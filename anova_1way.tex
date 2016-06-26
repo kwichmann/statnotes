@@ -1,0 +1,192 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}
+
+\newcommand*{\doublebar}[1]{\bar{\bar{#1}}}
+
+\begin{document}
+
+\section{One-way ANOVA}
+ANOVA is short for ANalysis Of VAriance. Analysis may be done for a number of \textit{factors}, i.e. groupings of potentially explanatory categories. This document deals with the case for one factor, hence the term "one-way".
+
+\subsection{The situation}
+Assume we have $a$ samples, each from a different subpopulation. Each sample is of size $n$, and the total number of samples is called $N=na$. The question we could ask ourselves is whether there's a difference between the $a$ subpopulation means? If $a=2$ we can do a $t$-test comparison, but for $a\ge 3$ other methods are needed.
+
+\subsection{Notation}
+The stochastic variables corresponding to sample $j$ from subpopulation $i$ is denotes $X_{ij}$. The estimator of the mean of the $i$'th subpopulation is denoted:
+\begin{equation}
+\bar{X}_i=\frac{1}{n}\sum_{j=1}^n X_{ij}
+\end{equation}
+The overall sample mean, also sometimes known as the \textit{grand mean}, is denoted by $\doublebar{X}$:
+\begin{equation}
+\doublebar{X}=\frac{1}{N}\sum_{i=1}^a\sum_{j=1}^n X_{ij}=\frac{1}{n}\sum_{j=1}^n \bar{X}_j
+\end{equation}
+Any actualized values of these are denoted by using lower case $x$'es. The true subpopulation means are denoted $\mu_1, \mu_2,\cdots, \mu_a$.
+
+\subsubsection{Example: Use of fertilizer}
+12 plots of land are divided randomly into three groups: 1, 2 and 3. Group 1 and 2 are fertilized while 3 (the control) is not. The table below shows the crop yield\footnote{This is from problem 10-1 from Wonnacot \& Wonnacot: Introductory statistics, fifth edition.}:
+\begin{center}
+\begin{tabular}{{l}|*{3}{c}}
+	Group	&	1	&	2	&	3	\\
+	\hline
+			&	75	&	74	&	60	\\
+			&	70	&	78	&	64	\\
+			&	66	&	72	&	65	\\
+			&	69	&	68	&	55	\\
+	\hline
+	Average	& $\bar{x}_1=70$ & $\bar{x}_2=73$ & $\bar{x}_3=61$ 
+\end{tabular}
+\end{center}
+So here $a=3, n=4$ and $N=12$. The means for each group is shown in the table. Finally, the grand mean is:
+\begin{equation}
+\doublebar{x}=\frac{1}{3}(70+73+61)=68
+\end{equation}
+
+\subsection{Null hypothesis}
+We wish to be able to detect differences between the subpopulations. For this, a null hypothesis is needed. We will use the following:
+\begin{equation}
+\label{H0}
+H_0:\textrm{ All subpopulations are distributed as: }X_{ij}\sim N(\mu,\sigma^2)
+\end{equation}
+So the subpopulations really form one, big population. Specifically $\mu=\mu_1=\mu_2=\cdots=\mu_a$. The variances are also the same.
+
+\subsection{Splitting the sum of squares}
+We're interested in variance, so we need to compute the total sum of squares for all the observations:
+\begin{equation}
+SS_T=\sum_{i=1}^a\sum_{j=1}^n\left(X_{ij}-\doublebar{X}\right)^2
+\end{equation}
+Now use the usual trick of inserting zero:
+\begin{equation}
+SS_T=\sum_{i=1}^a\sum_{j=1}^n\left(X_{ij}-\bar{X}_i+\bar{X}_i-\doublebar{X}\right)^2
+\end{equation}
+Expand $\left(X_{ij}-\bar{X}_i+\bar{X}_i-\doublebar{X}\right)^2$:
+\begin{equation}
+\left(X_{ij}-\bar{X}_i\right)^2+\left(\bar{X}_i-\doublebar{X}\right)^2+2\left(X_{ij}-\bar{X}_i\right)\left(\bar{X}_i-\doublebar{X}\right)
+\end{equation}
+When summing over the last term we get:
+\begin{equation}
+\sum_{i=1}^a\sum_{j=1}^n\left(X_{ij}-\bar{X}_i\right)\left(\bar{X}_i-\doublebar{X}\right)=\sum_{i=1}^a\left[\left(\bar{X}_i-\doublebar{X}\right)\sum_{j=1}^n\left(X_{ij}-\bar{X}_i\right)\right]
+\end{equation}
+But:
+\begin{equation}
+\sum_{j=1}^n\left(X_{ij}-\bar{X}_i\right)=n\bar{X}_i-n\bar{X}_i=0
+\end{equation}
+So the sum over the cross-term vanishes and we're left with:
+\begin{equation}
+SS_T=\sum_{i=1}^a\sum_{j=1}^n\left(X_{ij}-\bar{X}_i\right)^2+n\sum_{i=1}^a\left(\bar{X}_i-\doublebar{X}\right)^2
+\end{equation}
+Or, setting $SS_A=n\sum_{i=1}^a\left(\bar{X}_i-\doublebar{X}\right)^2$ and $SS_E=\sum_{i=1}^a\sum_{j=1}^n\left(X_{ij}-\bar{X}_i\right)^2$ this may be compactly written:
+\begin{equation}
+\label{totalsum}
+SS_T=SS_A+SS_E
+\end{equation}
+The E is short for 'error', as it cannot be attributed to any explanatory factor.
+
+\subsubsection{Example: Use of fertilizer (cont.)}
+For this example, the sum of squares for the group factor (A) is:
+\begin{equation}
+SS_A=\underbrace{4}_{n}\left[(70-68)^2+(73-68)^2+(61-68)^2\right]=312
+\end{equation}
+The error contribution is:
+\begin{align*}
+SS_E = & \underbrace{(75-70)^2+(70-70)^2+(66-70)^2+(69-70)^2}_{\textrm{Group 1}} + \\
+& \underbrace{(74-73)^2+(78-73)^2+(72-73)^2+(68-73)^2}_{\textrm{Group 2}} + \\
+& \underbrace{(60-61)^2+(64-61)^2+(65-61)^2+(55-61)^2}_{\textrm{Group 3}} = \\
+& 156
+\end{align*}
+Let's calculate the total sum of squares too to see if things add up:
+\begin{align*}
+SS_T = & \underbrace{(75-68)^2+(70-68)^2+(66-68)^2+(69-68)^2}_{\textrm{Group 1}} + \\
+& \underbrace{(74-68)^2+(78-68)^2+(72-68)^2+(68-68)^2}_{\textrm{Group 2}} + \\
+& \underbrace{(60-68)^2+(64-68)^2+(65-68)^2+(55-68)^2}_{\textrm{Group 3}} = \\
+& 468
+\end{align*}
+Since $468=312+156$ everything seems to be in order.
+
+\subsection{Terms as quadratic forms}
+We'd like to express the sum of squares terms as quadratic forms. This will allow us to apply Cochran's theorem to the problem.\par
+The relevant matrices should be $N\times N$. We need to normalize the $X_{ij}$ variables to get standard normals, and we need to decide on an ordering. Here we'll use the following:
+\begin{center}
+\begin{tabular}{*4{c}}
+$U_1=\frac{X_{11}-\mu}{\sigma},$ & $U_2=\frac{X_{12}-\mu}{\sigma},$	& $\cdots$ & $U_n=\frac{X_{1n}-\mu}{\sigma}$ \\
+$U_{n+1}=\frac{X_{21}-\mu}{\sigma},$ &	$U_{n+2}=\frac{X_{22}-\mu}{\sigma},$		& $\cdots$	& $U_{2n}=\frac{X_{2n}-\mu}{\sigma}$ \\
+$\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ \\
+$U_{(a-1)n+1}=\frac{X_{a1}-\mu}{\sigma},$ &	$U_{(a-1)n+2}=\frac{X_{a2}-\mu}{\sigma},$		& $\cdots$	& $U_{N}=\frac{X_{an}-\mu}{\sigma}$ \\
+\end{tabular}
+\end{center}
+For $SS_T$ this is pretty straightforward; it's the same as always for a basic mean estimator:
+\begin{equation}
+\frac{SS_T}{\sigma^2}=U^T\underbrace{\left(I_N-\frac{1}{N}J_N\right)}_{B^{(T)}}U
+\end{equation}
+As usual $B^{(T)}$ is idempotent with rank $N-1$. For the other terms it's useful to introduce the following $a\times N$ matrix:
+\begin{equation}
+\label{designmatrix}
+A=\begin{pmatrix}
+1 & 0 & 0 & \cdots & 0 \\
+\vdots & \vdots & \vdots & & \vdots \\
+1 & 0 & 0 & \cdots & 0 \\
+0 & 1 & 0 & \cdots & 0 \\
+\vdots & \vdots & \vdots & & \vdots \\
+0 & 1 & 0 & \cdots & 0 \\
+\vdots & \vdots & \vdots & & \vdots \\
+0 & 0 & 0 & \cdots & 1 \\
+\vdots & \vdots & \vdots & & \vdots \\
+0 & 0 & 0 & \cdots & 1
+\end{pmatrix}
+\end{equation}
+This should be read as $n$ rows of the first unit vector, $n$ rows of the second, and so on till the $a$'th unit vector. $A$ is known as the \textit{design matrix} for one-way ANOVA\footnote{It's also common to denote this matrix as $X$, but with $X_{ij}$ representing stochastic variables, $A$ is hopefully less confusing}. This is tied to the general linear model. $A$ can be used to express the means of each group as a column vector:
+\begin{equation}
+\bar{X}=\frac{1}{n}AU
+\end{equation}
+
+
+\subsection{Distribution of sum of square terms, and mean squares}
+Now, let's look at the distribution of the different terms. We will assume $X_{ij}\sim N(\mu,\sigma^2)$ pr. the null hypothesis. For $SS_T$ this means:
+\begin{equation}
+\doublebar{X}\sim N\left(\mu,\frac{\sigma^2}{N}\right),\quad SS_T\sim\sigma^2\chi^2_{N-1}
+\end{equation}
+Similarly for the means of each group:
+\begin{equation}
+\bar{X}_i\sim N\left(\mu,\frac{\sigma^2}{n}\right),\quad\sum_{j=1}^n\left(X_{ij}-\bar{X}\right)^2\sim\sigma^2\chi^2_{n-1}
+\end{equation}
+This implies the following distribution for $SS_E$:
+\begin{equation}
+SS_E\sim\sigma^2\chi^2_{a(n-1)} 
+\end{equation}
+Since $\frac{SS_T}{\sigma^2}$ is $\chi^2$ distributed, $(\ref{totalsum})$ along with Cochran's theorem implies, that $\frac{SS_A}{\sigma^2}$ must also be $\chi^2$ distributed. The number of degrees of freedom should add up, so it must be $N-1-a(n-1)=a-1$. So:
+\begin{equation}
+SS_A\sim\sigma^2\chi^2_{a-1}
+\end{equation}
+\par
+Now that we know the degrees of freedom for all the $\chi^2$-distributed sum of square terms, we can also calculate the corresponding mean square (MS) expressions (sometimes informally known as variances): 
+\begin{equation}
+\label{msformulas}
+MS_T=\frac{SS_T}{N-1},\quad MS_A=\frac{SS_A}{a-1},\quad MS_E=\frac{SS_E}{a(n-1)}
+\end{equation}
+
+\subsubsection{Example: Use of fertilizer (cont.)}
+We use equation $(\ref{msformulas})$ to get:
+\begin{equation}
+MS_T=\frac{468}{12-1}=52.55,\quad MS_A=\frac{312}{3-1}=156,\quad MS_E=\frac{156}{3(4-1)}=17.33
+\end{equation}
+
+\subsection{The F test statistic}
+We're looking for a statistic that measures how well the null hypothesis $\ref{H0}$ is satisfied. If the null is true, we should get no contribution from the variations due to factor, i.e. $SS_A$. On the other hand, if $SS_E$ is small, it means that the variance is due to random errors. In other words, the smaller the following number is, the more likely the null seems:
+\begin{equation}
+\label{Fscore}
+F=\frac{MS_A}{MS_E}
+\end{equation}
+Because of equation $(\ref{msformulas})$ this quantity is $F$-distributed with $a-1$ numerator degrees of freedom, and $a(n-1)$ denominator degrees of freedom under $H_0$. Therefore it can be used to perform tests. Critical values for a given confidence level and/or p-values can be found using a table or a computer program. The null is accepted/rejected accordingly.
+
+\subsubsection{Example: Use of fertilizer (cont.)}
+Let's test at a 5\% significance level. The $F$ test statistic is:
+\begin{equation}
+F=\frac{156}{17.33}=9
+\end{equation}
+The numerator degrees of freedom is 2, and the denominator degrees of freedom is 9. The critical value for the corresponding $F$-distribution is found in a table to be 4.26. Since the test statistic is larger than the critical value, the null is rejected: There really does seem to be a difference in crop yield between the groups. In fact the p-value can be calculated to be 0.0071, making the claim rather strong.
+
+\section{Unequal groupings}
+Sometimes the individual groups don't have the same number of elements in them.
+\end{document}

@@ -1,0 +1,363 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}
+
+
+\begin{document}
+
+\section{Cochran's theorem for dummies}
+\subsection{Basic ingredients}
+\label{ingredients}
+Let $U_1, U_2, \ldots , U_n$ be i.i.d. standard normally distributed random variables. Now, consider the sum:
+\begin{equation}
+\sum_{i=1}^n U_i^2
+\end{equation}
+By definition this quantity is $\chi^2_n$ distributed. But assume that it can also be written as a sum of quadratic forms in the $U_i$ variables:
+\begin{equation}
+\sum_{i=1}^n U_i^2 = Q_1 + Q_2 + \cdots + Q_k
+\end{equation}
+That $Q_i$ is a quadratic form means that:
+\begin{equation}
+Q_i=\sum_{j=1}^n\sum_{k=1}^n U_j B^{(i)}_{jk}U_k
+\end{equation} 
+Here, $B^{(i)}$ is a symmetric, positive semi-definite matrix.\par
+From this we immediately see that the following must be true:
+\begin{equation}
+\label{b_sum}
+\sum_{i=1}^k B^{(i)}=I_n
+\end{equation}
+Here $I_n$ is the unit matrix of size $n$ as usual. We will also use the notation $r_i$ for the rank of $B^{(i)}$.
+
+\subsubsection{Example: Standard normal sample}
+As a simple example, consider a population that is standard normally distributed. A random sample of size $n$ corresponds to the $U_i$'s above. Of interest is the usual estimators of means and sum of squares (for estimating variance):
+\begin{equation}
+\bar{U}=\frac{1}{n}\sum_{i=1}^n U_i,\quad SS_U=\sum_{i=1}^n(U_i-\bar{U})^2
+\end{equation}
+Now, let's try to express the sum of the $U_i^2$ in terms of these. Consider the usual trick:
+\begin{equation}
+\sum_{i=1}^n U_i^2 = \sum_{i=1}^n(U_i-\bar{U}+\bar{U})^2=\sum_{i=1}^n(U_i-\bar{U})^2+\sum_{i=1}^n\bar{U}^2+2\bar{U}\sum_{i=1}^n(U_i-\bar{U})
+\end{equation}
+The last sum is equal to zero by definition of $\bar{U}$, so we're left with:
+\begin{equation}
+\sum_{i=1}^n U_i^2 = \sum_{i=1}^n(U_i-\bar{U})^2+\sum_{i=1}^n\bar{U}^2 = SS_U + n\bar{U}^2
+\end{equation}
+We've now split the sum into two quadratic forms:
+\begin{equation}
+Q_1=SS_U=\sum_{i=1}^n(U_i-\bar{U})^2,\quad Q_2=n\bar{U}^2
+\end{equation}
+Let's rewrite these to make the corresponding $B$-matrices clear. $Q_2$ is the simplest:
+\begin{equation}
+Q_2=n\bar{U}^2=n\left(\frac{1}{n}\sum_{i=1}^n U_i\right)^2=\frac{1}{n}\sum_{i,j=1}^n U_i U_j
+\end{equation}
+In other words, $Q_2$ can be expressed as $\sum_{j=1}^n\sum_{k=1}^n U_j B^{(2)}_{jk}U_k$, where $B^{(2)}=\frac{1}{n}J_n$. Here, $J_n$ is the $n\times n$ matrix containing all $1$'s. Now, let's tackle $Q_1$:
+\begin{equation}
+Q_1=\sum_{i=1}^n(U_i-\bar{U})^2=\sum_{i=1}^n U_i^2 + \sum_{i=1}^n\bar{U}^2 - 2\bar{U}\sum_{i=1}^n U_i = \sum_{i=1}^n U_i^2 - n{U}^2  
+\end{equation}
+Once again, the definition of $\bar{U}$ has been used. This means (using the result for $Q_1$, that $B^{(1)}=I_n-\frac{1}{n}J_n$.\par
+It may superficially seem that this is just a roundabout way of stating the trivial identity $I_n = \left(I_n-\frac{1}{n}J_n\right) + \left(\frac{1}{n}J_n\right)$, which is indeed what equation $(\ref{b_sum})$ already told us. But the important part is the decomposition into estimators of mean and variance.
+
+\subsubsection{Example: Normal sample}
+Things don't change too much if we consider a sample from a general, normal distributed population. If the stochastic variables $X_1, X_2, \ldots, X_n$ are i.i.d. and $X_i\sim N(\mu,\sigma^2)$, simply transform as usual:
+\begin{equation}
+U_i=\frac{X_i-\mu}{\sigma}
+\end{equation}
+Since these will all be standard normally distributed, everything proceeds as in the previous section.
+
+\subsection{Statement of Cochran's theorem}
+We're now ready to state the actual theorem:
+\begin{theorem}
+\label{cochran}
+Let $U_1, U_2, \ldots , U_n$ be i.i.d. random variables, $U_i\sim N(0,1)$. Further assume:
+\begin{equation}
+\sum_{i=1}^n U_i^2 = Q_1 + Q_2 + \cdots + Q_k,
+\end{equation}
+where $Q_i=\sum_{jk}U_j B^{(i)}_{jk}U_k$ with $B^{(i)}$ being a symmetric, positive definite matrix of rank $r_i$. The following statements are now equivalent:
+\begin{enumerate}
+\item $\sum_{i=1}^k r_i=n$.
+\item $Q_i\sim\chi^2_{r_i}$ for all $i$.
+\item The $Q_i$'s are all independent of each other.
+\end{enumerate}
+\end{theorem}
+
+\subsubsection{Example: Standard normal sample (cont.)}
+Let's determine the ranks of $B^{(1)}$ and $B^{(2)}$ to see if the prerequisites of the theorem holds. $B^{(2)}$ is the simplest: all the rows are exactly the same (and non-zero), so the rank must be $1$. So we need to prove that the rank of $Q_1$ is $n-1$:
+\begin{theorem}
+The rank of the matrix $I_n-\frac{1}{n}J_n$ is $n-1$.
+\end{theorem}
+
+\begin{proof}
+The proof is by induction.\\
+1. Base case: For $n=1$, the matrix is simply $[0]$, which clearly has rank $0$. To avoid division by zero in the inductive step, we also need to show this for $n=2$. In this case, the matrix is:
+\begin{equation}
+\begin{pmatrix}
+	\frac{1}{2} 	& -\frac{1}{2} \\
+	-\frac{1}{2}	& \frac{1}{2} \\
+\end{pmatrix}
+\end{equation}
+Each row is equal to the other multiplied by $-1$, so the rank is clearly $1$.\\
+2. Inductive step: Assume $I_{n-1}-\frac{1}{n-1}J_{n-1}$ to have rank $n-2$. The matrix $I_n-\frac{1}{n}J_n$ has the form:
+\begin{equation}
+\begin{pmatrix}
+	 \frac{n-1}{n}	& -\frac{1}{n} 	& \cdots	& -\frac{1}{n} \\
+	 -\frac{1}{n}	& \frac{n-1}{n}	& \cdots	& -\frac{1}{n} \\
+	 \vdots			& \vdots		& \ddots	& \vdots \\
+	 -\frac{1}{n}	& -\frac{1}{n}	& \cdots	& \frac{n-1}{n} \\
+\end{pmatrix}
+\end{equation}
+To bring the matrix to echelon form, the upper row is normalized, i.e. multiplied by $\frac{n}{n-1}$ (this is why we needed $n=2$ in the base case). The non-leading entries thus turn into:
+\begin{equation}
+-\frac{1}{n}\frac{n}{n-1}=-\frac{1}{n-1}
+\end{equation}
+After this row operation we're therefore left with:
+\begin{equation}
+\begin{pmatrix}
+	 1				& -\frac{1}{n-1}& \cdots	& -\frac{1}{n-1} \\
+	 -\frac{1}{n}	& \frac{n-1}{n}	& \cdots	& -\frac{1}{n} \\
+	 \vdots			& \vdots		& \ddots	& \vdots \\
+	 -\frac{1}{n}	& -\frac{1}{n}	& \cdots	& \frac{n-1}{n} \\
+\end{pmatrix}
+\end{equation}
+$\frac{1}{n}$ times the first row is now added to all the other rows. There's two possibilities for the results. Diagonal elements:
+\begin{equation}
+\frac{n-1}{n}-\frac{1}{n(n-1)}=\frac{(n-1)^2-1}{n(n-1)}=\frac{n^2+1-2n-1}{n(n-1)}=\frac{n(n-2)}{n(n-1)}=\frac{n-2}{n-1}
+\end{equation}
+Off-diagonal elements:
+\begin{equation}
+-\frac{1}{n}-\frac{1}{n(n-1)}=\frac{-(n-1)-1}{n(n-1)}=-\frac{n}{n(n-1)}=-\frac{1}{n-1}
+\end{equation}
+So, we're left with the matrix:
+\begin{equation}
+\begin{pmatrix}
+	 1				& -\frac{1}{n-1}& \cdots	& -\frac{1}{n-1} \\
+	 0				& \frac{n-2}{n-1}& \cdots	& -\frac{1}{n-1} \\
+	 \vdots			& \vdots		& \ddots	& \vdots \\
+	 0				& -\frac{1}{n-1}& \cdots	& \frac{n-2}{n-1} \\
+\end{pmatrix}
+\end{equation}
+However, the lower right $(n-1)\times(n-1)$ submatrix is exactly $I_{n-1}-\frac{1}{n-1}J_{n-1}$, which by the induction hypothesis has rank $n-2$. Therefore, the total number of leading ones in the echelon form of $I_n-\frac{1}{n}J_n$ is $n-1$.
+\end{proof}
+According to Cochran's theorem, the estimators $Q_1$ and $Q_2$ are therefore independent and distributed as follows:
+\begin{equation}
+\label{sn_dist}
+n SS_U\sim\chi^2_{n-1}\quad\bar{U}^2\sim\chi^2_1
+\end{equation}
+This is the source of the (in)famous $n-1$ term in the variance of a sample.
+
+\subsubsection{Normal sample (cont.)}
+When the samples $X_i$ are normal distributed as opposed to standard normally distributed, i.e. $X_i\sim N(\mu,\sigma^2)$, equation $(\ref{sn_dist})$ still holds, but now the $U$'s are given by:
+\begin{equation}
+U_i=\frac{X_i-\mu}{\sigma}
+\end{equation}
+This means that the mean estimator is:
+\begin{equation}
+\bar{U}=\frac{1}{n}\sum_{i=1}^n\frac{X_i-\mu}{\sigma}=\frac{1}{n\sigma}\left(\sum_{i=1}^n X_i -n\mu\right)=\frac{1}{\sigma}\left(\bar{X}-\mu\right)
+\end{equation}
+So the sum of squares is:
+\begin{equation}
+SS_U=\sum_{i=1}^n\left(\frac{X_i-\mu}{\sigma}-\frac{1}{\sigma}\left(\bar{X}-\mu\right)\right)^2
+\end{equation}
+The inside of the parenthesis is simply $\frac{1}{\sigma}(X_i-\bar{X})$, which means that the sum of squares is:
+\begin{equation}
+SS_U=\frac{1}{\sigma^2}\sum_{i=1}^n(X_i-\bar{X})^2=\frac{1}{\sigma^2}SS_X
+\end{equation}
+Therefore the distribution of the sum of squares of the $X$'es can be expressed:
+\begin{equation}
+n SS_X\sim\sigma^2\chi^2_{n-1}
+\end{equation}
+\subsection{A detour: Idempotent matrices}
+It turns out that the concept of an \textit{idempotent} matrix will be of use to us here. A square matrix $A$ is called idempotent if $A^2=A$. Such matrices have some interesting properties. Let's start with this:
+\begin{theorem}
+The eigenvalues of an idempotent matrix $A$ are either $0$ or $1$. 
+\end{theorem}
+\begin{proof}
+\label{idem1}
+Assume $\lambda$ is an eigenvalue of $A$. I.e. there exists a vector $v$ such that $Av=\lambda v$. Apply $A$ to both sides of the equation to get:
+\begin{equation}
+A(Av)=A(\lambda v)\Leftrightarrow Av=\lambda^2 v
+\end{equation}
+This means that $\lambda v=\lambda^2 v$. This is only possible if $\lambda=\lambda^2$, which has only two solutions: $\lambda=0$ and $\lambda=1$
+\end{proof}
+
+The converse of theorem $\ref{idem1}$ is also true:
+\begin{theorem}
+If a diagonalizable matrix $A$ has only eigenvalues $0$ and $1$, $A$ is idempotent.
+\end{theorem}
+\begin{proof}
+Let $r$ be the multiplicity of the eigenvalue $1$. It follows that the multiplicity of the eigenvalue $0$ is $n-r$. Since $A$ is diagonalizable, it means that an orthogonal matrix $O$ exists, such that $A=O^TDO$ where $D=\textrm{diag}\{\underbrace{1, 1, \cdots, 1}_{r\textrm{ times}},\underbrace{0, 0,\cdots, 0}_{n-r\textrm{ times}}\}$. Now calculate:
+\begin{equation}
+A^2=A=(O^TDO)^2=O^TDOO^TDO=O^TD^2O
+\end{equation}
+Since the diagonal of $D$ only has zeroes and ones in it, in fact $D^2=D$. Therefore $A^2=O^TDO=A$.
+\end{proof}
+
+In fact, it turns out that all idempotent matrices are diagonalizable:
+
+\begin{theorem}
+An idempotent matrix $A$ is diagonalizable.
+\end{theorem}
+\begin{proof}
+Let $r$ be the rank of $r$. Then the image space of $A$ has a dimension of $r$. Let ${w_1, w_2,\cdots,w_r}$ be a basis. Since each of these vectors are in the image, it means that there exists vectors $v_1, v_2,\cdots, v_r$ such that $Av_i=w_i$. So:
+\begin{equation}
+Aw_i=A(Av_i)=Av_i=w_i 
+\end{equation}
+Hence the multiplicity of the eigenvalue $1$ is (at least) $r$. By the dimensionality theorem, the dimension of the null space is $n-r$. This means that $0$ is an eigenvalue with multiplicity $n-r$. Thus $A$ has $n$ eigenvalues and is therefore diagonalizable.
+\end{proof}
+
+From the proof we also see that the multiplicity of the eigenvalue $1$ is equal to the rank of $A$. This leads to the following neat result:
+
+\begin{theorem}
+The rank $r$ of an idempotent matrix $A$ is equal to its trace.
+\end{theorem}
+\begin{proof}
+$A$ is diagonalizable, so there exists an orthogonal matrix $O$ such that $A=O^TDO$, where $D$ is the diagonal matrix $\textrm{diag}\{\underbrace{1, 1, \cdots, 1}_{r\textrm{ times}},\underbrace{0, 0,\cdots, 0}_{n-r\textrm{ times}}\}$.
+Since trace is invariant under similarity transformations, this means that $\textrm{tr}A=\textrm{tr}D=r$.
+\end{proof}
+
+\subsubsection{Example: Normal sample yet again}
+It turns out, that the matrices $B^{(1)}$ and $B^{(2)}$ are indeed idempotent. Recall that $B^{(1)}=I_n-\frac{1}{n}J_n$. So:
+\begin{equation}
+\begin{multlined}
+(B^{(1)})^2=\left(I_n-\frac{1}{n}J_n\right)^2=I_n^2+\frac{1}{n^2}J_n^2-\frac{1}{n}(I_n J_n + J_n I_n)=\\
+I_n+\frac{1}{n}J_n-2\frac{1}{n}J_n=I_n-\frac{1}{n}J_n=B^{(1)}
+\end{multlined}
+\end{equation}
+Here, we've used that $J_n^2=nJ_n$. Similarly, since $B^{(2)}=\frac{1}{n}J_n$: 
+\begin{equation}
+(B^{(2)})^2=\left(\frac{1}{n}J_n\right)^2=\frac{1}{n}J_n=B^{(2)}
+\end{equation}
+So both matrices are indeed idempotent, and we can immediately conclude that the traces, and therefore the ranks are $n-1$ and $1$ respectively.
+
+\subsection{Idempotency of the $B^{(i)}$ matrices}
+In our example. The $B^{(i)}$ matrices happened to be idempotent. The question is if this is a coincidence? It turns out it is not:
+\begin{theorem}
+\label{b_idempotent}
+With the notation from section $\ref{ingredients}$, if $\sum_{i=1}^k r_i=n$, then the $B^{(i)}$ matrices are all idempotent.
+\end{theorem}
+\begin{proof}
+Start by recalling equation $(\ref{b_sum})$: $\sum_{i=1}^k B^{(i)}=I_n$. For a given $i$ this can also be stated as:
+\begin{equation}
+\label{bc_split}
+I_n=B^{(i)} + \underbrace{\sum_{j\neq i}B^{(j)}}_{C^{(i)}}
+\end{equation}
+Here, we've defined $C^{(i)}$ as shown by the brace. By subadditivity of matrix rank, this implies:
+\begin{equation}
+\textrm{rank}(I_n)\le\textrm{rank}(B^{(i)})+\textrm{rank}(C^{(i)})\Leftrightarrow \textrm{rank}(C^{(i)})\ge n-r_i
+\end{equation}
+However it also means:
+\begin{equation}
+\textrm{rank}(C^{(i)})\le\sum_{j\neq i}^k\textrm{rank}(B^{(j)})=n-r_i
+\end{equation}
+The last equality follows from the assumption $\sum_{i=1}^k r_i=n$. So the only possibility is $\textrm{rank}(C^{(i)})=n-r_i$.\par
+Since $B^{(i)}$ is symmetric, it is diagonalizable. So there exists an orthogonal matrix such that
+\begin{equation}
+\label{diag_b}
+B^{(i)}=O^T D_iO,
+\end{equation}
+where $D_i$ is diagonal. $r_i$ of the diagonal elements are non-zero:
+\begin{equation}
+D_i=\textrm{diag}\{\lambda_1,\lambda_2,\cdots,\lambda_{r_i},\underbrace{0,\cdots,0}_{n-r_i\textrm{ zeroes}}\}
+\end{equation}
+Equation $(\ref{diag_b})$ can be rewritten as $O^T B^{(i)}O=D_i$. This comes in handy as equation $(\ref{bc_split})$ is sandwiched by $O$ and $O^T$ in the same way:
+\begin{equation}
+OI_n O^T=O B^{(i)}O^T+O C^{(i)}O^T\Leftrightarrow I_n = D_i + O C^{(i)}O^T
+\end{equation}
+Therefore $OC^{(i)}O^T$ must be a diagonal matrix. Arranging the orthogonal matrices back this means
+\begin{equation}
+C^{(i)}=O^T\left[\textrm{diag}\{1-\lambda_1,1-\lambda_2,\cdots,1-\lambda_{r_i},\underbrace{1,\cdots,1}_{n-r_i\textrm{ ones}}\}\right]O
+\end{equation}
+So $C^{(i)}$ is diagonalized by the same orthogonal transformation as $B^{(i)}$. Now, we know the rank of $C^{(i)}$ is $n-r_i$, but there's already $n-r_i$ eigenvalues equal to one, so the rest of the eigenvalues must be zero. In other words $1-\lambda_1=0$, $1-\lambda_2=0, \ldots, 1-\lambda_{r_i}=0$ which means that the first $r_i$ $\lambda$'s must be zero! So $B^{(i)}$ has only eigenvalues of $0$ and $1$ and therefore is idempotent.
+\end{proof}
+
+\subsection{Quadratic forms of idempotent matrices}
+As the last theorem shows, we'll be dealing with such quadratic forms. The following will be useful:
+\begin{theorem}
+\label{quadform}
+Let $U_1,U_2,\cdots, U_n$ be i.i.d. standard normal stochastic variables and $A$ be a symmetric $n\times n$ matrix. Consider the quadratic form:
+\begin{equation}
+Q=\sum_{i=1}^n\sum_{j=1}^n U_i A_{ij} U_j
+\end{equation}
+Then $A$ is idempotent with rank $r$ if and only if $Q\sim\chi^2_r$.
+\end{theorem}
+\begin{proof}
+Since $A$ is symmetric, it is therefore diagonalizable. So $A=O^TDO$, where $O$ is an orthogonal and $D$ a diagonal matrix, respectively. So, in matrix form:
+\begin{equation}
+Q=U^T(O^TDO)U=(U^TO^T)D(OU)=(OU)^T D(OU)
+\end{equation}
+We need to show both implications. First assume $A$ is idempotent with rank $r$. Then:
+\begin{equation}
+D=\textrm{diag}\{\underbrace{1, 1, \cdots, 1}_{r\textrm{ times}},\underbrace{0, 0,\cdots, 0}_{n-r\textrm{ times}}\}
+\end{equation}
+Since an orthogonal transformation of a multidimensional standard normal is once again a multidimensional standard normal, it follows that $Q$ is indeed a sum of $r$ squares of independent standard normals. So $Q\sim\chi^2_r$.\par
+Conversely, assume $Q\sim\chi^2_r$. This means that $Q$ can be written as a sum of $r$ squares of i.i.d. standard normals $V_i$:
+\begin{equation}
+Q=\sum_{i=1}^r V_i^2=\sum_{i=1}^n\sum_{j=1}^n V_i D'_{ij} V_j
+\end{equation}
+Here $D'=\textrm{diag}\{\underbrace{1, 1, \cdots, 1}_{r\textrm{ times}},\underbrace{0, 0,\cdots, 0}_{n-r\textrm{ times}}\}$. 
+So in matrix form:
+\begin{equation}
+(OU)^T D(OU)=V^T D' V
+\end{equation}
+But eigenvalues must remain the same no matter what basis is used, so $D$ and $D'$ must have the same diagonal elements, which means that $A$ is idempotent with rank $r$.
+\end{proof}
+
+Another result we will need is the following (which is a special case of what is sometimes known as Craig's theorem):
+\begin{theorem}
+\label{craig}
+Let $U_1, U_2,\cdots,U_n$ be i.i.d. standard normally distributed variables and $A$ and $B$ be symmetric $n\times n$ matrices. The quadratic forms
+\begin{equation}
+Q_A=U^TAU,\quad Q_B=U^TBU
+\end{equation}
+are now independent if and only if $AB=0$.
+\end{theorem}
+\begin{proof}
+Both $A$ and $B$ are symmetric and hence diagnalizable. So there exists orthogonal matrices $O_A$ and $O_B$ such that:
+\begin{equation}
+A=O_A^T D_A O_A,\quad B=O_B^T D_B O_B
+\end{equation}
+Here $D_A$ and $D_B$ are diagonal matrices. So we have:
+\begin{equation}
+Q_A=U^T O_A^T D_A O_A U^T = (O_A U)^T D_A (O_A U),\quad Q_B=(O_B U)^T D_B (O_B U)
+\end{equation}
+Using the standard formula for the covariance of a product, we get:
+\begin{align*}
+\textrm{Cov}(Q_A,Q_B) & =E[Q_AQ_b]-E[Q_A]E[Q_B]=\\
+& E[(O_A U)^T D_A (O_A U)(O_B U)^T D_B (O_B U)]-E[(O_A U)^T D_A (O_A U)]E[(O_B U)^T D_B (O_B U)]
+\end{align*}
+
+
+If $Q_A$ and $Q_B$ are independent, then they're also uncorrelated. The covariance must therefore be zero. 
+\end{proof}
+
+\subsection{Proof of Cochran's theorem}
+By now we've done most of the heavy lifting needed to actually prove theorem $\ref{cochran}$. We need to show that the three conditions are equivalent.
+
+\subsubsection{Proof that 1 $\Rightarrow$ 2}
+\begin{proof}
+By theorem $\ref{b_idempotent}$ the matrix $B^{(i)}$ is idempotent. By theorem $\ref{quadform}$ $Q_i\sim\chi^2_{r_i}$.
+\end{proof}
+
+\subsubsection{Proof that 2 $\Rightarrow$ 1}
+\begin{proof}
+This follows directly from theorem $\ref{quadform}$ and the definition of $\chi^2$ distributions.
+\end{proof}
+
+\subsubsection{Proof that 2 $\Rightarrow$ 3}
+\begin{proof}
+From the proof of theorem $\ref{b_idempotent}$ we know that the same orthogonal matrix $O$ diagonalizes all the $B^{(i)}$ matrices simultaneously: $B^{(i)}=O^T D_i O$, where each $D_i$ is diagonal. Furthermore idempotency also means all diagonal elements are either $0$ or $1$. We can now write:
+\begin{equation}
+U^TU=U^T\left[O^T\left(\sum_{i=1}^k D_i\right)O\right]U=(OU)^T\left(\sum_{i=1}^k D_i\right)(OU)
+\end{equation}
+Since eigenvalues does not depend on basis, we must have $I_n=\sum_{i=1}^k D_i$. But since all diagonal $D$ elements are $0$ or $1$ there can be only exactly one $1$ in a single $D$ matrix for each of the $n$ basis vectors. Since orthogonal transformation maps standard multinormal to standard multinormal, the basis $V=OU$ consists of i.i.d. standard normally distributed stochastic variables. But each of the $n$ basis vectors $V_i$ will appear only in exactly one quadratic form. Hence the $Q$'s must be pairwise independent.
+\end{proof}
+
+\subsubsection{Proof that 3 $\Rightarrow$ 2}
+\begin{proof}
+According to equation $(\ref{b_sum})$ for any natural number $m$ we must have:
+\begin{equation}
+\left(\sum_{i=1}^k B^{(i)}\right)^m=I_n
+\end{equation}
+\end{proof}
+
+\end{document}
