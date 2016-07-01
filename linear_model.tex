@@ -1,0 +1,32 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+
+\section{The linear model}
+The \textit{linear model} is a theoretical framework that unifies a number of statistical concepts, like ANOVA and regression.
+
+\subsection{Least squares estimation}
+
+\subsubsection{Statement of the problem}
+The general problem is this: We wish to model a linear relationship between a response variables $Y$ and $p$ predictor variables $X_1, X_2,\cdots X_p$. In other words:
+\begin{equation}
+\label{linear1}
+Y=\beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_p X_p
+\end{equation}
+Here, the $\beta$'s are the coefficients corresponding to the $X$'s. Now, assume that we have $n$ data points, so that $y_i$ corresponds to $x_{i1}, x_{i2},\cdots x_{ip}$. In matrix form equation $(\ref{linear1})$ now becomes: 
+\begin{equation}
+y=X\beta
+\end{equation}
+Here, $y\in\mathbb{R}^{n\times 1}, X\in\mathbb{R}^{n\times p}$ and $\beta\in\mathbb{R}^{p\times 1}$. Given $y$ and $X$, we seek the best fit for $\beta$.
+
+
+
+%\subsection{Projection operators}
+
+
+\end{document}
