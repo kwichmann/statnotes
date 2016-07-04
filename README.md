@@ -1,5 +1,5 @@
 # My statistics notes
-This is a repo for various of my statistics notes. Mostly from a theoretical view.
+This is a repo for various of my statistics notes. Mostly from a theoretical point of view.
 
 I am not a professional statistician. These notes are only meant to documents my own work trying to grasp various aspects of the subject.
 Therefore, some bits are probably wrong. Other times I have probably not taken the shortest route. Other times, the notes are incomplete.

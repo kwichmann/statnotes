@@ -54,7 +54,7 @@ Here, $A\in\mathbb{R}^{n\times n}$ and $\beta\in\mathbb{R}^{n\times 1}$. Further
 \begin{equation}
 g(\beta)=\sum_{i=1}^n\sum_{j=1}^n\beta_i a_{ij}\beta_j
 \end{equation}
-Differentiating with respect to $\beta_k$ only terms where $i=k$ or $i=j$ will contribute. However, the case $i=j=k$ is distinct. So, when $i=k$ we get the contribution $a_{kj}\beta_j$. When $j=k$ we get $\beta_i a_{ij}$. And when $i=j=k$ we get $2a_{kk}a_k$. All in all, when summing up, we get two of each $a$-$\beta$ set (because of the symmetry of $A$). So:
+Differentiating with respect to $\beta_k$ only terms where $i=k$ or $i=j$ will contribute. However, the case $i=j=k$ is distinct. So, when $i=k$ we get the contribution $a_{kj}\beta_j$. When $j=k$ we get $\beta_i a_{ij}$. And when $i=j=k$ we get $2a_{kk}\beta_k$. All in all, when summing up, we get two of each $a$-$\beta$ set (because of the symmetry of $A$). So:
 \begin{equation}
 \frac{\partial g}{\partial\beta_k}=2\sum_{i=1}^n a_{ik}\beta_i
 \end{equation}
@@ -157,5 +157,11 @@ M^2=(I-H)^2=I^2+H^2-2H=I+H-2H=I-H=M
 \end{equation}
 \end{proof}
 
+\subsection{The error term}
+Obviously, the model described by equation $(\ref{linear2})$ allows for no random variation as written. We need an \textit{error term} to describe the random variation:
+\begin{equation}
+y=X\beta + \epsilon
+\end{equation}
+Here $\epsilon$ is a stochastic vector of dimension $n$. The basic assumption of the linear model is that the elements of $\epsilon$ are i.i.d. and normally distributed with mean zero: $\epsilon_i\sim N(0,\sigma^2)$. Or equivalently, that the error term vector follows a multivariate normal distribution: $\epsilon\sim N(0,\sigma^2 I)$. 
 
 \end{document}
