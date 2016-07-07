@@ -1,0 +1,72 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+
+\section{Bayesian statistics}
+
+\textit{Bayesian statistics}, as opposed to frequentist statistics, views probabilities merely as current opinion regarding the true state of the world. As new data is brought to light such opinion will be revised to reflect the new evidence. The way to update probabilities is prescribed by Bayes' theorem.\par
+So Bayesian probabilities are subjective, in contrast to the objective probabilities of frequentist statistics.
+
+\subsection{Prior and posterior probablities}
+Assume we have a given probability of an event $A$ happening. This probability $P(A)$ is known as the \textit{prior} in Bayesian terminology. Now, assume we know that event $B$ has occured - this constitutes evidence. We should now adjust our probability of event $A$ to the conditional probability $P(A|B)$, which is known as the \textit{posterior}. The two are related by Bayes' theorem:
+\begin{equation}
+\label{bayes}
+P(A|B)=\frac{P(B|A)P(A)}{P(B)}
+\end{equation}
+
+\subsection{Example: Radio quality}
+A given corporation produces radios. Of the last 200 truckloads of radios, 128 have been "bad" and 72 "good"; In the bad truckloads 44\% of the radios were defective. In the good truckloads only 15\%. Now, we're faced with determining whether a new truckload of radios is good or bad. Initially, since all we have is the information that 128 out of 200 truckloads have been bad, our prior probabilities would be:
+\begin{equation}
+P(B)=\frac{128}{200}=64\%,\quad P(G)=\frac{72}{200}=36\%
+\end{equation}
+Here, $B$ refers to the event "Bad truckload", and $G$ to the event "Good truckload". However, we now sample one of the radios from the truckload. This radio turns out to be defective. What are the updated, posterior probabilities of the truckload being good or bad? To answer this, we need Bayes' theorem:
+\begin{equation}
+\label{radio_post}
+P(B|D)=\frac{P(D|B)P(B)}{P(D)}
+\end{equation}
+Here $D$ refers to the event "Defective radio". $P(D|B)$ is the probability of a radio in a bad truckload being defective. We know that this is 44\%. We know that $P(B)=64\%$. But what is $P(D)$? By the law of total probability, this is:
+\begin{equation}
+P(D)=P(D|B)P(B)+P(D|G)P(G)=44\%\cdot 64\% + 15\%\cdot 36\% = 33.56\%
+\end{equation}
+Now, we can insert into equation $(\ref{radio_post})$:
+\begin{equation}
+P(B|D)=\frac{44\%\cdot 64\%}{33.56\%}=83.9\%
+\end{equation}
+By symmetry, the posterior probability of a good truckload has shrunk to $P(G|D)=100\%-83.9\%=16.1\%$. The knowledge that the sample radio is defect makes us update our view of the world.
+
+\subsubsection{Radio quality with odds}
+One could also reformulate the example above using \textit{odds}. The odds of a bad truckload is:
+\begin{equation}
+\frac{P(B)}{P(G)}=\frac{64\%}{36\%}=1.78
+\end{equation} 
+These are the prior odds. After the reveal of the defect radio, odds are:
+\begin{equation}
+\frac{P(B|D)}{P(G|D)}=\frac{83.9\%}{16.1\%}=5.21
+\end{equation}
+These are the posterior odds. How are the two related? Let's use Bayes' theorem to find out:
+\begin{equation}
+\frac{P(B|D)}{P(G|D)}=\frac{P(D|B)P(B)/P(D)}{P(G|B)P(B)/P(D)}=\frac{P(D|B)P(B)}{P(D|G)P(G)}
+\end{equation}
+So the prior odds times the quantity $\frac{P(D|B)}{P(G|B)}$, which can be interpreted as a \textit{likelihood ratio}. The relation between these three quantities can be written:
+\begin{equation}
+\label{bayes_odds}
+\textrm{posterior odds}=\textrm{prior odds}\cdot\textrm{likelihood ratio}
+\end{equation}
+
+\subsection{Calculating posterior probabilities}
+In general, let $\theta$ be a parameter describing an event and $X$ represent new evidence. By Bayes' theorem:
+\begin{equation}
+P(\theta|X)=\frac{P(X|\theta)P(\theta)}{P(X)}
+\end{equation}
+For a given set of evidence $X$ we wish to update on, $P(X)$ is a constant, so this may also be expressed:
+\begin{equation}
+P(\theta|X)\propto P(X|\theta)P(\theta)
+\end{equation}
+
+
+\end{document}
