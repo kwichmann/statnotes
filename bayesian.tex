@@ -50,7 +50,7 @@ These are the prior odds. After the reveal of the defect radio, odds are:
 \end{equation}
 These are the posterior odds. How are the two related? Let's use Bayes' theorem to find out:
 \begin{equation}
-\frac{P(B|D)}{P(G|D)}=\frac{P(D|B)P(B)/P(D)}{P(G|B)P(B)/P(D)}=\frac{P(D|B)P(B)}{P(D|G)P(G)}
+\frac{P(B|D)}{P(G|D)}=\frac{P(D|B)P(B)/P(D)}{P(D|G)P(G)/P(D)}=\frac{P(D|B)P(B)}{P(D|G)P(G)}
 \end{equation}
 So the prior odds times the quantity $\frac{P(D|B)}{P(G|B)}$, which can be interpreted as a \textit{likelihood ratio}. The relation between these three quantities can be written:
 \begin{equation}
@@ -59,7 +59,7 @@ So the prior odds times the quantity $\frac{P(D|B)}{P(G|B)}$, which can be inter
 \end{equation}
 
 \subsection{Calculating posterior probabilities}
-In general, let $\theta$ be a parameter describing an event and $X$ represent new evidence. By Bayes' theorem:
+In general, let $\theta$ be a parameter (or a vector of parameters) used to describe an event. In the example above, $\theta$ covered two option: Good or Bad truckload. In general, $\theta$ may represent many - even infinitely many - different outcomes. Let $X$ represent new evidence. By Bayes' theorem:
 \begin{equation}
 P(\theta|X)=\frac{P(X|\theta)P(\theta)}{P(X)}
 \end{equation}
@@ -67,6 +67,12 @@ For a given set of evidence $X$ we wish to update on, $P(X)$ is a constant, so t
 \begin{equation}
 P(\theta|X)\propto P(X|\theta)P(\theta)
 \end{equation}
+Or reworded to resemble equation $(\ref{bayes_odds})$:
+\begin{equation}
+\label{bayes_prob}
+\textrm{posterior probability}\propto\textrm{prior probability}\cdot\textrm{likelihood}
+\end{equation}
 
-
+\subsubsection{Radio quality revisited}
+The radio manufacturing company from above have made further inquiries into the distribution of percentages of defective radios in a truckload.
 \end{document}
