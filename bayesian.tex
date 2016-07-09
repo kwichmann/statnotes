@@ -4,6 +4,8 @@
 \usepackage{amsthm}
 \usepackage{mathtools}
 \newtheorem{theorem}{Theorem}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
 
 \begin{document}
 
@@ -55,7 +57,7 @@ These are the posterior odds. How are the two related? Let's use Bayes' theorem 
 So the prior odds times the quantity $\frac{P(D|B)}{P(G|B)}$, which can be interpreted as a \textit{likelihood ratio}. The relation between these three quantities can be written:
 \begin{equation}
 \label{bayes_odds}
-\textrm{posterior odds}=\textrm{prior odds}\cdot\textrm{likelihood ratio}
+\textrm{posterior odds}=\textrm{likelihood ratio}\cdot\textrm{prior odds}
 \end{equation}
 
 \subsection{Calculating posterior probabilities}
@@ -65,14 +67,64 @@ P(\theta|X)=\frac{P(X|\theta)P(\theta)}{P(X)}
 \end{equation}
 For a given set of evidence $X$ we wish to update on, $P(X)$ is a constant, so this may also be expressed:
 \begin{equation}
+\label{bayes_prob}
 P(\theta|X)\propto P(X|\theta)P(\theta)
 \end{equation}
 Or reworded to resemble equation $(\ref{bayes_odds})$:
 \begin{equation}
-\label{bayes_prob}
-\textrm{posterior probability}\propto\textrm{prior probability}\cdot\textrm{likelihood}
+\label{bayes_prob2}
+\textrm{posterior probability}\propto\textrm{likelihood}\cdot\textrm{prior probability}
 \end{equation}
 
 \subsubsection{Radio quality revisited}
-The radio manufacturing company from above have made further inquiries into the distribution of percentages of defective radios in a truckload.
+The radio manufacturing company from above have made further inquiries into the distribution of percentages of defective radios in a truckload. In this situation, the general parameter $\theta$ from last section corresponds to the defective percentage, which we will call $\pi$. It turns out, that this percentage seems to follow a beta distribution with parameters $\alpha=2$ and $\beta=4$:
+\begin{equation}
+P(\pi)\propto\pi(1-\pi)^3
+\end{equation}
+Since beta distributions are continuous, this is a probability \textit{density} of finding a truckload with a defective percentage of $\pi$, rather than a probability - this is our prior. We're now presented with a new truckload of radios. Without any further information, our best bet is the prior distribution. However, we now inspect the truckload, taking a random sample of 5 radios. It turns out, that 3 of those are defective. How do we account for this new information to update our distribution? According to equation $(\ref{bayes_prob})$, we need to find the likelihood $P(X|\pi)$. Here $X$ refers to the evidence of getting 3 out of 5 defective radios. In other words, this is a binomial likelihood\footnote{This assumes that the truckload is large enough that the consecutive picking of radios to test does not affect $\pi$ significantly.}:
+\begin{equation}
+P(X|\pi)=\binom{5}{3}\pi^3(1-\pi)^2\propto\pi^3(1-\pi)^2
+\end{equation}
+So the posterior distribution also turns out to be a beta distribution:
+\begin{equation}
+P(\pi|X)\propto\pi^4(1-\pi)^5
+\end{equation}
+This is a beta distribution with parameters $\alpha=5$ and $\beta=6$. When both distributions are of the same type, we speak of \textit{conjugate distributions}. Given a likelihood function, a prior that makes the distributions conjugate is known as a \textit{conjugate prior}.\par
+The graph below shows the three distributions for comparison\footnote{The likelihood isn't a distribution, since it does not sum to 1. However, for clarity, in this figure it has been scaled as if it did.}. The prior is relatively optimistic regarding quality, and the likelihood less so. The posterior is a compromise between the two.
+
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $\pi$,
+    ylabel = Density,
+    ymin = 0,
+    ymax = 3,
+]
+\addplot [
+    domain=0:1, 
+    samples=100, 
+    color=red,
+]
+{20 * x * (1-x)^3};
+\addlegendentry{Prior}
+\addplot [
+    domain=0:1, 
+    samples=100, 
+    color=blue,
+    ]
+    {60 * x^3 * (1-x)^2};
+\addlegendentry{Likelihood}
+\addplot [
+    domain=0:1, 
+    samples=100, 
+    color=green,
+    ]
+    {1260 * x^4 * (1-x)^5};
+\addlegendentry{Posterior}
+ 
+\end{axis}
+\end{tikzpicture}
+
 \end{document}
+
+
