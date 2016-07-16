@@ -1,0 +1,1716 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+
+\title{Measure theory}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Prerequisites}
+
+\subsection{Infimum and supremum}
+For a subset of the reals $A\subseteq\mathbb{R}$, and \textit{upper bound} is a number $U$ that is larger than or equal to all elements of $A$:
+\begin{equation}
+U\textrm{ is an upper bound on }A\Leftrightarrow\forall a\in A: U\ge a
+\end{equation}
+Similarly, $L$ is a \textit{lower bound} on $A$ is it is smaller than or equal to all elements of $A$:
+\begin{equation}
+L\textrm{ is a lower bound on }A\Leftrightarrow\forall a\in A: L\le a
+\end{equation}
+\begin{definition}
+The \textit{infimum} of $A\subseteq\mathbb{R}$ (if it exists) is the lowest upper bound on $A$. Similarly, the \textit{supremum} (if it exists) is the highest lower bound of $A$.
+\end{definition}
+It is a fundamental property of the real numbers that a lower (upper) bound subset $A\subseteq\mathbb{R}$ has an infimum (supremum). There's no "holes" in the real numbers.
+
+\subsection{The extended reals $\mathbb{R}^*$}
+By the extended reals, we means the usual reals $\mathbb{R}$ as well as $\pm\infty$:
+\begin{equation}
+\mathbb{R}^*=\mathbb{R}\cup\{-\infty,\infty\}
+\end{equation} 
+
+Any non-empty subset of $\mathbb{R}^*$ has an infimum and a supremum. This follows from the usual properties of bounded sets of reals.
+
+\begin{definition}
+For a sequence $a_1,a_2,\cdots\in\mathbb{R}^*$ we define \textit{limes inferior} and \textit{limes superior} by:
+\begin{align}
+\underset{n\rightarrow\infty}{\textrm{lim inf}}\ a_n&=\underset{p\ge 1}{\textrm{inf}}\ \textrm{sup}\{a_n|n\ge p\}\\
+\underset{n\rightarrow\infty}{\textrm{lim sup}}\ a_n&=\underset{p\ge 1}{\textrm{sup}}\ \textrm{inf}\{a_n|n\ge p\}
+\end{align}
+\end{definition}
+In other words, limes inferior is the infimum of the non-increasing sequence $\lambda_p=\textrm{sup}\{a_n|n\ge p\}$. Similarly, limes superior is the supremum of the non-decreasing sequence $\delta_p=\textrm{inf}\{a_n|n\ge p\}$.
+
+\begin{theorem}
+\label{liminf_limsup}
+A sequence $a_1,a_2,\cdots\in\mathbb{R}^*$ is convergent if and only if:
+\begin{equation}
+\underset{n\rightarrow\infty}{\textrm{lim inf}}\ a_n=\underset{n\rightarrow\infty}{\textrm{lim sup}}\ a_n=a
+\end{equation}
+The limit is then equal to $a$. 
+\end{theorem}
+\begin{proof}
+Let's split into the two cases of the limit being finite and non-finite.
+\begin{itemize}
+\item Finite limit, $\Rightarrow$: The series is convergent to $a\in\mathbb{R}$, which means that:
+\begin{equation}
+\forall\varepsilon>0\ \exists p\ \forall n\ge p: |a_n-a|<\varepsilon
+\end{equation}
+So $\{a_n|n\ge p\}$ takes values in the interval $(a-\varepsilon,a+\varepsilon)$. This means that $a+\varepsilon$ is an upper bound and that no upper bound can be below $a-\varepsilon$. In other words $a+\varepsilon\ge\lambda_p\ge a+\varepsilon$. Since this is true for all $\varepsilon>0$ this means that limes inferior must be equal to $a$. A similar argument shows that limes superior must also be $a$.
+\item Finite limit, $\Leftarrow$: Here:
+\begin{equation}
+\underset{n\rightarrow\infty}{\textrm{lim inf}}\ a_n=\underset{n\rightarrow\infty}{\textrm{lim sup}}\ a_n=a\in\mathbb{R}
+\end{equation}
+This means that $\forall p:\lambda_p\ge a$ and $\forall p:\delta_p\le a$. Now, let an $\varepsilon>0$ be given. There must now be a $p'$ where $\lambda_{p'}-a<\varepsilon$ and another $p''$ where $a-\delta_{p''}<\varepsilon$. Set $p=\textrm{max}\{p',p''\}$. Then by monotonicity of the $\lambda$'s and $\delta$'s we have:
+\begin{equation}
+\lambda_p-a<\varepsilon,\quad a-\delta_p<\varepsilon
+\end{equation}
+Now, since $\lambda_p=\textrm{sup}\{a_n|n\ge p\}$ we have:
+$\forall n\ge p: a_n\le\lambda_p$. This is equivalent to $a_n-a\le\lambda_p-a<\varepsilon$. Similarly, since $\delta_p=\textrm{inf}\{a_n|n\ge p\}$ we have: $\forall n\ge p: a_n\ge\delta_p$. Which is equivalent to $a_n-a\ge\delta_p-a\Leftrightarrow a-a_n\le a-\delta_p$. So $a-a_n\le\varepsilon$. All in all we have $|a_n-a|<\varepsilon$, which shows that $\underset{n\rightarrow\infty}{a_n}=a$.
+\item Infinite limit, $\Rightarrow$: Assume the series converges to $\infty$. This means that:
+\begin{equation}
+\forall r\in\mathbb{R}\ \exists p\ \forall n\ge p: a_n>r
+\end{equation}
+Since $\{a_n|n\ge p\}$ is not upper bound, the only upper bound is $\infty$. So $\lambda_n=\infty$, which means limes inferior must be $\infty$. A lower bound for $\{a_n|n\ge p\}$ is $r$, so $\delta_p\ge r$. Since this is true for all $r$, limes superior must be $\infty$. Similarly for convergence to $-\infty$.
+\item Infinite limit, $\Leftarrow$: Assume that:
+\begin{equation}
+\underset{n\rightarrow\infty}{\textrm{lim inf}}\ a_n=\underset{n\rightarrow\infty}{\textrm{lim sup}}\ a_n=\infty
+\end{equation}
+Since limes inferior is infinite, this means that the $\delta$'s get arbitrarily large. In other words:
+\begin{equation}
+\forall r\in\mathbb{R}\ \exists p\ \forall n\ge p:\delta_n>r
+\end{equation}
+But since $\delta_n$ is an infimum we must have $a_r\ge\delta_r$, so $a_n>r$, which shows the desired convergence. For convergence to $-\infty$ a similar argument can be made using limes superior.
+\end{itemize}
+\end{proof}
+
+Summation in $\mathbb{R}^*$ is extended through:
+\begin{align}
+a+\infty = \infty+a = \infty,\quad & a\neq -\infty\\
+a+(-\infty)=-\infty + a = -\infty,\quad & a\neq\infty
+\end{align}
+We leave $\infty+(-\infty)$ and $-\infty+\infty$ undefined. Furthermore, we extend multiplication in $\mathbb{R}^*$ as:
+\begin{align}
+0\cdot(\pm\infty)=\pm\infty\cdot 0&= 0\\
+c\cdot(\pm\infty)=(\pm\infty)\cdot c &=\pm\infty,\quad 0<c\le\infty\\
+c\cdot(\pm\infty)=(\pm\infty)\cdot c &=\mp\infty,\quad -\infty<c\le 0
+\end{align}
+Often we will work in $\mathbb{R}_+^*=[0,\infty]$.
+
+\subsection{Infinite sums}
+We now consider an infinite sum of elements of $\mathbb{R}_+^*$:
+\begin{equation}
+\sum_{j\in J}a_j,\quad a_j\in\mathbb{R}_+^*
+\end{equation}
+The index set $J$ can be of arbitrary cardinality. We now set:
+\begin{definition}
+\begin{equation}
+\sum_{j\in J}a_j=\textrm{sup}\left\{\sum_{i\in I}a_i|I\subseteq J, I\textrm{ finite}\right\}
+\end{equation}
+If $J=\emptyset$ we set the sum equal to 0.
+\end{definition}
+The following theorem for suprema in $\mathbb{R}_+^*$ will come in handy:
+
+\begin{theorem}
+\label{suprema_sets}
+Let $a\in\mathbb{R}_+^*$ and $A,B\subseteq\mathbb{R}_+^*$. Then:
+\begin{align}
+\textrm{(a) sup}(a+B)&=a+\textrm{sup}B\\
+\textrm{(b) sup}(a\cdot B)&=a\cdot\textrm{sup}B\\
+\textrm{(c) sup}(A+B)&=\textrm{sup}A+\textrm{sup}B\\
+\textrm{(d) sup}(A\cdot B)&=\textrm{sup}A\cdot\textrm{sup}B
+\end{align}
+Here $a+B=\{a+b|b\in B\}, a\cdot B=\{a\cdot b|b\in B\}, A+B=\{a+b|a\in A, b\in B\}$ and $A\cdot B=\{a\cdot b|a\in A, b\in B\}$.
+\end{theorem}
+\begin{proof}
+There's four parts to be shown:
+\begin{itemize}
+\item (a): If $U$ is an upper bound on $B$, then $U\ge\textrm{sup}B$. Now $U'=a+U$ is an upper bound on $a+B$. So for all upper bounds on $a+B$ we have $U'\ge a+\textrm{sup}B$, and so is the minimum upper bound, which is the supremum is $a+\textrm{sup}B$.
+\item (b): Similar to (a), but here the bounds are multiplied by $a$ instead of added.
+\item (c): Let $U_A$ and $U_B$ be upper bounds on $A$ and $B$ respectively. This means that $U_A\ge\textrm{sup}A$ and $U_B\ge\textrm{sup}B$. So any upper bound of $(A+B)$ can be written $U'=U_A+U_B\ge\textrm{sup}A+\textrm{sup}B$. This shows that $\textrm{sup}(A+B)=\textrm{sup}A+\textrm{sup}B$.
+\item (d): Similar to (c) but with multiplication instead of addition.
+\end{itemize}
+\end{proof}
+
+We can now prove the following:
+\begin{theorem}
+Let $(a_j)_{j\in J}$ be elements of $\mathbb{R}_+^*$. And let $J_1,J_2\subseteq J$ so that $J_1\cup J_2=J$ and $J_1\cap J_2=\emptyset$. Then:
+\begin{equation}
+\label{split_sum}
+\sum_{j\in J} a_j = \sum_{j_1\in J_1}a_{j_1} + \sum_{j_2\in J_2}a_{j_2}
+\end{equation}
+\end{theorem}
+\begin{proof}
+By definition, the sums are equal to suprema over finite subsets of the respective families:
+\begin{align}
+\sum_{j\in J} a_j &=\textrm{sup}\left\{\sum_{i\in I}a_i|I\subseteq J, I\textrm{ finite}\right\}\\
+\sum_{j_1\in J_1} a_j &=\textrm{sup}\left\{\sum_{i_1\in I_1}a_{i_1}|I_1\subseteq J_1, I_1\textrm{ finite}\right\}\\
+\sum_{j_2\in J_2} a_j &=\textrm{sup}\left\{\sum_{i_2\in I_2}a_{i_2}|I_2\subseteq J_2, I_2\textrm{ finite}\right\}
+\end{align}
+Since the right hand side of equation $(\ref{split_sum})$ is now a sum of suprema over two sets, we can use theorem $(\ref{suprema_sets})$, (c) to write it as:
+\begin{equation}
+\textrm{sup}\left\{\sum_{i_1\in I_1}a_{i_1}+\sum_{i_2\in I_2}a_{i_2}|I_1\subseteq J_1, I_2\subseteq J_2; I_1, I_2\textrm{ finite}\right\}
+\end{equation}
+But this set is just the same as finite sums from $J$, so the two sides of equation $(\ref{split_sum})$ are equal.
+\end{proof}
+
+By induction this generalizes to:
+\begin{theorem}
+Let $(a_j)_{j\in J}$ be elements of $\mathbb{R}_+^*$. And let $J_1,J_2,\cdots,J_k\subseteq J$ so that $\bigcup_{j=1}^k J_j=J$ and $J_i\cap J_j=\emptyset$ when $i\neq j$. Then:
+\begin{equation}
+\sum_{j\in J} a_j = \sum_{i=1}^k\sum_{j_i\in J_i}a_{j_i}
+\end{equation}
+\end{theorem}
+
+In fact, it turns out that we may generalize to an arbitrary family of subsets:
+
+\begin{theorem}
+\label{split_sum_arbitrary}
+Let $(a_j)_{j\in J}$ be elements of $\mathbb{R}_+^*$. And let $J_i\subseteq J, i\in K$ so that $\bigcup_{k\in K} J_k=J$ and $J_i\cap J_j=\emptyset$ when $i\neq j$. Then:
+\begin{equation}
+\label{split_sum_arb}
+\sum_{j\in J} a_j = \sum_{k\in K}\sum_{j_k\in J_k}a_{j_k}
+\end{equation}
+\end{theorem}
+\begin{proof}
+Now, the sum over $K$ is again defined as a supremum. For brevity, set $S_k=\sum_{j_k\in J_k}a_{j_k}$. The right hand side is now:
+\begin{equation}
+\sum_{k\in K}S_k=\textrm{sup}\left\{\sum_{k'\in K'} S_{k'}|K'\subseteq K, K'\textrm{ finite}\right\}
+\end{equation}
+Since each $S_k$ is itself a supremum over a finite subset, the set on the right hand side is in fact just the set of finite sums from $J$ itself, and therefore equation $(\ref{split_sum_arb})$ must be true.
+\end{proof}
+
+One special case of theorem $\ref{split_sum_arbitrary}$ will be particularly useful:
+
+\begin{theorem}
+\label{switch_sum}
+Let $a_{ij}\in\mathbb{R}_+^*$ for $i,j\in\mathbb{N}$. Then:
+\begin{equation}
+\sum_{ij}a_{ij}=\sum_i\sum_j a_{ij}=\sum_j\sum_i a_{ij}
+\end{equation}
+\end{theorem}
+
+Finally, consider the following:
+\begin{theorem}
+\label{infinite_sum_finite}
+Let $(a_j)_{j\in J}$ be elements of $\mathbb{R}_+^*$, so that:
+\begin{equation}
+\sum_{j\in J}a_j=s<\infty
+\end{equation}
+Then $a_j\neq 0$ for at most countably many $j$.
+\end{theorem}
+\begin{proof}
+For $n\in\mathbb{N}$, consider the number of $a_j\ge\frac{1}{n}$. Since the sum is $s$, there can be at most $sn$ (rounded down) of such elements, i.e. a finite amount. The amount of non-zero elements is clearly bounded by counting these for all $n$. But this is at most countably many, since $\mathbb{N}$ is countable.
+\end{proof}
+
+\section{Sigma algebras}
+\begin{definition}
+An \textit{algebra} $\mathcal{F}$ over a set $\Omega$ is a non-empty collection of subsets of $\Omega$ such that:
+\begin{equation}
+\textrm{(i) }A\in\mathcal{F}\Rightarrow A^c\in\mathcal{F}
+\end{equation}
+\begin{equation}
+\textrm{(ii) }A, B\in\mathcal{F}\Rightarrow A\cup B\in\mathcal{F}
+\end{equation}
+In other words, $\mathcal{F}$ is closed under complements and finite unions.
+\end{definition}
+
+For any $\Omega$ we may always form the \textit{trivial algebra}, which is simply $\mathcal{F}=\mathcal{P}(\Omega)$, the set of all subsets of $\Omega$.
+
+\begin{theorem}
+Given an algebra $\mathcal{F}$ over $\Omega$, $\Omega\in\mathcal{F}$ and $\emptyset\in\mathcal{F}$.
+\end{theorem}
+\begin{proof}
+Since an algebra is non-empty, there exists an $A\in\mathcal{F}$. By (i) $A^c\in\mathcal{F}$. By (ii) $A\cup A^c=\Omega\in\mathcal{F}$. By (i) $\Omega^c=\emptyset=\Omega\in\mathcal{F}$.
+\end{proof}
+
+In fact, for any $\Omega$, the set $\{\emptyset,\Omega\}$ is an algebra. If $A\subseteq\Omega$, so is the set $\{\emptyset,A,A^c,\Omega\}$.
+
+\begin{theorem}
+\label{finite_union}
+An algebra $\mathcal{F}$ over $\Omega$ is closed under finite intersections:
+\begin{equation}
+A, B\in\mathcal{F}\Rightarrow A\cap B\in\mathcal{F}
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let $A, B\in\mathcal{F}$. By (i) $A^c, B^c\in\mathcal{F}$. By (ii) $A^c\cup B^c\in\mathcal{F}$. By (i) $(A^c\cup B^c\in\mathcal{F})^c=A\cap B\in\mathcal{F}$. Here one of de Morgan's laws have been used.
+\end{proof}
+
+\begin{definition}
+A $\sigma$-algebra is an algebra that is closed under countably infinite unions instead of merely finite ones:
+\begin{equation}
+A_1, A_2,\cdots\in\mathcal{F}\Rightarrow\underset{i\in\mathbb{N}}{\bigcup}A_i\in\mathcal{F}
+\end{equation}
+The tuple $(\Omega,\mathcal{F})$ is collectively known as a measurable space. The elements of $\mathcal{F}$ are called $\mathcal{F}$-measurable or simply measurable, when there's no chance of confusion.
+\end{definition}
+
+In general, sigma refers to countable infinity.
+
+\begin{theorem}
+A $\sigma$-algebra $\mathcal{F}$ over $\Omega$ is closed under countably infinite intersections:
+\begin{equation}
+A_1, A_2,\cdots\in\mathcal{F}\Rightarrow\underset{i\in\mathbb{N}}{\bigcap}A_i\in\mathcal{F}
+\end{equation}
+\end{theorem}
+\begin{proof}
+The proof is completely analogous to the one for theorem $\ref{finite_union}$, since de Morgan's laws hold for any collection of sets.
+\end{proof}
+
+\begin{theorem}
+\label{sigma_intersect}
+Given a family of $\sigma$-algebras $(\mathcal{F}_i)_{i\in I}$ over $\Omega$, the intersection $\bigcap_{i\in I}\mathcal{F}_i$ is also a $\sigma$-algebra.
+\end{theorem}
+\begin{proof}
+Since all $\sigma$-algebras contain $\emptyset$ and $\Omega$, the intersection is non-empty. Consider $A\in\bigcap_{i\in I}\mathcal{F}_i$. Then $A$ must be an element in all $\mathcal{F}_i$. Therefore $A^c$ is also an element in all $\mathcal{F}_i$, and thus an element of $\bigcap_{i\in I}\mathcal{F}_i$. Similarly, if $A_n\in\bigcap_{i\in I}\mathcal{F}_i$ for $n\in\mathbb{N}$, then $A_n\in\mathcal{F}_i$, and therefore $\bigcup_{n\in\mathbb{N}}A_n\in\mathcal{F}_i$ for all $i\in I$. So $\bigcup_{n\in\mathbb{N}}A_n\in\bigcap_{i\in I}\mathcal{F}_i$.
+\end{proof}
+
+We can use theorem $(\ref{sigma_intersect})$ to make the following useful definition:
+
+\begin{definition}
+Let $\mathbb{D}$ be a subset of a $\sigma$-algebra $\mathcal{F}$. We then define the $\sigma$-algebra generated by $\mathbb{D}$ as:
+\begin{equation}
+\sigma(\mathbb{D})=\bigcap\left\{\mathcal{G}|\mathbb{D}\subseteq\mathcal{G}\subseteq\mathcal{F}, \mathcal{G}\textrm{ is a }\sigma-\textrm{algebra}\right\}
+\end{equation}
+\end{definition}
+
+Note: The set to be intersected is non-empty, as $\mathcal{P}(\Omega)$ always is a $\sigma$-algebra over $\Omega$. $\sigma(\mathbb{D})$ can be thought of as the smallest $\sigma$-algebra containing $\mathbb{D}$.
+
+\begin{definition}
+If there is a finite $\mathbb{D}$ such that $\sigma(\mathbb{D})=\mathcal{F}$, $\mathcal{F}$ is said to be finitely generated.  
+\end{definition}
+
+\subsection{The Borel algebra}
+For any topological space, the open sets induce a $\sigma$-algebra known as the \textit{Borel algebra}. The sets in this algebra are known as \textit{Borel sets}. Our concern will mainly be the cases where the space is simply $\mathbb{R}$ or $\mathbb{R}^n$.
+
+\begin{definition}
+The $\sigma$-algebra generated by the open subsets of $\mathbb{R}$ is called the Borel algebra $\mathbb{B}$. Similarly, the $\sigma$-algebra generated by the open subsets of $\mathbb{R}^n$ is denoted $\mathbb{B}_n$.
+\end{definition}
+
+From this definition immediately follows:
+
+\begin{theorem}
+In $\mathbb{R}^n$, all closed, finite and countable sets are Borel sets.
+\end{theorem}
+\begin{proof}
+Since all open sets are Borel sets, so are their complements, which are exactly the closed sets. All finite sets are closed and so are Borel sets. Specifically all singletons are Borel sets. Any countable set can be written as a countable union of singletons, and so are also a Borel set.
+\end{proof}
+
+The open intervals $(a,b)\subseteq\mathbb{R}$ are Borel sets. It turns out that closed and half-closed intervals are also Borel sets:
+
+\begin{theorem}
+For $a,b\in\mathbb{R}$, the intervals $(a,b], [a,b), [a,b]\in\mathbb{B}$.
+\end{theorem}
+\begin{proof}
+For the first interval, consider the following countable family of open intervals:
+\begin{equation}
+I_n=\left(a,b+\frac{1}{n}\right)
+\end{equation}
+The intersection $\bigcap_{n\in\mathbb{N}}I_n=(a,b]$ and so is a Borel set. For the other intervals, consider the families $I_n=\left(a-\frac{1}{n},b\right)$ and $I_n=\left(a-\frac{1}{n},b+\frac{1}{n}\right)$ respectively.
+\end{proof}
+
+The Borel algebra(s) has a lot of different generator systems. Systems of intervals being some of the most important.
+
+\begin{definition}
+\label{interval_def}
+An box $I$ in $\mathbb{R}^n$ is a cartesian product of ordinary intervals $I_1, I_2,\cdots, I_n$:
+\begin{equation}
+I=I_1\times I_2\times\cdots\times I_n
+\end{equation}
+The intervals $I_1, I_2,\cdots, I_n$ may be bounded, unbounded, open, closed or half-open individually. However, when all the intervals are half-open of the form $(a_i,b_i]$ - which we will refer to as a standard interval - we will refer to the box as a standard box. If $b_i-a_i$ is also the same for all $I_i$, we will refer to the resulting standard box $I$ as a standard cube.
+\end{definition}
+
+It turns out that the collection of standard cubes generates the Borel algebra(s):
+
+\begin{theorem}
+\label{openset_countable}
+Let $G\subseteq\mathbb{R}^n$ be an open set. Then $G$ can be written as a union of countably many standard cubes.
+\end{theorem}
+\begin{proof}
+Start by considering what we will call the 0th order mesh:
+\begin{equation}
+M_0=\{I_1\times I_2\times\cdots\times I_n|I_i=(z_i,z_i+1], z_i\in\mathbb{Z}\}
+\end{equation}
+All the countably many elements of $M_0$ are clearly disjoint standard cubes of side length 1, and $\bigcup M_0=\mathbb{R}^n$. Now, pick out the elements of $M_0$ that are fully contained within $G$. Next, consider the 1st order mesh:
+\begin{equation}
+M_1=\left\{I_1\times I_2\times\cdots\times I_n|I_i=\left(\frac{1}{2}z_i,\frac{1}{2}(z_i+1)\right], z_i\in\mathbb{Z}\right\}
+\end{equation}
+Again, the countably many elements of $M_1$ are disjoint standard cubes with side length $\frac{1}{2}$, and $\bigcup M_1=\mathbb{R}^n$. Now pick out the elements of $M_1$ that are fully contained in $G$ minus the elements we picked from $M_0$. In general, we can define the $p$'th mesh as:
+\begin{equation}
+M_p=\{I_1\times I_2\times\cdots\times I_n|I_i=(2^{-p}z_i,2^{-p}(z_i+1)], z_i\in\mathbb{Z}\}
+\end{equation}
+$M_p$ consists of countably many disjoint standard cubes of length $2^{-p}$ and $\bigcup M_p=\mathbb{R}^n$. For each new mesh, we pick out the cubes that are fully contained within what "remains" of $G$. We can continue this process to the limit $p\rightarrow\infty$. Because $G$ is open, each point in $G$ is an inner point, and we will in fact get all of $G$ this way.
+\end{proof}
+
+We can now state a number of sets that generate $\mathbb{B}$:
+
+\begin{theorem}
+\label{generate_borel}
+The following sets generate the Borel algebra $\mathbb{B}$:
+\begin{align}
+\textrm{(i) }&\{(a,b]|a, b\in\mathbb{R}, a<b\} \\
+\textrm{(ii) }&\{(a,b)|a, b\in\mathbb{R}, a<b\} \\
+\textrm{(iii) }&\{[a,b]|a, b\in\mathbb{R}, a<b\} \\
+\textrm{(iv) }&\{[a,b)|a, b\in\mathbb{R}, a<b\} \\
+\textrm{(v) }&\{(a,\infty)|a\in\mathbb{R}\} \\
+\textrm{(vi) }&\{[a,\infty)|a\in\mathbb{R}\} \\
+\textrm{(vii) }&\{(-\infty,a)|a\in\mathbb{R}\} \\
+\textrm{(viii) }&\{(-\infty,a]|a\in\mathbb{R}\}
+\end{align}
+\end{theorem}
+\begin{proof}
+There's eight sets to prove for. The proofs will be somewhat similar:
+\begin{itemize}
+\item (i): This follows directly from theorem $\ref{openset_countable}$.
+\item (ii): Consider the family of sets $I_n=\left(a,b+\frac{1}{n}\right)$. Now $\bigcap_{n\in\mathbb{N}}I_n=(a,b]$ (if $b-a<1$, start from the smallest $n$ where $\frac{1}{n}<b-a$ - use similar strategies below). The result now follows from theorem $\ref{openset_countable}$.
+\item (iii): Consider the family of sets $I_n=\left[a+\frac{1}{n},b\right]$. Now $\bigcup_{n\in\mathbb{N}}I_n=(a,b]$. The result now follows from theorem $\ref{openset_countable}$.
+\item (iv): Consider the family of sets $I_n=\left[a,b+\frac{1}{n}\right)$. Now $\bigcap_{n\in\mathbb{N}}I_n=[a,b]$. The result now follows from (iii).
+\item (v): Let $a,b\in\mathbb{R}, a<b$. By complement $(-\infty,b]$ is generated. So is the intersection $(a,\infty)\cap(-\infty,b)=(a,b)$. The result now follows from (i).
+\item (vi): Let $a,b\in\mathbb{R}, a<b$. By complement $(-\infty,b)$ is generated. So is the intersection $[a,\infty)\cap(-\infty,b)=[a,b)$. The result now follows from (iv).
+\item (vii): Let $a,b\in\mathbb{R}, a<b$. By complement $[a,\infty)$ is generated. So is the intersection $(-\infty,b)\cap[a,\infty)=[a,b)$. The result now follows from (iv).
+\item (viii): Let $a,b\in\mathbb{R}, a<b$. By complement $(a,\infty]$ is generated. So is the intersection $(-\infty,b]\cap(a,\infty)=(a,b]$. The result now follows from (i).
+\end{itemize}
+\end{proof}
+
+\subsection{The Borel algebra on $\mathbb{R}^*$}
+We will also construct a similar $\sigma$-algebra on $\mathbb{R}^*$. To do so, we need some way to specify open sets. Here, we will use a metric.
+
+\begin{definition}
+$\mathbb{B}^*$, the Borel algebra on $\mathbb{R}^*$ is defined as induced by the following metric:
+\begin{equation}
+d(x,y)=|\textrm{Arctan}(x)-\textrm{Arctan}(y)|
+\end{equation}
+Here we set $\textrm{Arctan}(\pm\infty)=\pm\frac{\pi}{2}$.
+\end{definition}
+
+\begin{theorem}
+\label{generate_borel_star}
+Let $\mathbb{B}^*$ as defined above. Then:
+\begin{equation}
+\mathbb{B}^*=\sigma\left(\{(a,\infty]\ |\ a\in\mathbb{R}\}\right)
+\end{equation}
+Furthermore, for $A\subseteq\mathbb{R}^*$:
+\begin{equation}
+A\in\mathbb{B}^*\Leftrightarrow A\cap\mathbb{R}\in\mathbb{B}
+\end{equation}
+\end{theorem}
+\begin{proof}
+The open neighbourhoods around $\pm\infty$ in this metric are of the form $(a,\infty], a\neq\infty$ and $[-\infty,a), a\neq-\infty$, respectively. If none of these points are in a set, it is open exactly when it's open in the usual metric. These sets are generated by the open intervals $(a,b), a,b\in\mathbb{R}$. So, if these three types of intervals are generated we get all of $\mathbb{B}^*$.
+\begin{itemize}
+\item $(a,\infty], a\neq\infty$: All of these are in the generating set pr. definition, except for $a=-\infty$. However, this is just all of $\mathbb{R}^*$ which is always generated.
+\item $[-\infty,a), a\neq-\infty$: Since $(a,\infty]$ is in the set of generators (except when $a=\infty$, but this gives all of $\mathbb{R}^*$ like above), so is $(a,\infty]^c=[-\infty,a]$. But then, so is $\left[-\infty,a-\frac{1}{n}\right], n\in\mathbb{N}$. The countable union over $n\in\mathbb{N}$ is $[-\infty,a)$.
+\item $(a,b), a,b\in\mathbb{R}$: According to the items above, $(a,\infty]$ and $[-\infty,b)$ are both generated. But then, so is $(a,\infty]\cap[-\infty,b)=(a,b)$.
+\end{itemize}
+Now for the second statement: According to theorem $(\ref{generate_borel})$ (v) $\mathbb{B}$ is generated by $\{(a,\infty)|a\in\mathbb{R}\}$. This shows that the two $\sigma$-algebras $\mathbb{B}$ and $\mathbb{B}^*$ contain the same sets when disregarding the two points $\pm\infty$. This shows the "$\Rightarrow$" part. As for "$\Leftarrow$": By taking the countable intersections $[-\infty,-n)$ and $(n,\infty]$ we see that that singletons $\{\pm\infty\}$ are both Borel sets for $\mathbb{R}^*$. If a set is a Borel set for $\mathbb{R}$, possibly adding a singleton or two will still yield another Borel set for $\mathbb{R}^*$.
+\end{proof}
+
+\section{Measurable functions}
+
+\begin{definition}
+Given two measurable spaces $(X,\mathbb{E})$ and $(Y,\mathbb{F})$, a function $\varphi: X\rightarrow Y$ is called $\mathbb{E}-\mathbb{F}$-measurable (or simply measurable) if:
+\begin{equation}
+\label{measurable_function}
+F\in\mathbb{F}\Rightarrow \varphi^{-1}(F)\in\mathbb{E}
+\end{equation}
+\end{definition}
+Here $\varphi^{-1}(F)$ is the \textit{pre-image} of the set $F$. Note the parallel to the definition of continuity of maps between topological space. In particular, this immediately implies that a continous function is $\mathbb{B}_X-\mathbb{B}_Y$-measurable.
+
+The following properties of pre-images will come in handy in a moment:
+
+\begin{theorem}
+\label{pre-image}
+Let $\varphi: A\rightarrow B$ and $\psi: B\rightarrow C$. Then the following is true of the pre-images $\varphi^{-1}$ and $\psi^{-1}$:
+\begin{align}
+(i)\ &F\subseteq B\Rightarrow\varphi^{-1}(F^c)=(\varphi^{-1}(F))^c\\
+(ii)\ &F_i\subseteq B, i\in\mathbb{N}\Rightarrow\varphi^{-1}\left(\bigcup_{i\in\mathbb{N}}F_i\right)=\bigcup_{i\in\mathbb{N}}\varphi^{-1}(F_i)\\
+(iii)\ &G\subseteq C\Rightarrow\varphi^{-1}(\psi^{-1}(G))=(\varphi\circ\psi)^{-1}(G)
+\end{align}
+\end{theorem}
+\begin{proof}
+There's three parts:
+\begin{itemize}
+\item (i): Assume $F\subseteq Y$. Then $\varphi^{-1}(F)=\{a\in A|\varphi(a)\in F\}$. Start from the right:
+\begin{align}
+(\varphi^{-1}(F))^c=A\backslash\varphi^{-1}(F)&=A\backslash\{a\in A|\varphi(a)\in F\}=\\
+\{a\in A|\varphi(a)\notin F\}&=\varphi^{-1}(F^c)
+\end{align}
+\item (ii): Assume $F_i\subseteq Y$. Then $\varphi^{-1}(F_i)=\{a\in A|\varphi(a)\in F_i\}$. Start from the right:
+\begin{align}
+\bigcup_{i\in\mathbb{N}}\varphi^{-1}(F_i)=\bigcup_{i\in\mathbb{N}}\{a\in A|\varphi(a)\in F_i\}=\\
+\left\{a\in A|\varphi(a)\in\bigcup_{i\in\mathbb{N}}F_i\right\}=\varphi^{-1}\left(\bigcup_{i\in\mathbb{N}}F_i\right)
+\end{align}
+\item (iii): We have $\psi^{-1}(G)=\{b\in B|\psi(b)\in G\}$. Now consider:
+\begin{align}
+\varphi^{-1}(\psi^{-1}(G))=\varphi^{-1}(\{b\in B|\psi(b)\in G\})&=\\
+\{a\in A|\varphi(a)\in\{b\in B|\psi(b)\in G\}\}&=\{a\in A|A\in\varphi(\psi(G))\}
+\end{align}
+This is exactly the pre-image $(\varphi\circ\psi)^{-1}(G)$.
+\end{itemize}
+\end{proof}
+
+Luckily, it turns out, that to show measurability of a function, it is enough to show equation $(\ref{measurable_function})$ for a set that generates $\mathbb{F}$:
+
+\begin{theorem}
+\label{measureability_criterion}
+Let $(X,\mathbb{E})$ and $(Y,\mathbb{F})$ be measurable spaces. Let $\mathbb{D}\subseteq\mathbb{F}$ such that $\sigma(\mathbb{D})=\mathbb{F}$. Now consider a function $\varphi: X\rightarrow Y$. $\varphi$ is then $\mathbb{E}-\mathbb{F}$-measurable if and only if:
+\begin{equation}
+\label{D_criterion}
+D\in\mathbb{D}\Rightarrow \varphi^{-1}(D)\in\mathbb{E}
+\end{equation}
+\end{theorem}
+\begin{proof}
+'Only if' follows directly from the defintion of measurability. For 'if' define the following subset of $\mathbb{F}$:
+\begin{equation}
+\tilde{\mathbb{F}}=\{F\in\mathbb{F}|\varphi^{-1}(F)\in\mathbb{E}\}
+\end{equation}
+If we can show $\tilde{\mathbb{F}}=\mathbb{F}$, we're done. It turns out that $\tilde{\mathbb{F}}$ is a $\sigma$-algebra:
+\begin{itemize}
+\item Since $\varphi^{-1}(Y)=X\in\mathbb{E}$, $\tilde{\mathbb{F}}$ is non-empty, as $Y\in\tilde{\mathbb{F}}$.
+\item Let $F\in\tilde{\mathbb{F}}$, i.e. $\varphi^{-1}(F)\in\mathbb{E}$ and therefore $(\varphi^{-1}(F))^c\in\mathbb{E}$. By theorem $\ref{pre-image}$ (i): $\varphi^{-1}(F^c)=(\varphi^{-1}(F))^c$, so $F^c\in\tilde{\mathbb{F}}$.
+\item Let $F_i\in\tilde{\mathbb{F}},i\in\mathbb{N}$, i.e. $\varphi^{-1}(F_i)\in\mathbb{E}$ and therefore $\bigcup_{i\in\mathbb{N}}\varphi^{-1}(F_i)\in\mathbb{E}$. By theorem $\ref{pre-image}$ (ii): $\varphi^{-1}\left(\bigcup_{i\in\mathbb{N}}F_i\right)=\bigcup_{i\in\mathbb{N}}\varphi^{-1}(F_i)$, so $\bigcup_{i\in\mathbb{N}}F_i\in\tilde{\mathbb{F}}$.
+\end{itemize}
+$\mathbb{D}\subseteq\tilde{\mathbb{F}}$ by assumption, but since $\tilde{\mathbb{F}}$ is a $\sigma$-algebra and $\mathbb{D}$ generates $\mathbb{F}$, we must have $\tilde{\mathbb{F}}\subseteq\mathbb{F}$. So we must have $\tilde{\mathbb{F}}=\mathbb{F}$.
+\end{proof}
+
+This means that we immediately get a sufficient condition for measurability of a function $f: X\rightarrow\mathbb{R}$ for each set of generators of $\mathbb{B}$ we have found. Similarly for functions into $\mathbb{R}^*$ and $\mathbb{B}^*$. For instance, theorem $\ref{generate_borel}$ gives us eight such sufficient conditions:
+
+\begin{theorem}
+\label{measurable_f}
+Let $(X,\mathbb{E})$ be a measurable space, and associate the Borel algebra with the real numbers to form the measurable space $(\mathbb{R},\mathbb{B})$. Then the following condition are all equivalent to the function $f: X\rightarrow\mathbb{R}$ being $\mathbb{E}-\mathbb{B}$-measurable:
+\begin{itemize}
+\item (i) $\forall a,b\in\mathbb{R}, a<b: \{x\in X|a<f(x)\le b\}\in\mathbb{E}$
+\item (ii) $\forall a,b\in\mathbb{R}, a<b: \{x\in X|a<f(x)<b\}\in\mathbb{E}$
+\item (iii) $\forall a,b\in\mathbb{R}, a<b: \{x\in X|a\le f(x)\le b\}\in\mathbb{E}$
+\item (iv) $\forall a,b\in\mathbb{R}, a<b: \{x\in X|a\le f(x)<b\}\in\mathbb{E}$
+\item (v) $\forall a\in\mathbb{R}: \{x\in X|a<f(x)\}\in\mathbb{E}$
+\item (vi) $\forall a\in\mathbb{R}: \{x\in X|a\le f(x)\}\in\mathbb{E}$
+\item (vii) $\forall a\in\mathbb{R}: \{x\in X|f(x)<a\}\in\mathbb{E}$
+\item (viii) $\forall a\in\mathbb{R}: \{x\in X|f(x)\le a\}\in\mathbb{E}$
+\end{itemize}
+\end{theorem}
+\begin{proof}
+All of these follow from theorem $\ref{generate_borel}$ and theorem $\ref{measureability_criterion}$. We'll show (i) explicitly - the rest follow completely analogously.
+\begin{itemize}
+\item (i): Here $\mathbb{D}=\{(a,b]|a,b\in\mathbb{R}, a<b\}$. By equation $(\ref{D_criterion})$ the corresponding criterion is:
+\begin{equation}
+D\in\{(a,b]|a,b\in\mathbb{R}, a<b\}\Rightarrow f^{-1}(D)\in\mathbb{E}
+\end{equation}
+But $f^{-1}(D)=\{x\in X|a<f(x)\le b\}$ and we're done.
+\end{itemize}
+\end{proof}
+
+Similarly for $\mathbb{B}^*$:
+
+\begin{theorem}
+\label{measurable_f_star}
+Let $(X,\mathbb{E})$ be a measurable space. A function $f: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$ is measurable if and only if:
+\begin{equation}
+\forall a\in\mathbb{R}: \{x\in X|a<f(x)\}\in\mathbb{E}
+\end{equation}
+\end{theorem}
+\begin{proof}
+This follows from theorems $\ref{generate_borel_star}$ and $\ref{measureability_criterion}$.
+\end{proof}
+
+\begin{theorem}
+\label{composite_measurable}
+Let $(X,\mathbb{E}), (Y,\mathbb{F})$ and $(Z,\mathbb{G})$ be measurable spaces. Let $\varphi: X\rightarrow Y$ be $\mathbb{E}-\mathbb{F}$-measurable and $\psi: Y\rightarrow Z$ be $\mathbb{F}-\mathbb{G}$-measurable. Then $\varphi\circ\psi: X\rightarrow Z$ is $\mathbb{E}-\mathbb{G}$-measurable.
+\end{theorem}
+\begin{proof}
+Let $G\in\mathbb{G}$. Since $\psi$ is $\mathbb{F}-\mathbb{G}$-measurable this means $F=\psi^{-1}(G)\in\mathbb{F}$. Since $\varphi$ is $\mathbb{E}-\mathbb{F}$-measurable $E=\varphi^{-1}(F)\in\mathbb{E}$. But $E=\varphi^{-1}(\psi^{-1}(G))=(\varphi\circ\psi)^{-1}(G)$ by theorem $\ref{pre-image}$ (iii), so $\varphi\circ\psi$ is $\mathbb{E}-\mathbb{G}$-measurable.
+\end{proof}
+
+If the target space is $\mathbb{R}^n$ instead of $\mathbb{R}$ it turns out that the question of measurability reduces to measurability of the coordinate functions:
+
+\begin{theorem}
+Consider the function $f: (X,\mathbb{E})\rightarrow(\mathbb{R}^n,\mathbb{B}_n)$. In vector form: $f(x)=(f_1(x), f_2(x),\cdots, f_n(x))$. Then $f$ is $\mathbb{E}-\mathbb{B}_n$-measurable if and only if all $f_i$ are $\mathbb{E}-\mathbb{B}$-measurable.
+\end{theorem}
+\begin{proof}
+Let $\mathbb{D}$ be the system of \textit{open half-spaces}, i.e:
+\begin{equation}
+\mathbb{D}=\{(x_1,x_2,\cdots,x_n)|x_i>a, i\in\{1,2,\cdots,n\}, a\in\mathbb{R}\}
+\end{equation}
+Then $\sigma(\mathbb{D})$ must contain sets like:
+\begin{align}
+S_i(a',a'')=&\{(x_1,x_2,\cdots,x_n)|x_i>a'\}\cap\{(x_1,x_2,\cdots,x_n)|x_i>a''\}^c=\\
+&\{(x_1,x_2,\cdots,x_n)|a'<x_i\le a''\}
+\end{align}
+Here $a'<a''$. $S_i(a',a'')$ can be though of as a slice of the space normal to the $i$'th axis. If we intersect one such slice for each axis we get a standard interval - from definition $\ref{interval_def}$. So all standard intervals are in $\sigma(\mathbb{D})$ and thus $\sigma(\mathbb{D})=\mathbb{B}_n$. Now we can use theorem $\ref{measureability_criterion}$ to get an equivalent condition to $f$ being measurable:
+\begin{equation}
+\forall i\in\{1, 2,\cdots, n\}\ \forall a\in\mathbb{R}: \{x\in\mathbb{R}|f_i(x)>a\}\in\mathbb{E}
+\end{equation}
+But according to theorem $\ref{measurable_f}$ (v) this simply means that the coordinate function $f_1,f_2,\cdots,f_n$ are measurable.
+\end{proof}
+
+\subsection{Limits of measurable functions}
+\begin{theorem}
+\label{function_limit}
+Let $(X,\mathbb{E})$ be a non-empty measurable space. Let $f_1,f_2,\cdots$ be a series of $\mathbb{E}-\mathbb{B}^*$-measurable functions, $f_i: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$. Then the functions (defined in a pointwise sense) $\textrm{sup}_n f_n, \textrm{inf}_n f_n, \textrm{lim sup}_n f_n$ and $\textrm{lim inf}_n f_n$ are all $\mathbb{E}-\mathbb{B}^*$-measurable.
+\end{theorem}
+\begin{proof}
+Let $f=\textrm{sup}_n f_n$. That is $\forall x\in X: f(x)=\textrm{sup}\{f_i(x)|i\in\mathbb{B}\}$. Now consider the inequality:
+\begin{equation}
+f(x)>a\Leftrightarrow\exists n\in\mathbb{R}: f_n(x)>a
+\end{equation}
+Here $a\in\mathbb{R}$. Now construct the set of all $x\in X$ which satisfy the inequality:
+\begin{equation}
+\{x\in X|f(x)>a\}=\{x\in X|\exists n\in\mathbb{N}: f_n(x)>a\}
+\end{equation}
+But this can also be written as:
+\begin{equation}
+\bigcup_{n\in\mathbb{N}}\{x\in X|f_n(x)>a\}
+\end{equation}
+But since $f_n$ is measurable, according to theorem $\ref{measurable_f_star}$ this set is an element of $\mathbb{E}$. By the same theorem, $f$ is also measurable. A similar argument can be made for $f=\textrm{inf}_n f_n$. Limes superior and limes inferior are both successive applications of infimum and supremum, and so are both measurable as well.
+\end{proof}
+
+It now immediately follows that the pointwise limit of a series of measurable functions is itself measurable:
+
+\begin{theorem}
+Let $(X,\mathbb{E})$ be a non-empty measurable space. Let $f_1,f_2,\cdots$ be a series of $\mathbb{E}-\mathbb{B}^*$-measurable functions, $f_i: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$. Then if the function $f: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$, where $f(x)=\underset{n\rightarrow\infty}{\textrm{lim}}f_n(x)$ exists, then it is $\mathbb{E}-\mathbb{B}^*$-measurable.
+\end{theorem}
+\begin{proof}
+If $f$ exists, then by theorem $\ref{liminf_limsup}$: $\textrm{lim sup}_n f_n=\textrm{lim inf}_n f_n=f$, which is then measurable by theorem $\ref{function_limit}$.
+\end{proof}
+
+\subsection{Combinations of measurable functions}
+\begin{theorem}
+\label{combination_measurability}
+Let $(X,\mathbb{E})$ be a non-empty measurable space. Let $f, g: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B})$ be $\mathbb{E}-\mathbb{B}$-measurable functions. Then the following functions are also $\mathbb{E}-\mathbb{B}$-measurable:
+\begin{equation}
+|f|, cf, f+g, f-g, f\vee g, f\wedge g, fg 
+\end{equation}
+Here $c\in\mathbb{R}, f\vee g(x)=\textrm{max}(f(x),g(x))$ and $f\wedge g(x)=\textrm{min}(f(x),g(x))$ respectively.
+\end{theorem}
+\begin{proof}
+All of these function can be made by composites of $f$ or $\varphi: X\rightarrow\mathbb{R}^2, \varphi(x)=(f(x), g(x))$ and continuous functions. By theorem $\ref{composite_measurable}$ these are all measurable.
+\end{proof}
+
+\subsubsection{Generating measurable sets using $\mathbb{R}$}
+
+One use of measurable functions and their combinations is to create sets that are elements of the $\sigma$-algebra $\mathbb{E}$. If for instance $f, g: (X,\mathbb{E})\rightarrow\mathbb{R}$ are measurable, then the following sets are elements of $\mathbb{E}$:
+\begin{equation}
+\{x\in X|f(x)<g(x)\}, \{x\in X|f(x)\le f(x)\}, \{x\in X|f(x)=g(x)\}
+\end{equation}
+This can be seen by considering the function $g-f$. By theorem $\ref{combination_measurability}$ the function is measurable. But the sets above can be expressed as pre-images of $(g-f): (g-f)^{-1}((0,\infty)), (g-f)^{-1}([0,\infty))$, and $(g-f)^{-1}(\{0\})$ respectively. Since the sets $(0,\infty), [0,\infty),\{0\}\in\mathbb{B}$, these are all $\mathbb{E}$-measurable.
+
+\subsection{Subspaces}
+\begin{theorem}
+\label{subspace_algebra}
+Let $(X,\mathbb{E})$ be a measurable space and let $X'\subseteq X$. Then the following set is a $\sigma$-algebra over $X'$:
+\begin{equation}
+\mathbb{E}'=\{X'\cap E|E\in\mathbb{E}\}
+\end{equation}
+\end{theorem}
+\begin{proof}
+There's three things to show:
+\begin{itemize}
+\item $\mathbb{E}'$ is non-empty since $X'\cap X=X'\in\mathbb{E}'$.
+\item If $E\in\mathbb{E}$, then $E^c\in\mathbb{E}$. And so $X'\cap E, X'\cap E^c\in\mathbb{E}'$. Remember that complement in $\mathbb{E}'$ is different from in $\mathbb{E}$. In $X'$, the complement of $X'\cap E$ is:
+\begin{align}
+X'\setminus(X\cap E)=& X'\cap(X\cap E)^c=X'\cap(X^c\cup E^c)=\\
+& X'\cap(\emptyset\cup E^c)=X'\cap E^c\in\mathbb{E}'
+\end{align}
+\item If $E_1, E_2,\cdots ...\in\mathbb{E}$, then $\bigcup_{i\in\mathbb{N}}E_i\in\mathbb{E}$. And so $X'\cap E_1, X'\cap E_2,\cdots\in\mathbb{E}'$ and $X'\cap\bigcup_{i\in\mathbb{N}}E_i\in\mathbb{E}'$. Consider the union:
+\begin{equation}
+\bigcup_{i\in\mathbb{N}}(X'\cap E_i)=X'\cap\bigcup_{i\in\mathbb{N}}E_i
+\end{equation}
+\end{itemize}
+\end{proof}
+
+\begin{definition}
+The $\sigma$-algebra $\mathbb{E}'$ from theorem $\ref{subspace_algebra}$ is referred to as the $\sigma$-algebra induced by or inherited from $X'$. The measurable space $(X',\mathbb{E}')$ is called the induced or inherited subspace.
+\end{definition}
+
+\begin{theorem}
+Let $(X,\mathbb{E})$ be a measurable space, $X'\subseteq X$ and $(X',\mathbb{E}')$ the inherited subspace. Then:
+\begin{equation}
+X'\in\mathbb{E}\Leftrightarrow\mathbb{E}'\subseteq\mathbb{E}
+\end{equation}
+\end{theorem}
+\begin{proof}
+"$\Rightarrow$" follows from $\sigma$-algebras being closed under intersection. "$\Leftarrow$" is true because $X'\in\mathbb{E}'$.
+\end{proof}
+
+\begin{theorem}
+Let $(X,\mathbb{E})$ and $(Y,\mathbb{F})$ be measurable spaces, $X'\subseteq X$ and $(X',\mathbb{E}')$ the inherited subspace from $X$. Let further $\varphi: X\rightarrow Y$ be measurable. Then the following functions are measurable:
+\begin{itemize}
+\item The inclusion map $i: X'\rightarrow X, i(x)=x$
+\item The restriction $\varphi|X': X'\rightarrow Y, (\varphi|X')(x)=\varphi(x)$
+\end{itemize}
+\end{theorem}
+\begin{proof}
+Let $E\in\mathbb{E}$, then $i^{-1}(E)=X'\cup E\in\mathbb{E}'$. So $i$ is measurable. $\varphi|X'=\varphi\circ i$, so by theorem $\ref{composite_measurable}$, $\varphi|X'$ is also measurable.
+\end{proof}
+
+\begin{theorem}
+\label{cases_measurable}
+Let $(X,\mathbb{E})$ and $(Y,\mathbb{F})$ be measurable spaces. Let furthermore $A_1,\cdots, A_n\in\mathbb{E}$ be pairwise disjoint sets so that $\bigcup_{i=1}^n A_i=X$. Let further $\varphi_i: A_i\rightarrow Y$, and define:
+\begin{equation}
+\phi: X\rightarrow Y, \varphi(x)=
+\begin{cases}
+\varphi_1(x)	& \textrm{for }x\in A_1 \\
+\varphi_2(x)	& \textrm{for }x\in A_2 \\
+\vdots \\
+\varphi_n(x)	& \textrm{for }x\in A_n
+\end{cases}
+\end{equation} 
+If all the $\varphi_i$'s are $\mathbb{E}_{A_i}-\mathbb{F}$-measurable, then $\phi$ is measurable.
+\end{theorem}
+\begin{proof}
+Let $F\in\mathbb{F}$. Consider the pre-image:
+\begin{equation}
+\varphi^{-1}(F)=\bigcup_{i=1}^n(\varphi^{-1}(F)\cap A_i)=\bigcup_{i=1}^n\varphi_i^{-1}(F)
+\end{equation}
+But since $\varphi_i$ is measurable, $\varphi_i^{-1}(F)\in\mathbb{E}$ and so is the finite union.
+\end{proof}
+
+\subsubsection{Generating measurable sets using $\mathbb{R}^*_+$}
+
+Above we used measurable function to generate measurable subsets using $\mathbb{R}$. We can do something similar for $\mathbb{R}^*_+$. Let $f, g: (X,\mathbb{E})\rightarrow(\mathbb{R}^*_+,\mathbb{B}^*_+)$ be measurable. Here, $\mathbb{B}^*_+$ is the $\sigma$-algebra inherited from $\mathbb{B}^*$ under restriction to $\mathbb{R}^*_+$. Then the following sets are elements of $\mathbb{E}$:
+\begin{equation}
+\label{R*+_measurable}
+\{x\in X|f(x)<g(x)\}, \{x\in X|f(x)\le f(x)\}, \{x\in X|f(x)=g(x)\}
+\end{equation}
+
+We can't use the same strategy as we did above. The trouble is, that $g-f$ is not well-defined when the functions can take on values both $-\infty$ and $\infty$. Instead, define the four following set:
+\begin{align}
+F&=\{x\in X|f(x)<\infty\}=f^{-1}((0,\infty))\\
+F_\infty&=\{x\in X|f(x)=\infty\}=f^{-1}(\{\infty\}) \\
+G&=\{x\in X|f(x)<\infty\}=g^{-1}((0,\infty))\\
+G_\infty&=\{x\in X|f(x)=\infty\}=g^{-1}(\{\infty\})
+\end{align}
+These are all $\mathbb{E}$-measurable, since $(0,\infty)$ and $\{\infty\}$ are measurable. Now, consider the restriction of $\mathbb{E}$ to the set $F\cap G$. On this set, $g-f$ is well-defined since we don't run into any infinities. So:
+\begin{equation}
+(g-f)^{-1}((0,\infty))=\{x\in F\cap G|f(x)<g(x)\}\in\mathbb{E}_{F\cap G}\subseteq\mathbb{E}
+\end{equation}
+Now, we only need the $x\in A$ where $f(x)\neq\infty$ and $g(x)=\infty$. This is done by forming a union with $F\cap G_\infty$. The result is still an element of $\mathbb{E}$. The rest of the sets can be constructed in similar ways.
+
+\section{Measures}
+A \textit{measure} is a function that assigns length, area, volume or other weight to the elements of a $\sigma$-algebra.
+
+\begin{definition}
+\label{measure_definition}
+For a $\sigma$-algebra $\mathcal{F}$ over $\Omega$, a measure is a function $\mu: \mathcal{F}\rightarrow\mathbb{R}_+^*$ which satisfies:
+\begin{align}
+\textrm{(i) }&\mu(\emptyset)=0\\
+\textrm{(ii) }&\mu\left(\bigcup_{i\in\mathbb{N}}A_i\right)=\sum_{i\in\mathbb{N}}\mu(A_i),\quad A_i\textrm{'s pairwise disjoint}
+\end{align}
+The tuple $(\Omega, \mathcal{F}, \mu)$ is collectively known as a measure space. Sometimes referred to as $(\Omega, \mu)$ as a shorthand. Further, we define:
+\begin{itemize}
+\item $\mu(A)$ is called the measure of $A\in\mathbb{E}$.
+\item If $\mu(\Omega)<\infty$, the measure $\mu$ is called finite.
+\item If $\mu(\Omega)=1$, the measure $\mu$ is sometimes referred to as a probability measure or distribution.
+\end{itemize}
+\end{definition}
+
+\begin{theorem}
+\label{measure_properties}
+Let $(\Omega, \mathcal{F}, \mu)$ be a measure space. Let any set named $E$ or $E_i$ below be an element of $\mathcal{F}$. Then:
+\begin{itemize}
+\item (i): $\mu\left(\bigcup_{i=1}^n A_i\right)=\sum_{i=1}^n\mu(A_i)$ when the $A_i$'s are pairwise disjoint.
+\item (ii): $E_1\subseteq E_2\Rightarrow\mu(E_1)\le\mu(E_2)$.
+\item (iii): $E_1\subseteq E_2,\mu(E_1)<\infty$: $\mu(E_2\setminus E_1)=\mu(E_2)-\mu(E_1)$.
+\item (iv): $\mu\left(\bigcup_{i\in\mathbb{N}}E_i\right)\le\sum_{i\in\mathbb{N}}\mu(E_i)$
+\item (v): $\mu\left(\bigcup_{i=1}^n E_i\right)\le\sum_{i=1}^n\mu(E_i)$
+\item (vi): When $E_1\subseteq E_2\subseteq E_3\subseteq\cdots$: $\mu(E_i)\nearrow\mu\left(\bigcup_{i\in\mathbb{N}}E_i\right)$
+\item (vii): When $E_1\supseteq E_2\supseteq E_3\supseteq\cdots, \mu(E_1)<\infty$: $\mu(E_i)\searrow\mu\left(\bigcap_{i\in\mathbb{N}}E_i\right)$
+\end{itemize}
+\end{theorem}
+\begin{proof}
+There's seven statements:
+\begin{itemize}
+\item (i): This is simply the finite version of definition $\ref{measure_definition}$ (ii). Formally it can be shown by setting $E_{n+1}=E_{n+2}=\cdots=\emptyset$.
+\item (ii): Since $E_1,E_2\in\mathbb{F}$, $E_2\setminus E_1\in\mathbb{F}$. Since $E_1\subseteq E_2$, we may write $E_2=E_1\cup(E_2\setminus E_1)$. Now by (ii) we have $\mu(E_2)=\mu(E_1)+\mu(E_2\setminus E_1)$. Since $\mu(E_2\setminus E_1)\ge 0$ we must have $\mu(E_1)\le\mu(E_2)$.
+\item (iii): Same situation as (ii): $\mu(E_2)=\mu(E_1)+\mu(E_2\setminus E_1)$. But now that we know $\mu(E_1)$ is finite, we may subtract it on both sides to yield the desired result.
+\item (iv): Define a series of sets as follows:
+\begin{equation}
+F_1=E_1, F_2=E_2\setminus E_1, F_3=E_3\setminus(E_1\cup E_2),\cdots,F_n=E_n\setminus\left(\bigcup_{i=1}^{n-1}E_i\right)
+\end{equation}
+These $F_i$ are pairwise disjoint and $\bigcup_{i\in\mathbb{N}}F_i$=$\bigcup_{i\in\mathbb{N}}E_i$. For all $n\in\mathbb{N}$ we have $F_n\subseteq E_n$. So using definition $\ref{measure_definition}$ (ii) and (ii) above we get:
+\begin{equation}
+\mu\left(\bigcup_{i\in\mathbb{N}}E_i\right)=\mu\left(\bigcup_{i\in\mathbb{N}}F_i\right)=\sum_{i\in\mathbb{N}}\mu(F_i)\le\sum_{i\in\mathbb{N}}\mu(E_i)
+\end{equation}
+\item (v): This is just the finite version of (iv).
+\item (vi): Because of (ii) $\mu(E_1)\le\mu(E_2)\le\mu(E_3)\le\cdots$. Now define a sequence of sets:
+\begin{equation}
+F_1=E_1, F_2=E_2\setminus E_1, F_3=E_3\setminus E_2, \cdots, F_n=E_n\setminus E_{n-1},\cdots
+\end{equation}
+These are pairwise disjoint, and $E_n=\bigcup_{i=1}^n F_i$. This also means that $\bigcup_{i\in\mathbb{N}}F_i=\bigcup_{i\in\mathbb{N}}E_i$. So using (i) above and $\ref{measure_definition}$ (ii) we get:
+\begin{align}
+\mu(E_n)=&\mu\left(\bigcup_{i=1}^n F_i\right)=\sum_{i=1}^n\mu(F_n)\nearrow\sum_{i\in\mathbb{N}}\mu(F_n)=\\
+&\mu\left(\bigcup_{i\in\mathbb{N}}F_i\right)=\mu\left(\bigcup_{i\in\mathbb{N}}E_i\right)
+\end{align}
+\item (vii): Define a sequence of sets by $F_n=E_1\setminus E_n$. This sequence has the properties from (vi), so:
+\begin{equation}
+\mu(F_i)\nearrow\mu\left(\bigcup_{i\in\mathbb{N}}F_i\right)
+\end{equation}
+But $\mu(F_i)=\mu(E_1)-\mu(E_n)$ by (iii) and $\bigcup_{i\in\mathbb{N}}F_i=E_1\setminus\bigcap_{i\in\mathbb{N}}E_i$. So again by (iii) $\mu(\bigcap_{i\in\mathbb{N}}F_i)=\mu(E_1)-\mu\left(\bigcap_{i\in\mathbb{N}}E_i\right)$. This means that:
+\begin{equation}
+\mu(E_1)-\mu(E_n)\nearrow\mu(E_1)-\mu\left(\bigcap_{i\in\mathbb{N}}E_i\right)\Leftrightarrow\mu(E_n)\searrow\mu\left(\bigcap_{i\in\mathbb{N}}E_i\right)
+\end{equation}
+\end{itemize}
+\end{proof}
+
+\subsection{Examples}
+
+\subsubsection{The Lebesgue measure}
+This will be the most important example: The \textit{Lebesgue measure} on $m_n$ on $(\mathbb{R}^n,\mathbb{B}_n)$ is the (unique) measure that assigns the usual length/area/volume to intervals. So for instance $m_1([a,b])=b-a$. We'll devote an entire section to this subject below.
+
+\subsubsection{The counting measure}
+For any set $X$, the \textit{counting measure} $\mu$ is defined on the $\sigma$-algebra $\mathcal{P}(X)$. $\mu(E)$ is equal to the number of elements in $E$ for finite $E$, and set to $\infty$ otherwise.
+
+We want to show that $\mu$ is a measure:
+\begin{itemize}
+\item (i): $\mu(\emptyset)=0$ since the empty set contains zero elements.
+\item (ii): A union of disjoint sets contains as many elements as the individual sets combined.
+\end{itemize}
+
+\subsubsection{Restriction of a measure}
+\label{restriction_of_measure}
+If $(\Omega,\mathcal{F},\mu)$ is a measure space, and $A\in\mathcal{F}$. We might consider restricting the measure to the inherited $\sigma$-algebra $\mathcal{F}_A=\{A\cap F|F\in\mathcal{F}\}$, setting $\mu_A(F)=\mu(A\cap F)$. The measure space $(A,\mathcal{F}_A,\mu_A)$ is denoted the \textit{restriction} of $\mu$ to $A$.
+
+We want to show that $\mu_A$ is a measure. Both are shown using the corresponding property of $\mu$:
+\begin{itemize}
+\item (i): $\mu_A(\emptyset)=\mu(A\cap\emptyset)=\mu(\emptyset)=0$.
+\item (ii): 
+\begin{align*}
+\mu_A\left(\bigcup_{i\in\mathbb{N}} E_i\right)&=\mu\left(A\cap\bigcup_{i\in\mathbb{N}} E_i\right)=\mu\left(\bigcup_{i\in\mathbb{N}}(A\cap E_i)\right)=\\
+&\sum_{i\in\mathbb{N}}\mu(A\cap E_i)=\sum_{i\in\mathbb{N}}\mu_A(E_i)
+\end{align*}
+\end{itemize}
+
+\subsubsection{Linear combinations of measures}
+\label{linear_combination_measure}
+Let $(\mu_j)_{j\in J}$ be a family of measure on the measurable space $(\Omega,\mathcal{F})$, and $(a_j)_{j\in J}$ an associated family of numbers, $a_j\in\mathbb{R}^*_+$. We may then define a new measure by:
+\begin{equation}
+\mu(F)=\sum_{j\in J}a_j\mu_j(F)
+\end{equation}
+
+We want to show that $\mu$ is a measure:
+\begin{itemize}
+\item (i): $\mu(\emptyset)=\sum_{j\in J} a_j\mu_j(\emptyset)=\sum_{j_\in J}0=0$.
+\item (ii): Here, we'll need theorem $\ref{switch_sum}$ (for the penultimate step):
+\begin{align*}
+\mu\left(\bigcup_{i\in\mathbb{N}} E_i\right)=\sum_{j\in J} a_j\mu_j\left(\bigcup_{i\in\mathbb{N}} E_i\right)=&\sum_{j\in J}\left(a_j\sum_{i\in\mathbb{N}}\mu_j(E_i)\right)=\\
+\sum_{i\in\mathbb{N}}\sum_{j\in J}a_j\mu_j(E_i)=&\sum_{i\in\mathbb{N}}\mu(E_i)
+\end{align*}
+\end{itemize}
+
+\subsubsection{The Dirac measure}
+For a set $X$ and an $a\in X$, the \textit{Dirac measure} $\varepsilon_a$ is a measure on the measurable space $(X,\mathcal{P}(X))$ defined by:
+\begin{equation}
+\varepsilon_a(F)=
+\begin{cases}
+1	& \textrm{when }a\in F \\
+0	& \textrm{otherwise}
+\end{cases}
+\end{equation}
+We note that this is also a probability distribution, since $\mu(X)=1$.
+
+We want to show that $\varepsilon_a$ is a measure:
+\begin{itemize}
+\item (i): $\varepsilon_a(\emptyset)=0$, since $a\notin\emptyset$.
+\item (ii): $\varepsilon_a\left(\bigcup_{i\in\mathbb{N}} E_i\right)$. This is 1 if $\exists i: a\in E_i$ and 0 otherwise. Since the $E_i$'s are disjoint $a$ can be in at most one $E_i$. So this is equal to $\sum_{i\in\mathbb{N}}\mu(E_i)$.
+\end{itemize}
+
+\subsection{The term "almost everywhere"}
+\begin{definition}
+Let $(\Omega,\mathcal{F},\mu)$ be a measure space. If for an $F\in\mathcal{F}$ we have $\mu(A)=0$, then $A$ and any subset of $A$, is called a null set with respect to $\mu$.
+\end{definition}
+
+\begin{definition}
+Let $(\Omega,\mathcal{F},\mu)$ be a measure space. Let $P(\omega)$ be an open statement about a point $\omega\in\Omega$. We use the phrase $P$ "$\mu$-almost everywhere" (sometimes shortened to "a.o." or "p.p." for preque partout) to mean that:
+\begin{equation}
+\{\omega\in\Omega|\neg P(\omega)\}\textrm{ is a null set with respect to }\mu
+\end{equation}
+\end{definition}
+
+For instance, a real function $f: \mathbb{R}\rightarrow\mathbb{R}$ is said to be zero $m_1$-almost everywhere if there is a $m_1$-null set $N\subseteq\mathbb{R}$ so that $f(x)=0$ for all $x\in\mathbb{R}\setminus N$.
+
+\subsubsection{Functions equal almost everywhere}
+\begin{definition}
+Let $(X,\mathbb{F},\mu)$ be a measure space, and let $f, g$ be functions from $X$ to some set $Y$. We now define the following equivalence relation:
+\begin{equation}
+f\ \sim\ g \Leftrightarrow f(x)=g(x)\ \mu\textrm{-almost everywhere}
+\end{equation}
+\end{definition}
+
+The functions of a particular equivalence class are in a sense "essentially the same" with respect to the measure $\mu$.
+
+\section{Integration}
+Given a measure space $(X,\mathbb{E},\mu)$, we wish to be to associate a given function $f: X\rightarrow\mathbb{R}$ with an \textit{integral}: $\int f(x)d\mu$. When $\mu$ is the Lebesgue measure, this should be equal to the usual Riemann integral for well-behaved functions. The core of the idea is, that for $A\in\mathbb{E}$, the integral of the indicator function should be:
+\begin{equation}
+\label{indicator_integral}
+\int 1_A\ d\mu = \mu(A)
+\end{equation}
+The Lebesgue integral essentially follows by demanding linearity and appropriate continuity conditions of the integral.
+
+\subsection{Simple functions}
+\begin{definition}
+Let $(X,\mathbb{E})$ be a measurable space. A function $s: X\rightarrow\mathbb{R}$ is called simple if the image consist only of a finite set of different values. 
+\end{definition}
+
+An example of simple functions are indicator functions, since they only take on the values 0 or 1. If a simple function $s$ takes on the $n$ values $a_1,a_2,\cdots,a_n\in\mathbb{R}$, $X$ can be partitioned into the $n$ sets $A_1=s^{-1}(\{a_1\}),A_2=s^{-1}(\{a_2\}),\cdots,A_n=s^{-1}(\{a_n\})$. Now, $s$ can be expressed in terms of indicator functions:
+\begin{equation}
+s=\sum_{i=1}^n a_i\cdot 1_{A_i}
+\end{equation}
+Now assume $\mu$ is a measure on $(X,\mathbb{E})$. If $s$ is measurable, the sets $A_i$ are also measurable. In light of equation $\ref{indicator_integral}$, it seems natural to require linearity from the integral and set:
+\begin{equation}
+\label{simple_integral}
+\int s\ d\mu = \sum_{i=1}^n a_i\int 1_{A_i}d\mu = \sum_{i=1}^n a_i\mu(A_i)
+\end{equation}
+However, we might run into some problems if both $-\infty$ and $\infty$ are terms in the sum. But if $s$ is non-negative, things are fine. This hints that it's easier if we work only with non-negative, simple, measurable functions:
+
+\begin{definition}
+Let $(X,\mathbb{E})$ be a measurable space. Then the collection of all simple, measurable functions from $X$ to $\mathbb{R}_+=[0,\infty)$ is denoted $\mathcal{S}^+(X,\mathbb{E})$. If $\mu$ is a measure on $(X,\mathbb{E})$, we define the integral on $\mathcal{S}^+(X,\mathbb{E})$ through equation $(\ref{simple_integral})$.
+\end{definition}
+
+Let's explore some properties of simple functions and their integrals.
+
+\begin{theorem}
+\label{simple_integral_unique}
+Let $(X,\mathbb{E},\mu)$ be a measure space, and let $s\in\mathcal{S}^+$. Assume $s$ can be written in the form:
+\begin{equation}
+\label{alternative_indicator_split}
+s=\sum_{j=1}^m b_j\cdot 1_{B_j}
+\end{equation}
+Here $b_j\in\mathbb{R}_+, B_j\in\mathbb{E}, \bigcup_{j=1}^m B_j=X$ and the $B_j$'s are pairwise disjoint. Note that the $b_j$'s need not be distinct. Then:
+\begin{equation}
+\sum_{j=1}^m b_j\mu(B_j)=\int s\ d\mu
+\end{equation}
+\end{theorem}
+\begin{proof}
+Like above we can write:
+\begin{equation}
+s=\sum_{i=1}^n a_i\cdot 1_{A_i}
+\end{equation}
+Here again $A_1=s^{-1}(\{a_1\}),A_2=s^{-1}(\{a_2\}),\cdots,A_n=s^{-1}(\{a_n\})$. Comparing with equation $(\ref{alternative_indicator_split})$ it's clear that $b_j\in\{a_1,\cdots,a_n\}$ and that $A_i=\bigcup_{k=1}^{p_i}B_{q_{ik}}$. Now, calculate:
+\begin{equation}
+\sum_{j=1}^m b_j\mu(B_j)=\sum_{i=1}^n\left(a_i\sum_{k=1}^{p_i}\mu(B_{q_{ik}})\right)=\sum_{i=1}^n a_i\mu(A_i)=\int s\ d\mu
+\end{equation}
+In the penultimate step, we have used theorem $\ref{measure_properties}$ (i). \end{proof}
+
+This ensures that if we can write a simple function as a sum of indicator functions of a partition of $X$, we can evaluate the integral in the usual way, without worrying that the coefficients are distinct or that the partition sets $A_i$ happen to be of the form $s^{-1}(\{a_i\})$. This will be useful in the proof of the following:
+
+\begin{theorem}
+\label{simple_integral_linear}
+Let $(X,\mathbb{E},\mu)$ be a measure space and let $s, t\in\mathcal{S}^+(X,\mathbb{E})$ and $c\in\mathbb{R}_+=[0,\infty)$. Then $c\cdot s$ and $s+t$ are also simple, measurable functions and:
+\begin{equation}
+\int(c\cdot s)d\mu=c\int s\ d\mu,\quad \int(s+t)d\mu=\int s\ d\mu+\int t\ d\mu
+\end{equation}
+\end{theorem}
+\begin{proof}
+$s$ is simple and has $m$ distinct values $a_1,a_2,\cdots,a_m$. Similar for $t$ with $n$ distinct values $b_1,b_2,\cdots,b_m$. Set $A_i=s^{-1}(\{a_i\}), B_j=t^{-1}(\{b_j\})$. Then $c\cdot s$ still has $n$ distinct values (unless $c=0$ where there's only one distinct value: 0) and is therefore simple. $s+t$ has at most $nm$ distinct values $a_i+b_j$ and is also simple. Measurability follows from theorem $\ref{combination_measurability}$. The first integral is:
+\begin{align}
+\int c\cdot s\ d\mu=&\int c\sum_{i=1}^m a_i 1_{A_i}d\mu=\int\sum_{i=1}^m (c\cdot a_i) 1_{A_i}d\mu=\\
+&\sum_{i=1}^m (c\cdot a_i)\mu(A_i)=c\sum_{i=1}^m a_i\mu(A_i)=c\int s\ d\mu
+\end{align}
+For the sum things are less clear. But we can use this trick:
+\begin{equation}
+X=X\cap X=\left(\bigcup_{i=1}^n A_i\right)\cap\left(\bigcup_{j=1}^m B_j\right)=\bigcup_{i=j=1}^{i=m,j=n}\left(A_i\cap B_j\right)
+\end{equation}
+The sets $A_i\cap B_j$ are disjoint, and the value of $s+t$ is constant and equal to $a_i+b_j$ on each set. Therefore:
+\begin{equation}
+s+t=\sum_{i=j=1}^{i=m,j=n}(a_i+b_j)1_{A_i\cap B_j}
+\end{equation}
+But we can also use the intersections to express the integrals of $s$ and $t$:
+\begin{align}
+\int s\ d\mu+&\int t\ d\mu=\int\left(\sum_{i=j=1}^{i=m,j=n}a_i 1_{A_i\cap B_j}\right)+\int\left(\sum_{i=j=1}^{i=m,j=n}b_j 1_{A_i\cap B_j}\right)=\\
+&\sum_{i=j=1}^{i=m,j=n}a_i\mu(A_i\cap B_j)+\sum_{i=j=1}^{i=m,j=n}b_j\mu(A_i\cap B_j)=\\
+&\sum_{i=j=1}^{i=m,j=n}(a_i+b_j)\mu(A_i\cap B_j)=\int(s+t)d\mu
+\end{align}
+In the last step we have used theorem $\ref{simple_integral_unique}$.
+\end{proof}
+
+\begin{theorem}
+\label{simple_integral_ineq}
+Let $(X,\mathbb{E},\mu)$ be a measure space and let $s, t\in\mathcal{S}^+(X,\mathbb{E})$ so that $s\le t$. Then:
+\begin{equation}
+\int s\ d\mu\le\int t\ d\mu
+\end{equation}
+\end{theorem}
+\begin{proof}
+Write $t=s+(t-s)$ and use theorem $\ref{simple_integral_linear}$:
+\begin{equation}
+\int t\ d\mu=\int (s+(t-s))\ d\mu=\int s\ d\mu+\underbrace{\int (t-s)\ d\mu}_{\ge 0}
+\end{equation}
+\end{proof}
+
+\subsection{The Lebesque integral and the monotone convergence theorem}
+
+We now wish to extend the integral to a class of non-simple, measurable functions:
+
+\begin{definition}
+Let $(X,\mathbb{E})$ be a measurable space. Then the collection of all measurable functions from $X$ to $\mathbb{R}^*_+=[0,\infty]$ is denoted $\mathcal{M}^+(X,\mathbb{E})$.
+\end{definition}
+
+Note the extension of the co-domain to $\mathbb{R}^*_+$. These functions are promising in this regard, as they can be expressed as a limit of simple functions:
+
+\begin{theorem}
+\label{simple_limit}
+Let $(X,\mathbb{E})$ be a measurable space. If $f\in\mathcal{M}^+(X,\mathbb{E})$, there is a non-decreasing sequence of functions $s_1\le s_2\le\cdots\in\mathcal{S}^+(X,\mathbb{E})$, such that it converges pointwise to $f$
+\end{theorem}
+\begin{proof}
+One such sequence is given by setting:
+\begin{equation}
+s_n(x)=
+\begin{cases}
+0					& \textrm{when }0\le f(x)<\frac{1}{2^n} \\
+\frac{1}{2^n}		& \textrm{when }\frac{1}{2^n}\le f(x)<\frac{2}{2^n} \\
+\frac{2}{2^n}		& \textrm{when }\frac{2}{2^n}\le f(x)<\frac{3}{2^n} \\
+\vdots \\
+\frac{k}{2^n}		& \textrm{when }\frac{k}{2^n}\le f(x)<\frac{k+1}{2^n} \\
+\vdots \\
+\frac{n2^n-1}{2^n}	& \textrm{when }\frac{n2^n-1}{2^n}\le f(x)<n \\
+n					& \textrm{when }n\le x
+\end{cases}
+\end{equation}
+In words: For the $n$'th function $[0,n)$ is chopped into $n2^n$ slices of length $\frac{1}{2^n}$ and the $f(x)$-values are then rounded down to the nearest such value. Larger $f(x)$-values are assigned to $n$. This sequence satisfies all the conditions above.
+\end{proof}
+
+With this in mind, it seems reasonable to define the integral for a non-simple function as follows:
+
+\begin{definition}
+\label{lebesque_integral}
+(Lebesgue integral) Let $(X,\mathbb{E},\mu)$ be a measure space. For $f\in\mathcal{M}^+(X,\mathbb{E})$ we set:
+\begin{equation}
+\label{M+integral}
+\int f\ d\mu = \sup\left\{\int s'\ d\mu|\ s'\le f, s'\in\mathcal{S}^+(X,\mathbb{E})\right\}
+\end{equation}
+\end{definition}
+
+\begin{theorem}
+Let $(X,\mathbb{E},\mu)$ be a measure space and let $s\in\mathcal{S}^+(X,\mathbb{E})$. Setting $f=s$ in equation $(\ref{M+integral})$ yields the same integral value as the one from equation $(\ref{simple_integral})$.
+\end{theorem}
+\begin{proof}
+By setting $s'=s$ in equation $(\ref{M+integral})$, we see that the "non-simple integral"$\ge$"simple integral". On the other hand, if $s'\le s$ we know from theorem $\ref{simple_integral_ineq}$ that $\int s'\ d\mu\le\int s\ d\mu$ ("simple" integrals). So we must also have "non-simple integral"$\le$"simple integral". Hence the two must be equal.
+\end{proof}
+
+This means that we can use the integral symbol without ambiguity in the following. We can now extend theorem $\ref{simple_integral_ineq}$:
+
+\begin{theorem}
+\label{integral_ineq}
+Let $(X,\mathbb{E},\mu)$ be a measure space. For $f,g\in\mathcal{M}^+(X,\mathbb{E}), f\le g$ we have:
+\begin{equation}
+\int f\ d\mu\le\int g\ d\mu
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let $s\in\mathcal{S}^+(X,\mathbb{E})$. If $s<f$, then $s<g$. So by equation $(\ref{M+integral})$ we must have $\int f\ d\mu\le\int g\ d\mu$.
+\end{proof}
+
+That definition $\ref{lebesque_integral}$ is reasonable is made clear by the following:
+
+\begin{theorem}
+\label{unique_integral_exists}
+Let $(X,\mathbb{E},\mu)$ be a measure space. Assume a function $I_\mu: \mathcal{M}^+(X,\mathbb{E})\rightarrow\mathbb{R}^*$ satisfies the following conditions:
+\begin{itemize}
+\item (i) For $E\in\mathbb{E}: I_\mu(1_E)=\mu(E)$.
+\item (ii) For $f,g\in\mathcal{M}^+(X,\mathbb{E}): I_\mu(f+g)=I_\mu(f)+I_\mu(g)$
+\item (iii) For a sequence in $\mathcal{M}^+(X,\mathbb{E})$ where $f_n\nearrow f: \underset{n\rightarrow\infty}{\lim}I_\mu(f_n)=I_\mu(f)$
+\end{itemize}
+Then $I_\mu(f)=\int f\ d\mu$ as defined through equation $(\ref{M+integral})$.
+\end{theorem}
+
+The proof is rather complex, so we will break it down into a series of steps. First, let's analyze the situation.
+
+\paragraph{Analysis:}
+One might wonder why the homogeneity condition is absent from the list. It turns out it is not needed. Set $f=g$ and (ii) becomes $I_\mu(2f)=2 I_\mu(f)$. By repeated application $I_\mu(nf)=n I_\mu(f)$ for all $n\in\mathbb{R}$. For a rational number $r=\frac{p}{q}\in\mathbb{Q}$:
+\begin{equation}
+p I_\mu(f)=I_\mu(pf)=I_\mu(q(rf))=q I_\mu(rf)\Leftrightarrow I_\mu(rf)=r I_\mu(f)
+\end{equation}
+This can be done for any linear map. But (iii) allows us to generalize to all positive real numbers in this case. For $c\in\mathbb{R}_+$ there exist an increasing Cauchy sequence of rationals $(q_i)_{i\in\mathbb{N}}$ such that $q_i\nearrow c$. Now apply (iii) to the sequence $q_i f\nearrow c f$ to get:
+\begin{equation}
+\underset{n\rightarrow\infty}{\lim}I_\mu(q_i f)=\underset{n\rightarrow\infty}{\lim}\left(q_i I_\mu(f)\right)=c I_\mu(f)=I_\mu(c f)
+\end{equation}
+(A similar argument can be made for $c=\infty$ using the sequence $(n)_{n\in\mathbb{N}}$.) So homogeneity follows from (ii) and (iii), but for clarity, we will add it as a separate condition:
+\begin{equation}
+\label{lebesgue_integral_homogeneity}
+\textrm{(iv) }For f\in\mathcal{M}^+(X,\mathbb{E}), c\in\mathbb{R}^*_+: I_\mu(c f)=c I_\mu(f)
+\end{equation}
+Now, above we have seen that (i), (ii) and (iv) leads to equation $(\ref{simple_integral})$. If we further require (iii) to be true. From theorem $\ref{simple_limit}$ we know that such a sequence of simple limits exists, and since the limit is equal to supremum for a non-decreasing sequence, equation $(\ref{M+integral})$ follows.
+
+So, our analysis shows, that if $I_\mu$ exists, it is unique and must be of the form given by equation $(\ref{M+integral})$. The big question is now whether $I_\mu$ actually satisfies the general conditions of theorem $\ref{unique_integral_exists}$?
+
+\paragraph{Proof of theorem $\ref{unique_integral_exists}$:}
+(i) is clearly true. Below we will prove (iii), so for now we will assume it to be true. Then (iii) $\Rightarrow$ (ii): Let $f,g\in\mathcal{M}^+(X,\mathbb{E})$. Then pr. theorem $\ref{simple_limit}$ there exists sequences of simple, measurable functions $(s_i)_{i\in\mathbb{N}}$ and $(t_i)_{i\in\mathbb{N}}$ such that $s_i\nearrow f, t_i\nearrow g$ and therefore $s_i+t_i\nearrow f+g$. So according to (iii) and theorem $\ref{simple_integral_linear}$:
+\begin{align}
+\int(f+g)d\mu=&\underset{i\rightarrow\infty}{\lim}\int(s_i+t_i)d\mu=\underset{i\rightarrow\infty}{\lim}\left(\int s_i\ d\mu+\int t_i\ d\mu\right)=\\
+&\underset{i\rightarrow\infty}{\lim}\int s_i\ d\mu+\underset{i\rightarrow\infty}{\lim}\int t_i\ d\mu=\int f\ d\mu+\int g\ d\mu
+\end{align}
+
+So finally, we need to prove (iii). This is a famous result, so we restate it in its own theorem:
+
+\begin{theorem}
+\label{monotone_convergence}
+(Lebesgue's monotone convergence theorem) Let $(X,\mathbb{E},\mu)$ be a measure space and $f_1, f_2,\cdots\in\mathcal{M}^+(X,\mathbb{E})$ so that $f_1\le f_2\le \cdots$. Then:
+\begin{equation}
+\int\left(\underset{i\rightarrow\infty}{\lim}f_i\right)d\mu=\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\end{equation}
+\end{theorem}
+\begin{proof}
+Since the sequence is non-decreasing, we have:
+\begin{equation}
+f=\underset{i\rightarrow\infty}{\lim}f_i=\underset{i\rightarrow\infty}{\sup}f_i
+\end{equation}
+Start by noting the following: According to theorem $\ref{function_limit}, f\in\mathcal{M}^+(X,\mathbb{E})$. According to theorem $\ref{integral_ineq}$, $\int f_1\ d\mu\le\int f_2\ d\mu\le\cdots$. So both sides in the equation are well-defined. Since $f\ge f_i$ for all $i\in\mathbb{N}$ we have - again by theorem $\ref{integral_ineq}$:
+\begin{equation}
+\int f\ d\mu\ge\int f_i\ d\mu\ge\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\end{equation}
+If we can show the opposite inequality, we're done. This amounts to showing, that for all $s\in\mathcal{S}^+(X,\mathbb{E}), s\le f$:
+\begin{equation}
+\label{mono_eq}
+\int s\ d\mu\le\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\end{equation} 
+We now use an odd trick: If we could show the following for all $\alpha\in(0,1)$, this would also show equation $(\ref{mono_eq})$:
+\begin{equation}
+\alpha\int s\ d\mu=\int(\alpha\cdot s)d\mu\le\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\end{equation}
+The reason for the need for $\alpha$ will become clear in a minute. Now, consider the $x\in X$ for which $f(x)=0$. In this case $s(x)=f_1(x)=\cdots=0$. If not, we have $s(x)\le f(x)$. If $s(x)=f(x)$, this means $f_n(x)\nearrow s$. In this case, there might not be an $n$ where $s(x)\le f_n(x)$ (this can only happen if $s(x)=f_i(x)$ from a certain point). So we would like a sharp inequality. This is where $\alpha$ comes in, because then $\alpha\cdot s(x)<f(x)$. Now, when this is true, there must be some $n$ where $\alpha\cdot s(x)\le f_n(x)$. Now we construct the following sequence of sets:
+\begin{equation}
+E_n=\{x\in X|\alpha\cdot s(x)\le f_n(x)\}
+\end{equation}
+$E_n\in\mathbb{E}$ according to $(\ref{R*+_measurable})$, and $E_1\subseteq E_2\subseteq\cdots$. And because of the use of $\alpha$, $\bigcup_{i\in\mathbb{N}}E_i=X$. Now define the following map
+\begin{equation}
+\nu:\mathbb{E}\rightarrow\mathbb{R}^*_+,\mu(E)=\alpha\int(s\cdot 1_E)d\mu
+\end{equation}
+We wish to show that $\nu$ is a measure. To see this, write $s$ as $s=\sum_{i=1}^n a_i\cdot 1_{A_i}$. Now:
+\begin{equation}
+\nu(E)=\alpha\int\left(\sum_{i=1}^n a_i\cdot 1_{A_i\cap E}\right)d\mu=\alpha\sum_{i=1}^n a_i\mu(A_i\cap\mu)=\alpha\int s\ d\mu(A_i\cap E)
+\end{equation}
+Here $\mu(A_i\cap E)$ is the restriction measure of $\mu$ to $(A_i\cap E)$. As shown in section $\ref{linear_combination_measure}$, a linear combination of measures, $\nu$ is itself a measure. Now we can use theorem $\ref{measure_properties}$ (vi) to get:
+\begin{equation}
+\label{mono_eq2}
+\nu(E_n)=\alpha\int(s\cdot 1_{E_n})d\mu\nearrow\nu(X)=\alpha\int(s\cdot 1_X)d\mu=\alpha\int s\ d\mu
+\end{equation}
+By construction $\alpha\cdot s\cdot 1_{E_n}\le f_n$, so $\alpha\int s\cdot 1_{E_n}d\mu\le\int f_n\ d\mu$, by theorem $\ref{integral_ineq}$. So restating equation $(\ref{mono_eq2})$ from the right:
+\begin{equation}
+\alpha\int s\ d\mu=\underset{i\rightarrow\infty}{\lim}\alpha\int(s\cdot 1_{E_n})d\mu\le\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\end{equation}
+\end{proof}
+
+From equation $(\ref{lebesgue_integral_homogeneity})$ and theorem $\ref{integral_ineq}$ - both "spoils" from proving the monotone convergence theorem - the following result follows rather easily:
+
+\begin{theorem}
+\label{zero_infty_ae}
+Let $(X,\mathbb{E},\mu)$ be a measure space and $f\in\mathcal{M}^+(X,\mathbb{E})$. Then:
+\begin{align}
+\textrm{(i) }\int f\ d\mu =0&\Leftrightarrow f(x)=0\ \mu\textrm{-almost everywhere} \\
+\textrm{(ii) }\int f\ d\mu <\infty&\Rightarrow f(x)<\infty\ \mu\textrm{-almost everywhere}
+\end{align}
+\end{theorem}
+\begin{proof}
+There's two parts:
+\begin{itemize}
+\item Let $A=\{x\in X|f(x)>0\}$. Then we may write $\infty\cdot f=\infty\cdot 1_A$. Now use equation $(\ref{lebesgue_integral_homogeneity})$:
+\begin{equation}
+\infty\int f\ d\mu=\int(\infty\cdot f)d\mu=\int(\infty\cdot 1_A)d\mu=\infty\int 1_A\ d\mu=\infty\cdot\mu(A)
+\end{equation}
+But this is true if and only if $\mu(A)=0$ (remember, that $0\cdot\infty=0$).
+\item Similarly, let Let $B=\{x\in X|f(x)<\infty\}$. Then $\infty\cdot 1_B\le f$. Now use theorem $\ref{integral_ineq}$:
+\begin{equation}
+\int(\infty\cdot 1_B)d\mu=\infty\cdot\int 1_B\ d\mu=\infty\cdot\mu(B)\le\int f\ d\mu
+\end{equation}
+If the integral is finite, the only possibilty is $\mu(B)=0$.
+\end{itemize}
+\end{proof}
+
+The monotone convergence theorem itself can be used to extend theorem $\ref{unique_integral_exists}$ (ii) to countably many terms:
+
+\begin{theorem}
+\label{exchange_int_sum}
+Let $(X,\mathbb{E},\mu)$ be a measure space with a sequence $f_1,f_2,\cdots\in\mathcal{M}^+(X,\mathbb{E})$. Then:
+\begin{equation}
+\int\left(\sum_{i=1}^\infty f_i\right)d\mu=\sum_{i=1}^\infty\int f_i\ d\mu
+\end{equation}
+\end{theorem}
+\begin{proof}
+From $\sum_{i=1}^n f_i\nearrow\sum_{i=1}^\infty f_i$ the monotone convergence theorem implies:
+\begin{align}
+\int\left(\sum_{i=1}^\infty f_i\right)d\mu=&\int\left(\underset{i\rightarrow\infty}{\lim}\sum_{i=1}^n f_i\right)d\mu=\underset{i\rightarrow\infty}{\lim}\int\left(\sum_{i=1}^n f_i\right)d\mu=\\
+&\underset{i\rightarrow\infty}{\lim}\sum_{i=1}^n\int f_i\ d\mu=\sum_{i=1}^\infty\int f_i\ d\mu
+\end{align}
+\end{proof}
+
+Finally, let's use the monotone convergence theorem to prove yet another famous, useful result:
+
+\begin{theorem}
+\label{fatou}
+(Fatou's lemma) Let $(X,\mathbb{E},\mu)$ be a measure space and $(f_n)$ a sequence in $\mathcal{M}^+(X,\mathbb{E})$. Then:
+\begin{equation}
+\int(\liminf f_n)d\mu=\liminf\int f_n\ d\mu
+\end{equation} 
+\end{theorem}
+\begin{proof}
+Let $g_p=\inf_{n\ge p}f_n$. So $g_p\le f_n$ for $p\le n$. By theorem $\ref{integral_ineq}$:
+\begin{equation}
+\int g_p\ d\mu=\int f_n\ d\mu,\quad p\le n
+\end{equation}
+So:
+\begin{equation}
+\int g_p\ d\mu\le\inf_{p\ge n}\int f_n\ d\mu\le\liminf\int f_n\ d\mu
+\end{equation}
+Since $g_p$ is non-decreasing, and converges to $\liminf f_n$, we can use the monotone convergence theorem to yield the desired result.
+\end{proof}
+
+\subsection{Integrals of real functions}
+We now turn our attention to integrals of functions that may take on positive as well as negative values. Here, having both positive and negative infinities in play will prove problematic, so we will consider only values in $\mathbb{R}$ itself:
+
+\begin{definition}
+Let $(X,\mathbb{E})$ be a measurable space. Then the collection of measurable functions from $X$ to $\mathbb{R}$ is denoted $\mathcal{M}(X,\mathbb{E})$. For $f\in\mathcal{M}(X,\mathbb{E})$ we define (in the pointwise sense):
+\begin{equation}
+f^+=f\vee 0,\quad f^-=-(f \wedge 0)
+\end{equation}
+These are known as the positive and negative parts of $f$ respectively.
+\end{definition}
+
+It is immediately clear, that $f=f^+ -f^-, |f|=f^+ +f^-$, and that $f^+,f^-\in\mathcal{M}^+(X,\mathbb{E})$. We can now define the integral on $\mathcal{M}(X,\mathbb{E})$:
+
+\begin{definition}
+Let $(X,\mathbb{E},\mu)$ be a non-empty measure space. We say that an $f\in\mathcal{M}(X,\mathbb{E})$ is $\mu$-integrable if both $\int f^+\ d\mu$ and $\int f^-\ d\mu$ are finite. In that case, we set:
+\begin{equation}
+\label{non-negative_integral}
+\int f\ d\mu=\int f^+\ d\mu - \int f^-\ d\mu
+\end{equation}
+The collection of all $\mu$-integrable functions is denoted $\mathcal{L}(X,\mathbb{E},\mu)$.
+\end{definition}
+
+Note that when $f\in\mathcal{M}^+(X,\mathbb{E})\cap\mathcal{M}(X,\mathbb{E}), f^+=f$ and $f^-=0$, so the new definition is consistent with equation $(\ref{M+integral})$. However, since it may be confusing if an integral means the usual $\mathcal{M}^+$-definition, and when it means the one defined through equation $(\ref{non-negative_integral})$, for now we will denote the latter with a $\pm$ sign as the "lower limit" to make the distinction crystal clear. For instance, in this notation equation $(\ref{non-negative_integral})$ would read:
+
+\begin{equation}
+\int_\pm f\ d\mu=\int f^+\ d\mu - \int f^-\ d\mu
+\end{equation}
+
+Also note that for $A\subseteq X, 1_A$ is integrable if and only if $A\in\mathbb{E}$ ad $\mu(A)<\infty$. In the following $X$ is always assumed to be a measure space $(X,\mathbb{E},\mu)$, where $X\neq\emptyset$.
+
+\begin{theorem}
+\label{measurable_absolute}
+A measurable function $f: X\rightarrow\mathbb{R}$ is integrable if and only if $|f|$ is integrable. In this case:
+\begin{equation}
+\left|\int_\pm f\ d\mu\right|\le\int_\pm|f|\ d\mu
+\end{equation}
+\end{theorem}
+\begin{proof}
+First we show the equivalence:
+\begin{itemize}
+\item $\Rightarrow$: If $f$ is integrable, then $\int f^+\ d\mu, \int f^-\ d\mu<\infty$. Since $|f|=f^+ +f^-$, we have $|f|^+=f^+ +f^-$, and $|f|^-=0$. Therefore $\int |f|^+\ d\mu=\int f^+\ d\mu+\int f^-\ d\mu<\infty, \int |f|^-\ d\mu=0<\infty$. So $|f|$ is integrable. 
+\item $\Leftarrow$: If $|f|$ is integrable, then $\int |f|^+\ d\mu=\int f^+\ d\mu+\int f^-\ d\mu<\infty$. This is only possible is both terms are finite, and so $f$ is integrable.
+\end{itemize}
+The inequality is shown by using the relation $|a-b|\le a+b$ for real numbers:
+\begin{equation}
+\left|\int_\pm f\ d\mu\right|=\left|\int f^+\ d\mu-\int f^-\ d\mu\right|\le\int f^+\ d\mu+\int f^-\ d\mu=\int_\pm |f|d\mu
+\end{equation}
+\end{proof}
+
+This immediately gives us the following criterion for integrability:
+
+\begin{theorem}
+\label{dominated_integrability}
+If $f\in\mathcal{M}(X,\mathbb{E}), g\in\mathcal{M}^+(X,\mathbb{E})$, so that $\int g\ d\mu<\infty$. If $|f|\le g$, then $f$ is integrable.
+\end{theorem}
+\begin{proof}
+Since $\int|f|d\mu\le\int g\ d\mu<\infty, \int|f|d\mu$ must be finite, and therefore $|f|$ is integrable. From theorem $\ref{measurable_absolute}$ it follows that $f$ is integrable too.
+\end{proof}
+
+The integral further has these nice properties:
+
+\begin{theorem}
+\label{integrable_linearity}
+If $f, g\in\mathcal{L}(X,\mathbb{E},\mu)$ and $a\in\mathbb{R}$, then $(a\cdot f), (f+g)\in\mathcal{L}(X,\mathbb{E},\mu)$ and:
+\begin{equation}
+\int_\pm(a\cdot f)d\mu=a\int_\pm f\ d\mu,\quad\int_\pm(f+g)d\mu=\int_\pm f\ d\mu+\int_\pm g\ d\mu
+\end{equation}
+\end{theorem}
+\begin{proof}
+This is shown for each of the new functions:
+\begin{itemize}
+\item $(a\cdot f)$: Split into three cases according to $c$:
+\begin{itemize}
+\item $c=0$: In this case, the result is trivial.
+\item $c>0$: Here $(a\cdot f)^+=a\cdot f^+$ and $(a\cdot f)^-=a\cdot f^-$. Their integrals:
+\begin{equation}
+\int(a\cdot f)^+\ d\mu=a\int f^+\ d\mu,\quad\int(a\cdot f)^-\ d\mu=a\int f^-\ d\mu
+\end{equation}
+Since $f$ is integrable, both are finite, and hence $(a\cdot f)\in\mathcal{L}(X,\mathbb{E},\mu)$ with integral:
+\begin{equation}
+\int_\pm(a\cdot f)d\mu=a\int f^+\ d\mu-a\int f^-\ d\mu=a\int_\pm f\ d\mu
+\end{equation}
+\item $c<0$: Now $(a\cdot f)^+=-a\cdot f^-$ and $(a\cdot f)^-=-a\cdot f^+$. Once again, the integrals are finite:
+\begin{equation}
+\int(a\cdot f)^+\ d\mu=-a\int f^-\ d\mu,\quad\int(a\cdot f)^-\ d\mu=-a\int f^+\ d\mu
+\end{equation}
+So $(a\cdot f)\in\mathcal{L}(X,\mathbb{E},\mu)$ with integral:
+\begin{equation}
+\int_\pm(a\cdot f)d\mu=-a\int f^-\ d\mu+a\int f^+\ d\mu=a\int_\pm f\ d\mu
+\end{equation}
+\end{itemize}
+\item $(f+g)$: Since $f$ and $g$ are integrable, so is $|f|$ and $|g|$. $|f+g|\le|f|+|g|$. So
+\begin{equation}
+\int|f+g|d\mu\le\int(|f|+|g|)d\mu=\int|f|d\mu+\int|g|d\mu<\infty
+\end{equation}
+This shows that $|f+g|$ and therefore $f+g$ are integrable. For calculating the integral it is not so easy to get a simple expression for $(f+g)^+$ and $(f+g)^-$. But we can write:
+\begin{align}
+(f+g)^+ - (f+g)^- &= f+g = f^+ - f^- + g^+ - g^-\Leftrightarrow\\
+(f+g)^+ + f^- + g^- &= (f+g)^- + f^+ + g^+
+\end{align}
+All these terms are members of $\mathcal{M}^+(X,\mathbb{E})$, so:
+\begin{equation}
+\int(f+g)^+ d\mu + \int f^-\ d\mu + \int g^-\ d\mu = \int(f+g)^- d\mu + \int f^+\ d\mu + \int g^+\ d\mu 
+\end{equation}
+All of these are finite, since $f, g$ and $f+g$ are integrable. So:
+\begin{equation}
+\int(f+g)^+ d\mu - \int(f+g)^- d\mu=\int f^+\ d\mu - \int f^-\ d\mu + \int g^+\ d\mu - \int g^-\ d\mu
+\end{equation}
+In other words $\int_\pm(f+g)d\mu=\int_\pm f\ d\mu + \int_\pm g\ d\mu$.
+\end{itemize}
+\end{proof}
+
+\begin{theorem}
+Let $f,g\in\mathcal{L}(X,\mathbb{E},\mu)$ so $f\le g$. Then:
+\begin{equation}
+\int_\pm f\ d\mu\le\int_\pm g\ d\mu
+\end{equation}
+The equality sign is true if and only if $g=f\ \mu$-almost everywhere.
+\end{theorem}
+\begin{proof}
+Since $f\le g$, $g-f\in\mathcal{M}^+(X,\mathbb{E})$. So $\int(g-f)d\mu\ge 0$. Since $g$ and $f$ are both integrable, we may use the "new integral" here instead, and use theorem $\ref{integrable_linearity}$:
+\begin{equation}
+\int_\pm(g-f)d\mu\ge 0=\int_\pm g\ d\mu-\int_\pm f\ d\mu\ge 0\Leftrightarrow\int_\pm g\ d\mu\ge\int_\pm f\ d\mu
+\end{equation}
+Furthermore, theorem $\ref{zero_infty_ae}$ (i) gives us:
+\begin{equation}
+\int(g-f)d\mu=0\Leftrightarrow g-f=0\ \mu\textrm{-almost everywhere}
+\end{equation}
+This is equivalant to $g=f\ \mu$-almost everywhere.
+\end{proof}
+
+As we have now generalized most basic results to the "new integral", we will drop the $\int_\pm$-notation and simply use the integral sign.
+
+\subsection{Lebesgue's dominated convergence theorem}
+Unfortunately, the limit for a pointwise convergent sequence of integrable functions turn out to not necessarily be integrable. Requiring the associated sequence of integrals to be convergent does not remedy this. However, we can assure such convergence by using the following famous theorem - a cornerstone of Lebesgue integration theory.
+
+\begin{theorem}
+\label{dominated_convergence}
+(Lebesgue's dominated convergence theorem\footnote{Sometimes simply shortened to DCT.})\\
+Let $f_1,f_2,\cdots\in\mathcal{M}(X,\mathbb{E})$ be a sequence of functions that converge pointwise to the function $f$. If there exists a function $g\in\mathcal{M}^+(X,\mathbb{E})$ with $\int g\ d\mu<\infty$ such that $|f_i|\le g$ for all $i\in\mathbb{N}$. Then:
+\begin{equation}
+\underset{n\rightarrow\infty}{\lim}\int f_i\ d\mu=\int f\ d\mu
+\end{equation}
+The function $g$ is sometimes known as a majorant for the sequence.\end{theorem}
+\begin{proof}
+By theorem $\ref{dominated_integrability}$ we have that all the $f_i$ must be integrable. So must the limit $f$. At first, we show the theorem for the case where $g(x)<\infty$ for all $x\in X$. This means that $g\in\mathcal{L}(X,\mathbb{E},\mu)$. Since $|f_n|\le g$ we have $g+f_n\ge 0$ and $g-f_n\ge 0$. These two sequences are pointwise convergent, since $(f_n)_{i\in\mathbb{N}}$ is. For a convergent sequence, limes superior and limes inferior are both equal to the limit, so:
+\begin{align}
+\label{fatou1}
+\underset{n\rightarrow\infty}{\liminf}\ g+f_n&=\underset{n\rightarrow\infty}{\lim}g+f_n=g+f \\
+\label{fatou2}
+\underset{n\rightarrow\infty}{\liminf}\ g-f_n&=\underset{n\rightarrow\infty}{\lim}g-f_n=g-f
+\end{align}
+We can now use Fatou's lemma on equations $(\ref{fatou1})$ and $(\ref{fatou2})$. First:
+\begin{equation}
+\int(g+f)d\mu\le\liminf\int(g+f_n)d\mu
+\end{equation}
+Using the linearity of the integral:
+\begin{equation}
+\int g\ d\mu + \int f\ d\mu\le\liminf\left(\int g\ d\mu + \int f_n\ d\mu\right)
+\end{equation}
+But since $g$ is constant, the right hand side is $\int g\ d\mu+\liminf\int f_n\ d\mu$. Now subtract $\int g$ from both sides to get:
+\begin{equation}
+\int f\ d\mu\le\liminf\int f_n\ d\mu
+\end{equation}
+Second:
+\begin{equation}
+\int(g-f)d\mu\le\liminf\int(g-f_n)d\mu
+\end{equation}
+By linearity
+\begin{equation}
+\int g\ d\mu - \int f\ d\mu\le\liminf\left(\int g\ d\mu - \int f_n\ d\mu\right)
+\end{equation}
+Once again, the integral of $g$ separates and can be subtracted out:
+\begin{equation}
+-\int f\ d\mu\le-\liminf\int f_n\ d\mu
+\end{equation}
+So here we get:
+\begin{equation}
+\int f\ d\mu\ge\liminf\int f_n\ d\mu
+\end{equation}
+So we must have 
+\begin{equation}
+\int f\ d\mu=\liminf\int f_n\ d\mu=\lim\int f_n\ d\mu
+\end{equation}
+But what if there's $x\in X$ for which $g(x)=\infty$? Let $N=\{x\in X|g(x)=\infty\}$. We can now use $1_{X\setminus N}\cdot g$ as a majorant for the sequence $(1_{X\setminus N}\cdot f_n)_{n\in\mathbb{N}}$ using the argument above, so that:
+\begin{equation}
+\int (1_{X\setminus N}\cdot f)d\mu=\lim\int(1_{X\setminus N}\cdot f_n)d\mu
+\end{equation}
+Since $\int g\ d\mu<\infty$, from theorem $\ref{zero_infty_ae}$ (ii) $N$ is a null set. So the integrals have the same values as the ones without indicator functions, and we refind the desired result. 
+\end{proof}
+
+\subsubsection{Addendum to the proof of DCT}
+In the very last step in the proof we used the following:
+
+\begin{theorem}
+If $f\in\mathcal{M}(X,\mathbb{E}), g\in\mathcal{L}(X,\mathbb{E},\mu)$ and $f=g \ \mu$-almost everywhere, then $f\in\mathcal{L}(X,\mathbb{E},\mu)$ and:
+\begin{equation}
+\int f\ d\mu=\int g\ d\mu
+\end{equation}
+\end{theorem}
+\begin{proof}
+Write $f=g+(f-g)$. We know that $f-g$ is zero $\mu$-almost everywhere, but we can't be sure it's an element of $\mathcal{M}^+(X,\mathbb{E})$. However, $|f-g|$ must be, and it is also zero $\mu$-almost everywhere. By theorem $\ref{zero_infty_ae}$ (i) we have $\int|f-g|d\mu=0$. By theorem $\ref{measurable_absolute}$ $f-g$ is integrable. Finally by theorem $\ref{integrable_linearity} f$ as a sum of integrable functions is itself integrable.
+\end{proof}
+
+This has the consequence, that for some theorems, we might weaken some conditions slightly. For instance, for the dominated convergence theorem, we may release the requirement of convergence of $f_i$ for all $x\in X$ to $\mu$-almost everywhere. Related, it would also enough to require that the majorant $|f_i|\le g$ $\mu$-almost everywhere.
+
+We can also use the theorem to integrate functions that are only defined $\mu$-almost everywhere.
+
+\subsection{Integrals over subsets}
+Let $(X,\mathbb{E},\mu)$ be a measure space, and let $V\in\mathbb{E}, V$ non-empty. Consider the restricted measure space $(X,\mathbb{E}_V,\mu_V)$ as described in section $\ref{restriction_of_measure}$. To recapitulate:
+\begin{equation}
+\mathbb{E}_V=\{E\cap V|E\in\mathbb{E}\},\quad\mu_V(E)=\mu|\mathbb{E}_V
+\end{equation}
+A function $g: V\rightarrow\mathbb{R}$ can be extended so the domain becomes all of $X$ by setting:
+\begin{equation}
+\tilde{g}(x)=
+\begin{cases}
+g(x)	& \textrm{if }x\in V \\
+0		& \textrm{otherwise}
+\end{cases}
+\end{equation}
+By theorem $\ref{cases_measurable}, \tilde{g}$ is measurable if and only if $g$ is.
+
+\begin{theorem}
+For $g\in\mathcal{M}^+(V,\mathbb{E}_V)$:
+\begin{equation}
+\label{g_tilde}
+\int g\ d\mu_V=\int\tilde{g}\ d\mu
+\end{equation}
+For any $\mathbb{E}$-measurable $g$:
+\begin{equation}
+g\in\mathcal{L}(V,\mathbb{E}_V,\mu_V)\Leftrightarrow \tilde{g}\in\mathcal{L}(X,\mathbb{E},\mu)
+\end{equation}
+Furthermore equation $(\ref{g_tilde})$ remains true if this is the case.
+\end{theorem}
+\begin{proof}
+According to theorem $\ref{unique_integral_exists}$ (i) applied to the two measures, for $E\in\mathbb{E}_V$, $\int \widetilde{1_E}\ d\mu=\mu(E)$, but also $\int 1_E\ d\mu_V=\mu_V(E)$. But since $\widetilde{1_E}=1_E$ and $\mu(E)=\mu_V(E)$, is follows that for $s\in\mathcal{S}(V,\mathbb{E}_V)$:
+\begin{equation}
+\int \tilde{s}\ d\mu=\int s\ d\mu_V
+\end{equation}
+Therefore we must have $\int\tilde{g}\ d\mu=\int g\ d\mu_V$.
+For the second part, assume $g\in\mathcal{L}(V,\mathbb{E}_V,\mu_V)$. According to theorem $\ref{measurable_absolute}$ this is equivalent to $\int|g|\ d\mu_V<\infty$. Now "put the tilde" on $|g|$:
+\begin{equation}
+\widetilde{|g|}(x)=
+\begin{cases}
+|g(x)|	& \textrm{if }x\in V \\
+0		& \textrm{otherwise}
+\end{cases}
+=|\tilde{g}(x)|
+\end{equation}
+So $\widetilde{|g|}=|\tilde{g}|$. Therefore:
+\begin{equation}
+\int|g|\ d\mu_V=\int |\tilde{g}|d\mu<\infty
+\end{equation}
+But again, according to theorem $\ref{measurable_absolute}$ this is equivalent to $\tilde{g}\in\mathcal{L}(X,\mathbb{E},\mu)$. Now, the integral of $g$ is:
+\begin{equation}
+\int g\ d\mu_V=\int g^+\ d\mu_V-\int g^-\ d\mu_V
+\end{equation}
+Since $\widetilde{g^+}$ must be equal to $(\tilde{g})^+$ and similarly $\widetilde{g^-}=(\tilde{g})^-$, this is equal to:
+\begin{equation}
+\int(\tilde{g})^+\ d\mu-\int(\tilde{g})^-\ d\mu=\int\tilde{g}\ d\mu
+\end{equation}
+\end{proof}
+
+If $g\in\mathcal{L}(V,\mathbb{E}_V,\mu_V)$, we say that $g$ is $\mu$\textit{-integrable over} $V$ and use the following notation:
+\begin{equation}
+\int_V g\ d\mu=\int g\ d\mu_V=\int\tilde{g}\ d\mu
+\end{equation}
+The notation is used even if $g$ is defined on all of $X$. Then we set:
+\begin{equation}
+\int_V g\ d\mu=\int_V g|V\ d\mu_V
+\end{equation}
+Since $\widetilde{g|V}=1_V\cdot g$ this means:
+\begin{equation}
+\int_V g\ d\mu=\int 1_V\cdot g\ d\mu
+\end{equation}
+
+\subsubsection{Integration over intervals}
+When $(X,\mathbb{E})=(\mathbb{R},\mathbb{B})$ and $V=I$ is an interval $(a,b), (a,b], [a,b)$ or $[a,b]$, we use the well-known notation:
+\begin{equation}
+\int_I g\ d\mu=\int_a^b g\ d\mu
+\end{equation}
+(Since single points are $\mathbb{B}$-null sets, the open-ness of the interval does not matter with regards to the integral). If $\mu=m$ is the Lebesgue measure, we use the (even more well-known) notation:
+\begin{equation}
+\int_I g\ dm=\int_a^b g(x)\ dx
+\end{equation}
+
+\subsection{Density with respect to a measure}
+From a given measure we can easily generate more by combining is with a density function. It is often a practical way to make a measure by specifying a density with respect to the Lebesgue or counting measure.
+
+\begin{theorem}
+Let $(X,\mathbb{E},\mu)$ be a measure space and let $f\in\mathcal{M}^+(X,\mathbb{E})$. Then the following map $\mathbb{E}\rightarrow\mathbb{R}^*_+$ is a measure:
+\begin{equation}
+E\mapsto\int_E f\ d\mu
+\end{equation}
+This measure is denoted $f\cdot\mu$ or simply $f\mu$. $f$ is said to be the measure's density with respect to $\mu$.
+\end{theorem}
+\begin{proof}
+We need to show the two usual conditions:
+\begin{itemize}
+\item (i): $(f\cdot\mu)(\emptyset)=\int_\emptyset f\ d\mu=\int 1_\emptyset\cdot f\ d\mu=\int 0\ d\mu=0$.
+\item (ii):
+\begin{equation}
+(f\cdot\mu)\left(\bigcup_{i\in\mathbb{N}} E_i \right)=\int_{\bigcup_{i\in\mathbb{N}} E_i} f\ d\mu=\int 1_{\bigcup_{i\in\mathbb{N}} E_i}\cdot f\ d\mu
+\end{equation}
+Since the $E_i$'s are disjoint, we have $1_{\bigcup_{i\in\mathbb{N}} E_i}=\sum_{i\in\mathbb{N}} 1_{E_i}$, so the integral becomes:
+\begin{equation}
+\int\left(\sum_{i\in\mathbb{N}} 1_{E_i}\right)f\ d\mu=\int\sum_{i\in\mathbb{N}}(1_{E_i}\cdot f)d\mu
+\end{equation}
+Now use theorem $\ref{exchange_int_sum}$ to get:
+\begin{equation}
+\sum_{i\in\mathbb{N}}\int(1_{E_i}\cdot f)d\mu=\sum_{i\in\mathbb{N}}\int_{E_i}f\ d\mu=\sum_{i\in\mathbb{N}}(f\cdot\mu)(E_i)
+\end{equation}
+\end{itemize}
+\end{proof}
+
+\begin{theorem}
+For $f, \varphi\in\mathcal{M}^+(X,\mathbb{E})$ we have:
+\begin{equation}
+\int\varphi\ d(f\cdot\mu)=\int(\varphi\cdot f)d\mu
+\end{equation}
+If $f(x)<\infty$ for all $x\in X$, we further have for a $\varphi\in\mathcal{M}(X,\mathbb{E})$:
+\begin{equation}
+\varphi\in\mathcal{L}(X,\mathbb{E},f\cdot\mu)\Leftrightarrow\varphi\cdot f\in\mathcal{L}(X,\mathbb{E},\mu)
+\end{equation}
+In this case, the formula above remains true.
+\end{theorem}
+\begin{proof}
+Since $(f\cdot\mu)$ is a measure, it is characterized by the three properties of theorem $\ref{unique_integral_exists}$. Now consider the function
+\begin{equation}
+I_f: \mathcal{M}^+(X,\mathbb{E})\rightarrow\mathbb{R}^*_+,\quad I_f(\varphi)=\int(\varphi\cdot f)d\mu
+\end{equation}
+It turns out that this also satisfies the three properties (through the same properties for $\mu$):
+\begin{itemize}
+\item (i): $I_f(1_E)=\int(1_E\cdot f)d\mu=\int_E f\ d\mu=(f\cdot\mu)(E)$
+\item (ii):
+\begin{align*}
+I_f (g_1+g_2)=\int((g_1+g_2)\cdot f)d\mu=&\int(g_1\cdot f+g_2\cdot f)d\mu=\\
+\int(g_1\cdot f)d\mu+\int(g_2\cdot f)d\mu=&I_f (g_1)+I_f(g_2)
+\end{align*}
+\item (iii): Let $g_n\nearrow g$, so $g_n\cdot f\nearrow g\cdot f$:
+\begin{equation}
+I_f(g_n)=\int(g_n\cdot f)d\mu\nearrow\int(g\cdot f)d\mu=I_f(g)
+\end{equation}
+\end{itemize}
+So by theorem $\ref{unique_integral_exists}$, $I_f(\varphi)=\int(\varphi\cdot f)d\mu=\int\varphi\ d(f\cdot\mu)$.\\
+For the second part, let $\varphi\in\mathcal{M}(X,\mathbb{E})$ be given. The according to theorem $\ref{measurable_absolute}, \varphi$ being $(f\cdot\mu)$-integrable is equivalent to:
+\begin{equation}
+\int|\varphi|\ d(f\cdot\mu)=\int(|\varphi|\cdot f)\ d\mu<\infty
+\end{equation}
+If $f$ is finite-valued, then $|\varphi|f=|\varphi\cdot f|$, which means that $\varphi\cdot f\in\mathcal{L}(X,\mathbb{E},\mu)$. For the integrals, start by noting, that since $f$ is non-negative $(\varphi\cdot f)^+=\varphi^+\cdot f$ and $(\varphi\cdot f)^-=\varphi^-\cdot f$. So:
+\begin{align}
+\int\varphi\ d(f\cdot\mu)=&\int\varphi^+\ d(f\cdot\mu)-\int\varphi^-\ d(f\cdot\mu)=\\
+&\int(f\cdot\varphi^+)d\mu-\int(f\cdot\varphi^-)d\mu=\\
+&\int(f\cdot\varphi)^+\ d\mu-\int(f\cdot\varphi)^-\ d\mu=\int(\varphi\cdot f)d\mu
+\end{align}
+\end{proof}
+
+\subsection{Image measures}
+In this section, $(X,\mathbb{E},\mu)$ and $(Y,\mathbb{F},\nu)$ are assumed to be measure spaces.
+
+\begin{theorem}
+Let $\varphi: X\rightarrow Y$ be measurable. Then the following map $\mathbb{F}\rightarrow\mathbb{R}^*_+$ is a measure:
+\begin{equation}
+F\mapsto\mu(\varphi^{-1}(F))
+\end{equation}
+This is called the image measure of $\mu$ under $\varphi$ and is denoted $\varphi(\mu)$.
+\end{theorem}
+\begin{proof}
+We have two properties to show:
+\begin{itemize}
+\item (i): $\varphi(\mu)(\emptyset)=\mu(\varphi^{-1}(\emptyset))=\mu(\emptyset)=0$
+\item (ii):
+\begin{align*}
+\varphi(\mu)\left(\bigcup_{i\in\mathbb{N}}E_i\right)=&\mu\left(\varphi^{-1}\left(\bigcup_{i\in\mathbb{N}}E_i\right)\right)=\mu\left(\bigcup_{i\in\mathbb{N}}\varphi^{-1}(E_i)\right)=\\
+&\sum_{i\in\mathbb{N}}\mu(\varphi^{-1}(E_i))=\sum_{i\in\mathbb{N}}\varphi(\mu)(E_i)
+\end{align*}
+\end{itemize}
+\end{proof}
+
+\begin{theorem}
+Let $g\in\mathcal{M}^+(Y,\mathbb{F})$. Then:
+\begin{equation}
+\int g\ d\mu(\varphi)=\int g\circ\varphi\ d\mu
+\end{equation}
+For $g\in\mathcal{M}(Y,\mathbb{F})$:
+\begin{equation}
+g\in\mathcal{L}(Y,\mathbb{F},\mu(\varphi))\Leftrightarrow g\circ\varphi\in\mathcal{L}(X,\mathbb{E},\mu)
+\end{equation}
+In this case, the formula above remains valid.
+\end{theorem}
+\begin{proof}
+Since $\mu(\varphi)$ is a measure, the related integral satisfies the three conditions of theorem $\ref{unique_integral_exists}$. Now, define a map:
+\begin{equation}
+I_\varphi: \mathcal{M}^+\rightarrow\mathbb{R}^*_+,\quad I_\varphi(g)=\int g\circ\varphi\ d\mu
+\end{equation}
+It turns out, that this map satisfies the same three conditions:
+\begin{itemize}
+\item (i): $I_\varphi(1_F)=\int 1_F\circ\varphi\ d\mu=\int 1_{\varphi^{-1}(F)}\ d\mu=\mu(\varphi^{-1}(F))$
+\item (ii):
+\begin{align*}
+I_\varphi(g_1+g_2)=&\int (g_1+g_2)\circ\varphi\ d\mu=\int (g_1\circ\varphi)+(g_2\circ\varphi)d\mu=\\
+&\int g_1\circ\varphi\ d\mu+\int g_2\circ\varphi\ d\mu=I_\varphi(g_1)+I_\varphi(g_2)
+\end{align*}
+\item (iii): Let $g_n\nearrow g$, so $g_n\circ\varphi\nearrow g\circ\varphi$.
+\begin{equation}
+I_\varphi(g_n)=\int g_n\circ\varphi\ d\mu\nearrow\int g\circ\varphi\ d\mu=I_\varphi(g)
+\end{equation}
+\end{itemize}
+Now, by theorem $\ref{unique_integral_exists}$, the two must be the same:
+\begin{equation}
+\int g\ d\mu(\varphi)=\int g\circ\varphi\ d\mu
+\end{equation}
+$g\in\mathcal{L}(Y,\mathbb{F},\mu(\varphi))$ if and only if $\int|g|\ d\mu(\varphi)=\int|g|\circ\varphi\ d\mu<\infty$. But:
+\begin{equation}
+(|g|\circ\varphi)(x)=|g(\varphi(x))|=|g\circ\varphi|(x)
+\end{equation}
+So $\int|g\circ\varphi|d\mu<\infty$, which is true if and only if $g\circ\varphi\in\mathcal{L}(X,\mathbb{E},\mu)$.\\
+For the integrals, note that $(g\circ\varphi)^+=g^+\circ\varphi$ and $(g\circ\varphi)^-=g^-\circ\varphi$. So:
+\begin{align*}
+\int g\ d\mu(\varphi)=&\int g^+\ d\mu(\varphi)-\int g^-\ d\mu(\varphi)=\int g^+\circ\varphi\ d\mu-\int g^-\circ\varphi\ d\mu=\\
+&\int (g\circ\varphi)^+\ d\mu(\varphi)-\int (g\circ\varphi)^-\ d\mu(\varphi)=\int g\circ\varphi\ d\mu
+\end{align*}
+\end{proof}
+
+\subsection{Sums as integrals}
+Using the counting measure, we can express sums as integrals, thereby benefitting from the theoretical framework developed so far. In this subsection $\mu$ is always the counting measure.
+
+\begin{theorem}
+For any function $f: J\rightarrow\mathbb{R}^*_+$, we have:
+\begin{equation}
+\int_J f\ d\mu=\sum_{j\in J}f(j)
+\end{equation}
+\end{theorem}
+\begin{proof}
+For any $j\in J$, we have:
+\begin{equation}
+\int_{\{j\}}f\ d\mu=\int 1_{\{j\}}\cdot f\ d\mu=f(j)\cdot\mu({\{j\}})=f(j)
+\end{equation}
+We can extend this to finite and countable $J$ by countable union:
+\begin{equation}
+\int_J f\ d\mu=\sum_{j\in J}f(j),\quad |J|\le \aleph_0
+\end{equation}
+If $J$ is uncountable, there's two options according to theorem $\ref{infinite_sum_finite}$: Either the sum is infinite, or there's at most a countable amount of finite $J(j)$. We've effectively dealt with the latter case above. In the former case, since the integral is a supremum over a set containing an infinity, it must itself be infinite as well.
+\end{proof}
+
+When we consider functions $ f: J\rightarrow\mathbb{R}*_+$ instead, according to theorem $\ref{measurable_absolute}$ a sufficient and necessary condition for integrability is $\int |J|\ d\mu<\infty$, which leads to the following definition:
+
+\begin{definition}
+We denote the collection of integrable functions $ f: J\rightarrow\mathbb{R}^*_+$ as $\ell(J)$ rather than $\mathcal{L}(J,\mathcal{P}(J),\mu)$. For a $f\in\ell(J)$ we define:
+\begin{equation}
+\sum_{j\in J}f(j)=\int_J f\ d\mu
+\end{equation}
+\end{definition}
+
+When $J=\mathbb{N}$, it is tempting to think of the elements of $\ell(\mathbb{N})$ as the usual infinite sums:
+\begin{equation}
+\sum_{i=1}^\infty a_i=\underset{n\rightarrow\infty}{\lim}\sum_{i=1}^n a_i
+\end{equation}
+There is however a subtle, but important difference: As written above, we sum in the order 1, 2, 3,$ldots$ etc. We have made no such assumptions in the integral formulation. However, we see from the integrability criterium, that $\ell(\mathbb{N})$ only contains the absolutely convergent sums. Remember, that for absolutely convergent series (and only those), the order of summation is interchangeable.
+
+\subsection{Integration with real parameter}
+In this section $(X,\mathbb{E},\mu)$ denotes a non-empty measure space, $I\subseteq\mathbb{R}$ a (possibly unbound) interval, and $f: X\times I\rightarrow\mathbb{R}$ a function.
+
+\begin{definition}
+For $x\in X$, the function $I\rightarrow\mathbb{R}$ defined by:
+\begin{equation}
+t\mapsto f(x,t)
+\end{equation}
+is denoted $f_x$ or $f(x,\cdot)$. Similarly for $t\in I$ the function $X\rightarrow\mathbb{R}$ defined by:
+\begin{equation}
+x\mapsto f(x,t)
+\end{equation}
+is denoted $f^t$ or $f(\cdot,t)$. These are also known as intersection functions. 
+\end{definition}
+
+If we assume $f^t\in\mathcal{L}(X,\mathbb{E},\mu)$ for all $t\in I$ we may define a function $F$:
+\begin{equation}
+F: I\rightarrow\mathbb{R},\quad F(t)=\int_X f^t\ d\mu=\int_X f(x,t)\ d\mu(x)
+\end{equation}
+Here, the notation $\mu(x)$ is used to avoid confusion with measures on $I$.
+
+\begin{theorem}
+Further assume, that for a $t_0\in I$, all $f_x$ are continuous at $t_0$. If $g\in\mathcal{M}^+(X,\mathbb{E})$, such that $\int g\ d\mu<\infty$ and:
+\begin{equation}
+\forall t\in I\ \forall x\in X: |f(x,t)|\le g(x),
+\end{equation}
+then $F$ is continuous at $t_0$.
+\end{theorem}
+\begin{proof}
+If $(t_n)\rightarrow t_0$ is a convergent sequence in $I$, then by continuity of $f_x$ at $t_0$, we have $(f_x(t_n))\rightarrow f_x(t_0)$. This is the same as $f(x,t_n)\rightarrow f(x,t_0)$ or $f^{t_n}(x)\rightarrow f^{t_0}(x)$. For all $t\in I$ we have $|f^t|\le g$. By the theorem of dominated convergence:
+\begin{equation}
+\lim_{n\rightarrow\infty}\int f^{t_n}(x)\ d\mu(x)=\int f^{t_0}(x)\ d\mu(x)\Rightarrow\lim_{n\rightarrow\infty}F(t_n)=F(t_0)
+\end{equation}
+In other words, $F$ is continous at $t_0$.
+\end{proof}
+
+\subsubsection{Differentiation under the integral}
+We may use the theory in this subsection to show that when differentiating an integral expressing, it is sometimes possible to move the differential operator into the integral. The exact conditions will be restated in the following theorem:
+
+\begin{theorem}
+Let $(X,\mathbb{E},\mu)$ be a non-empty measure space, $I\subseteq\mathbb{R}$ an interval, and $f: X\times I\rightarrow\mathbb{R}$ which satisfies:
+\begin{equation}
+\forall t\in I: f^t\in\mathcal{L}(X,\mathbb{E},\mu), \forall x\in X: \frac{\partial}{\partial t}f(x,t)\textrm{ exists}
+\end{equation}
+If there exists a $g\in\mathcal{M}^+(X,\mathbb{E})$ with $\int g\ d\mu<\infty$ that satisfies:
+\begin{equation}
+\forall t\in I\ \forall x\in X: \left|\frac{\partial}{\partial t}f(x,t)\right|\le g(x),
+\end{equation}
+then $x\mapsto\frac{\partial}{\partial t}f(x,t)$ is an element of $\mathcal{L}(X,\mathbb{E},\mu)$ for all $t\in I$, and $F$ is differentiable in $I$ with:
+\begin{equation}
+\frac{d}{dt}F(t)=\frac{d}{dt}\int_X f(x,t)\ d\mu=\int_X\frac{\partial}{\partial t}f(x,t)\ d\mu
+\end{equation}
+\end{theorem} 
+\begin{proof}
+Let $(t_n)\rightarrow t$ be a sequence in $I$, so that $t_i\neq t$. From this construct the sequence:
+\begin{align}
+\frac{F(t_n)-F(t)}{t_n-t}=&\frac{1}{t_n-t}\left(\int_X f(t_n,x)\ d\mu-\int_X f(t,x)\ d\mu\right)=\\
+&\int_X\frac{f^{t_n}(x)-f^{t}(x)}{t_n-t}d\mu
+\end{align}
+As $n\rightarrow$, the sequence converges to $\frac{d}{dt}F(t)$. The integrand converges pointwise to $\frac{d}{dt}f(x,t)$ as $f^t(x)=f_x(t)$. According to the mean value theorem, there is a $\tau_{x,n}$ between $t_n$ and $t$ such that:
+\begin{equation}
+\frac{f^{t_n}(x)-f^{t}(x)}{t_n-t}=\frac{\partial}{\partial t}f(x,\tau_{x,n})
+\end{equation}
+Since $\left|\frac{\partial}{\partial t}f(x,t)\right|\le g(x)$ for all $x\in X$ and $t\in I$, it is also true when $t=\tau_{x,n}$. So:
+\begin{equation}
+\left|\frac{f^{t_n}-f^{t}}{t_n-t}\right|\le g(x)
+\end{equation}
+Now, the dominated convergence theorem tells us that the differential operator $x\mapsto\frac{\partial}{\partial t}f(x,t)$ is an element of $\mathcal{L}(X,\mathbb{E},\mu)$. We now have:
+\begin{equation}
+\frac{d}{dt}F(t)=\lim_{n\rightarrow\infty}\int_X\frac{f^{t_n}(x)-f^{t}(x)}{t_n-t}d\mu=\int_X\frac{\partial}{\partial t}f(x,t)\ d\mu
+\end{equation}
+\end{proof}
+
+\section{The Lebesgue measure}
+Given a standard box $I=(a_1,b_1]\times(a_2,b_2)\times\cdots\times(a_k,b_k]$ in $\mathbb{R}^k$ (from definition $\ref{interval_def}$), it seems reasonable to assign it a (hyper-)volume of $v(I)=(b_1-a_1)\cdot(b_2-a_2)\cdot\cdots(b_k-a_k)$. It turns out, that this condition is enough to define a unique measure on $\mathbb{R}^k$:
+
+\begin{theorem}
+There exists a unique measure $m_k$ on $(\mathbb{R}^k,\mathbb{B}_k)$ which satisfies $m_k(I)=v(I)$ for all standard boxes $I\subseteq\mathbb{R}^k$. This measure is called the Lebesgue measure in $k$ dimensions.
+\end{theorem}
+
+The proof of this important result is rather long, so we will devote a subsection to each of the existence and uniqueness parts.
+
+\subsection{Existence of the Lebesgue measure}
+\begin{definition}
+Denote the collection of standard boxes in $k$ dimensions by $\mathbb{I}_k$. The $k$-dimensional volume function $v_k: \mathbb{I}_k\rightarrow\mathbb{R}^*_+$ is defined as above.
+\end{definition}
+
+\begin{theorem}
+Let $I_1, I_2,\cdots, I_n\in\mathbb{I}_k$. Then 
+\end{theorem}
+
+
+\subsection{Uniqueness of the Lebesgue measure}
+
+\end{document}
