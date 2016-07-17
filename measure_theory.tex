@@ -1693,7 +1693,7 @@ Now, the dominated convergence theorem tells us that the differential operator $
 \end{proof}
 
 \section{The Lebesgue measure}
-Given a standard box $I=(a_1,b_1]\times(a_2,b_2)\times\cdots\times(a_k,b_k]$ in $\mathbb{R}^k$ (from definition $\ref{interval_def}$), it seems reasonable to assign it a (hyper-)volume of $v(I)=(b_1-a_1)\cdot(b_2-a_2)\cdot\cdots(b_k-a_k)$. It turns out, that this condition is enough to define a unique measure on $\mathbb{R}^k$:
+Given a standard box $I=(a_1,b_1]\times(a_2,b_2]\times\cdots\times(a_k,b_k]$ in $\mathbb{R}^k$ (from definition $\ref{interval_def}$), it seems reasonable to assign it a (hyper-)volume of $v(I)=(b_1-a_1)\cdot(b_2-a_2)\cdot\cdots(b_k-a_k)$. It turns out, that this condition is enough to define a unique measure on $\mathbb{R}^k$:
 
 \begin{theorem}
 There exists a unique measure $m_k$ on $(\mathbb{R}^k,\mathbb{B}_k)$ which satisfies $m_k(I)=v(I)$ for all standard boxes $I\subseteq\mathbb{R}^k$. This measure is called the Lebesgue measure in $k$ dimensions.
@@ -1707,9 +1707,19 @@ Denote the collection of standard boxes in $k$ dimensions by $\mathbb{I}_k$. The
 \end{definition}
 
 \begin{theorem}
-Let $I_1, I_2,\cdots, I_n\in\mathbb{I}_k$. Then 
+Let $I_1, I_2,\cdots, I_n\in\mathbb{I}_k$. Then the union, intersection or set difference between any sets in the collection can be expressed as union of a subset of a finite set of disjoint standard boxes $J=\{J_1,J_2,\cdots J_m\}$.
 \end{theorem}
-
+\begin{proof}
+Write $I_i=(a_{i1},b_{i1}]\times(a_{i2},b_{i2}]\times\cdots\times(a_{ik},b_{ik}]$. Then consider all the coordinates from dimension $1\le d\le k$.
+\begin{equation}
+C^d=\bigcup_{i=1}^n\{a_{di},b_{di}\}
+\end{equation}
+Now, let $C^d_i$ refer to the $i$'th element of $C^d$, sorted by the usual ordering (and removing possible duplicates). Now we can define a set of standard boxes:
+\begin{equation}
+J=\{(C^1_{j_i},C^1_{j_i+1}]\times(C^2_{j_2},C^2_{j_2+1}]\times\cdots\times(C^k_{j_k},b_{j_k+1}]|1\le j_i<|C^j|\}\}
+\end{equation}
+This corresponds to dicing up the smallest standard box that contains all the $I_i$ along cuts that corresponds to the extended sides of all the $I_i$'s. The result is at most $(2n-1)^k$ disjoint standard boxes. From this it clear, that any union, intersection or difference between two $I$'s can be made by a disjoint union of $J$. Since $J$ is finite the union is finite. From this is clear that any finite amount of set operations can still be written as a finite, disjoint union from elements of $J$.
+\end{proof}
 
 \subsection{Uniqueness of the Lebesgue measure}
 
