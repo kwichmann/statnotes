@@ -7,21 +7,30 @@
 \usepackage{pgfplots}
 \pgfplotsset{width=10cm,compat=1.9}
 
+\title{Bayesian statistics}
+\author{Kristian Wichmann}
+
 \begin{document}
 
-\section{Bayesian statistics}
+\maketitle
+
+This document is based primarily on chapter 19 from Wonnacott and Wonnacott's "Introductory Statistics" (fifth edition) and the Coursera course "Bayesian Statistics" offered by Duke University.
+
+\section{Bayesian inference}
+
+\subsection{The Bayesian view of probability}
 
 \textit{Bayesian statistics}, as opposed to frequentist statistics, views probabilities merely as current opinion regarding the true state of the world. As new data is brought to light such opinion will be revised to reflect the new evidence. The way to update probabilities is prescribed by Bayes' theorem.\par
 So Bayesian probabilities are subjective, in contrast to the objective probabilities of frequentist statistics.
 
-\subsection{Prior and posterior probablities}
+\subsection{Prior and posterior probabilities}
 Assume we have a given probability of an event $A$ happening. This probability $P(A)$ is known as the \textit{prior} in Bayesian terminology. Now, assume we know that event $B$ has occured - this constitutes evidence. We should now adjust our probability of event $A$ to the conditional probability $P(A|B)$, which is known as the \textit{posterior}. The two are related by Bayes' theorem:
 \begin{equation}
 \label{bayes}
 P(A|B)=\frac{P(B|A)P(A)}{P(B)}
 \end{equation}
 
-\subsection{Example: Radio quality}
+\subsubsection{Example: Radio quality}
 A given corporation produces radios. Of the last 200 truckloads of radios, 128 have been "bad" and 72 "good"; In the bad truckloads 44\% of the radios were defective. In the good truckloads only 15\%. Now, we're faced with determining whether a new truckload of radios is good or bad. Initially, since all we have is the information that 128 out of 200 truckloads have been bad, our prior probabilities would be:
 \begin{equation}
 P(B)=\frac{128}{200}=64\%,\quad P(G)=\frac{72}{200}=36\%
@@ -76,7 +85,79 @@ Or reworded to resemble equation $(\ref{bayes_odds})$:
 \textrm{posterior probability}\propto\textrm{likelihood}\cdot\textrm{prior probability}
 \end{equation}
 
-\subsubsection{Radio quality revisited}
+\subsubsection{Discrete example: Coin throws}
+Consider a coin which may or may not be biased. We initially think it's 50\% likely to be fair, but still consider the possibility of the probability of getting heads $p$ as 20\%, 40\%, 60\%, and 80\% possible, and assign each possibility an equal share of the remaining 50\%. In other words, our prior is:
+\begin{center}
+\begin{tabular}{ c | c c c c c }
+ $p_0$		& 0.2 & 0.4 & 0.5 & 0.6	& 0.8 \\
+ \hline
+ $P(p=p_0)$	& $\frac{1}{8}$ & $\frac{1}{8}$ & $\frac{1}{2}$	& $\frac{1}{8}$ & $\frac{1}{8}$\\      
+\end{tabular}
+\end{center}
+Now, we toss the coin three times and get all heads. What is the posterior distribution in this case? As usual, we can use Bayes' theorem to answer this:
+\begin{equation}
+P(p=p_0|3\textrm{ heads})=\frac{P(3\textrm{ heads}|p=p_0)P(p=p_0)}{P(3\textrm{ heads})}
+\end{equation}
+Here, $p_0$ may take on any of our five considered values. The likelihood $P(3\textrm{ heads}|p=p_0)$ is a binomial distribution:
+\begin{equation}
+P(3\textrm{ heads}|p=p_0)=\binom{3}{3}p_0^0(1-p_0)^3=(1-p_0)^3
+\end{equation}
+The probability $P(3\textrm{ heads})$ can be calculated using the law of total probability:
+\begin{align*}
+P(&3\textrm{ heads})=\sum_{p_0}P(3\textrm{ heads}|p=p_0)P(p=p_0)=\sum_{p_0}(1-p_0)^3 P(p=p_0)=\\
+&(1-0.2)^3\frac{1}{8}+(1-0.4)^3\frac{1}{8}+(1-0.5)^3\frac{1}{2}+(1-0.6)^3\frac{1}{8}+(1-0.8)^3\frac{1}{8}=\\
+&0.1625
+\end{align*}
+Now, we can calculate a posterior probability for each $p_0$. For instance:
+\begin{equation}
+P(p=0.2|3\textrm{ heads})=\frac{(1-0.2)^3\cdot\frac{1}{8}}{0.1625}\approx 39.4\%
+\end{equation}
+Repeating for the remaining 4 possibilities gives us the following table of the posterior distribution:
+\begin{center}
+\begin{tabular}{ c | c c c c c }
+ $p_0$		& 0.2 & 0.4 & 0.5 & 0.6	& 0.8 \\
+ \hline
+ $P(p=p_0|3\textrm{ heads})$ & 39.4\% & 16.6\% & 38.5\%	& 4.9\% & 0.6\%\\      
+\end{tabular}
+\end{center}
+Of course, we could also have disregarded the constants independent of $p_0$ - the denominator and the binomial coefficient (in generel it will be different from 1) - and eventually normalize the resulting distribution.
+
+\subsubsection{Discrete example: The "two-armed bandit"}
+We have two slot machines - also known as "one-armed bandits" - to play. Let's call them $M_1$ and $M_2$. We know that one of them is "good", in that the win rate is $\frac{1}{2}$, and that one of them is "bad", having only a win rate of $\frac{1}{3}$. But initially, we do not know which is which. So our prior is:
+\begin{equation}
+P(M_1\textrm{ good}=P(M_2\textrm{ bad})=\frac{1}{2},\quad P(M_1\textrm{ bad})= (M_2\textrm{ good})=\frac{1}{2}
+\end{equation}
+But we do know the conditional probabilities for winning
+\begin{align}
+P(\textrm{Win on }M_1|M_1\textrm{ good})=&P(\textrm{Win on }M_2|M_2\textrm{ good})=\frac{1}{2}\\
+P(\textrm{Win on }M_1|M_1\textrm{ bad})=&P(\textrm{Win on }M_2|M_2\textrm{ bad})=\frac{1}{3}
+\end{align}
+And losing:
+\begin{align}
+P(\textrm{Lose on }M_1|M_1\textrm{ good})=&P(\textrm{Lose on }M_2|M_2\textrm{ good})=\frac{1}{2}\\
+P(\textrm{Lose on }M_1|M_1\textrm{ bad})=&P(\textrm{Lose on }M_2|M_2\textrm{ bad})=\frac{2}{3}
+\end{align}
+Now, let's say that we play $M_1$ and we win. What is the posterior probability of $M_1$ being good? We use Bayes' theorem:
+\begin{align}
+&P(M_1\textrm{ good}|\textrm{Win on }M_1)=\\
+&\frac{P(\textrm{Win on }M_1|M_1\textrm{ good})P(M_1\textrm{ good})}{P(\textrm{Win on }M_1|M_1\textrm{ good})P(M_1\textrm{ good})+P(\textrm{Win on }M_1|M_1\textrm{ bad})P(M_1\textrm{ bad})}
+\end{align}
+This is equal to:
+\begin{equation}
+\frac{\frac{1}{2}\cdot\frac{1}{2}}{\frac{1}{2}\cdot\frac{1}{2}+\frac{1}{3}\cdot\frac{1}{2}}=\frac{1/4}{5/12}=\frac{3}{5}=60\%
+\end{equation}
+This also means, that the posterier probability of $M_2$ being good is 40\%. If we had instead played $M_1$ and lost the corresponding posterior would be:
+\begin{align}
+&P(M_1\textrm{ good}|\textrm{Lose on }M_1)=\\
+&\frac{P(\textrm{Lose on }M_1|M_1\textrm{ good})P(M_1\textrm{ good})}{P(\textrm{Lose on }M_1|M_1\textrm{ good})P(M_1\textrm{ good})+P(\textrm{Lose on }M_1|M_1\textrm{ bad})P(M_1\textrm{ bad})}
+\end{align}
+This is equal to:
+\begin{equation}
+\frac{\frac{1}{2}\cdot\frac{1}{2}}{\frac{1}{2}\cdot\frac{1}{2}+\frac{2}{3}\cdot\frac{1}{2}}=\frac{1/4}{7/12}=\frac{3}{7}\approx 42.9\%
+\end{equation}
+
+
+\subsubsection{Continuous example: Radio quality revisited}
 The radio manufacturing company from above have made further inquiries into the distribution of percentages of defective radios in a truckload. In this situation, the general parameter $\theta$ from last section corresponds to the defective percentage, which we will call $\pi$. It turns out, that this percentage seems to follow a beta distribution with parameters $\alpha=2$ and $\beta=4$:
 \begin{equation}
 P(\pi)\propto\pi(1-\pi)^3
@@ -125,6 +206,10 @@ The graph below shows the three distributions for comparison\footnote{The likeli
 \end{axis}
 \end{tikzpicture}
 
+\section{Bayesian inference for the beta distribution}
+We've already seen the beta distribution in action in the example above. The distribution is useful, because it's appropriate to assign to something that is itself a probability.
+
+\section{Bayesian inference for the normal distribution}
+
+
 \end{document}
-
-
