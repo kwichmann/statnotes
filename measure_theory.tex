@@ -40,17 +40,17 @@ Any non-empty subset of $\mathbb{R}^*$ has an infimum and a supremum. This follo
 \begin{definition}
 For a sequence $a_1,a_2,\cdots\in\mathbb{R}^*$ we define \textit{limes inferior} and \textit{limes superior} by:
 \begin{align}
-\underset{n\rightarrow\infty}{\textrm{lim inf}}\ a_n&=\underset{p\ge 1}{\textrm{inf}}\ \textrm{sup}\{a_n|n\ge p\}\\
-\underset{n\rightarrow\infty}{\textrm{lim sup}}\ a_n&=\underset{p\ge 1}{\textrm{sup}}\ \textrm{inf}\{a_n|n\ge p\}
+\liminf_{n\rightarrow\infty}a_n&=\inf_{p\ge 1}\sup\{a_n|n\ge p\}\\
+\limsup_{n\rightarrow\infty}a_n&=\sup_{p\ge 1}\inf\{a_n|n\ge p\}\\
 \end{align}
 \end{definition}
-In other words, limes inferior is the infimum of the non-increasing sequence $\lambda_p=\textrm{sup}\{a_n|n\ge p\}$. Similarly, limes superior is the supremum of the non-decreasing sequence $\delta_p=\textrm{inf}\{a_n|n\ge p\}$.
+In other words, limes inferior is the infimum of the non-increasing sequence $\lambda_p=\sup\{a_n|n\ge p\}$. Similarly, limes superior is the supremum of the non-decreasing sequence $\delta_p=\inf\{a_n|n\ge p\}$.
 
 \begin{theorem}
 \label{liminf_limsup}
 A sequence $a_1,a_2,\cdots\in\mathbb{R}^*$ is convergent if and only if:
 \begin{equation}
-\underset{n\rightarrow\infty}{\textrm{lim inf}}\ a_n=\underset{n\rightarrow\infty}{\textrm{lim sup}}\ a_n=a
+\liminf_{n\rightarrow\infty}a_n=\limsup_{n\rightarrow\infty}a_n=a
 \end{equation}
 The limit is then equal to $a$. 
 \end{theorem}
@@ -64,14 +64,14 @@ Let's split into the two cases of the limit being finite and non-finite.
 So $\{a_n|n\ge p\}$ takes values in the interval $(a-\varepsilon,a+\varepsilon)$. This means that $a+\varepsilon$ is an upper bound and that no upper bound can be below $a-\varepsilon$. In other words $a+\varepsilon\ge\lambda_p\ge a+\varepsilon$. Since this is true for all $\varepsilon>0$ this means that limes inferior must be equal to $a$. A similar argument shows that limes superior must also be $a$.
 \item Finite limit, $\Leftarrow$: Here:
 \begin{equation}
-\underset{n\rightarrow\infty}{\textrm{lim inf}}\ a_n=\underset{n\rightarrow\infty}{\textrm{lim sup}}\ a_n=a\in\mathbb{R}
+\liminf_{n\rightarrow\infty}a_n=\limsup_{n\rightarrow\infty}a_n=a\in\mathbb{R}
 \end{equation}
-This means that $\forall p:\lambda_p\ge a$ and $\forall p:\delta_p\le a$. Now, let an $\varepsilon>0$ be given. There must now be a $p'$ where $\lambda_{p'}-a<\varepsilon$ and another $p''$ where $a-\delta_{p''}<\varepsilon$. Set $p=\textrm{max}\{p',p''\}$. Then by monotonicity of the $\lambda$'s and $\delta$'s we have:
+This means that $\forall p:\lambda_p\ge a$ and $\forall p:\delta_p\le a$. Now, let an $\varepsilon>0$ be given. There must now be a $p'$ where $\lambda_{p'}-a<\varepsilon$ and another $p''$ where $a-\delta_{p''}<\varepsilon$. Set $p=\max\{p',p''\}$. Then by monotonicity of the $\lambda$'s and $\delta$'s we have:
 \begin{equation}
 \lambda_p-a<\varepsilon,\quad a-\delta_p<\varepsilon
 \end{equation}
 Now, since $\lambda_p=\textrm{sup}\{a_n|n\ge p\}$ we have:
-$\forall n\ge p: a_n\le\lambda_p$. This is equivalent to $a_n-a\le\lambda_p-a<\varepsilon$. Similarly, since $\delta_p=\textrm{inf}\{a_n|n\ge p\}$ we have: $\forall n\ge p: a_n\ge\delta_p$. Which is equivalent to $a_n-a\ge\delta_p-a\Leftrightarrow a-a_n\le a-\delta_p$. So $a-a_n\le\varepsilon$. All in all we have $|a_n-a|<\varepsilon$, which shows that $\underset{n\rightarrow\infty}{a_n}=a$.
+$\forall n\ge p: a_n\le\lambda_p$. This is equivalent to $a_n-a\le\lambda_p-a<\varepsilon$. Similarly, since $\delta_p=\inf\{a_n|n\ge p\}$ we have: $\forall n\ge p: a_n\ge\delta_p$. Which is equivalent to $a_n-a\ge\delta_p-a\Leftrightarrow a-a_n\le a-\delta_p$. So $a-a_n\le\varepsilon$. All in all we have $|a_n-a|<\varepsilon$, which shows that $\underset{n\rightarrow\infty}{a_n}=a$.
 \item Infinite limit, $\Rightarrow$: Assume the series converges to $\infty$. This means that:
 \begin{equation}
 \forall r\in\mathbb{R}\ \exists p\ \forall n\ge p: a_n>r
@@ -79,7 +79,7 @@ $\forall n\ge p: a_n\le\lambda_p$. This is equivalent to $a_n-a\le\lambda_p-a<\v
 Since $\{a_n|n\ge p\}$ is not upper bound, the only upper bound is $\infty$. So $\lambda_n=\infty$, which means limes inferior must be $\infty$. A lower bound for $\{a_n|n\ge p\}$ is $r$, so $\delta_p\ge r$. Since this is true for all $r$, limes superior must be $\infty$. Similarly for convergence to $-\infty$.
 \item Infinite limit, $\Leftarrow$: Assume that:
 \begin{equation}
-\underset{n\rightarrow\infty}{\textrm{lim inf}}\ a_n=\underset{n\rightarrow\infty}{\textrm{lim sup}}\ a_n=\infty
+\liminf_{n\rightarrow\infty}a_n=\limsup_{n\rightarrow\infty}a_n=\infty
 \end{equation}
 Since limes inferior is infinite, this means that the $\delta$'s get arbitrarily large. In other words:
 \begin{equation}
@@ -110,7 +110,7 @@ We now consider an infinite sum of elements of $\mathbb{R}_+^*$:
 The index set $J$ can be of arbitrary cardinality. We now set:
 \begin{definition}
 \begin{equation}
-\sum_{j\in J}a_j=\textrm{sup}\left\{\sum_{i\in I}a_i|I\subseteq J, I\textrm{ finite}\right\}
+\sum_{j\in J}a_j=\sup\left\{\sum_{i\in I}a_i|I\subseteq J, I\textrm{ finite}\right\}
 \end{equation}
 If $J=\emptyset$ we set the sum equal to 0.
 \end{definition}
@@ -120,19 +120,19 @@ The following theorem for suprema in $\mathbb{R}_+^*$ will come in handy:
 \label{suprema_sets}
 Let $a\in\mathbb{R}_+^*$ and $A,B\subseteq\mathbb{R}_+^*$. Then:
 \begin{align}
-\textrm{(a) sup}(a+B)&=a+\textrm{sup}B\\
-\textrm{(b) sup}(a\cdot B)&=a\cdot\textrm{sup}B\\
-\textrm{(c) sup}(A+B)&=\textrm{sup}A+\textrm{sup}B\\
-\textrm{(d) sup}(A\cdot B)&=\textrm{sup}A\cdot\textrm{sup}B
+\textrm{(a) }\sup(a+B)&=a+\sup B\\
+\textrm{(b) }\sup(a\cdot B)&=a\cdot\sup B\\
+\textrm{(c) }\sup(A+B)&=\sup A+\sup B\\
+\textrm{(d) }\sup(A\cdot B)&=\sup A\cdot\sup B
 \end{align}
 Here $a+B=\{a+b|b\in B\}, a\cdot B=\{a\cdot b|b\in B\}, A+B=\{a+b|a\in A, b\in B\}$ and $A\cdot B=\{a\cdot b|a\in A, b\in B\}$.
 \end{theorem}
 \begin{proof}
 There's four parts to be shown:
 \begin{itemize}
-\item (a): If $U$ is an upper bound on $B$, then $U\ge\textrm{sup}B$. Now $U'=a+U$ is an upper bound on $a+B$. So for all upper bounds on $a+B$ we have $U'\ge a+\textrm{sup}B$, and so is the minimum upper bound, which is the supremum is $a+\textrm{sup}B$.
+\item (a): If $U$ is an upper bound on $B$, then $U\ge\textrm{sup}B$. Now $U'=a+U$ is an upper bound on $a+B$. So for all upper bounds on $a+B$ we have $U'\ge a+\sup B$, and so is the minimum upper bound, which is the supremum is $a+\sup B$.
 \item (b): Similar to (a), but here the bounds are multiplied by $a$ instead of added.
-\item (c): Let $U_A$ and $U_B$ be upper bounds on $A$ and $B$ respectively. This means that $U_A\ge\textrm{sup}A$ and $U_B\ge\textrm{sup}B$. So any upper bound of $(A+B)$ can be written $U'=U_A+U_B\ge\textrm{sup}A+\textrm{sup}B$. This shows that $\textrm{sup}(A+B)=\textrm{sup}A+\textrm{sup}B$.
+\item (c): Let $U_A$ and $U_B$ be upper bounds on $A$ and $B$ respectively. This means that $U_A\ge\sup A$ and $U_B\ge\sup B$. So any upper bound of $(A+B)$ can be written $U'=U_A+U_B\ge\sup A+\sup B$. This shows that $\sup (A+B)=\sup A+\sup B$.
 \item (d): Similar to (c) but with multiplication instead of addition.
 \end{itemize}
 \end{proof}
@@ -148,13 +148,13 @@ Let $(a_j)_{j\in J}$ be elements of $\mathbb{R}_+^*$. And let $J_1,J_2\subseteq 
 \begin{proof}
 By definition, the sums are equal to suprema over finite subsets of the respective families:
 \begin{align}
-\sum_{j\in J} a_j &=\textrm{sup}\left\{\sum_{i\in I}a_i|I\subseteq J, I\textrm{ finite}\right\}\\
-\sum_{j_1\in J_1} a_j &=\textrm{sup}\left\{\sum_{i_1\in I_1}a_{i_1}|I_1\subseteq J_1, I_1\textrm{ finite}\right\}\\
-\sum_{j_2\in J_2} a_j &=\textrm{sup}\left\{\sum_{i_2\in I_2}a_{i_2}|I_2\subseteq J_2, I_2\textrm{ finite}\right\}
+\sum_{j\in J} a_j &=\sup\left\{\sum_{i\in I}a_i|I\subseteq J, I\textrm{ finite}\right\}\\
+\sum_{j_1\in J_1} a_j &=\sup\left\{\sum_{i_1\in I_1}a_{i_1}|I_1\subseteq J_1, I_1\textrm{ finite}\right\}\\
+\sum_{j_2\in J_2} a_j &=\sup\left\{\sum_{i_2\in I_2}a_{i_2}|I_2\subseteq J_2, I_2\textrm{ finite}\right\}
 \end{align}
 Since the right hand side of equation $(\ref{split_sum})$ is now a sum of suprema over two sets, we can use theorem $(\ref{suprema_sets})$, (c) to write it as:
 \begin{equation}
-\textrm{sup}\left\{\sum_{i_1\in I_1}a_{i_1}+\sum_{i_2\in I_2}a_{i_2}|I_1\subseteq J_1, I_2\subseteq J_2; I_1, I_2\textrm{ finite}\right\}
+\sup\left\{\sum_{i_1\in I_1}a_{i_1}+\sum_{i_2\in I_2}a_{i_2}|I_1\subseteq J_1, I_2\subseteq J_2; I_1, I_2\textrm{ finite}\right\}
 \end{equation}
 But this set is just the same as finite sums from $J$, so the two sides of equation $(\ref{split_sum})$ are equal.
 \end{proof}
@@ -180,7 +180,7 @@ Let $(a_j)_{j\in J}$ be elements of $\mathbb{R}_+^*$. And let $J_i\subseteq J, i
 \begin{proof}
 Now, the sum over $K$ is again defined as a supremum. For brevity, set $S_k=\sum_{j_k\in J_k}a_{j_k}$. The right hand side is now:
 \begin{equation}
-\sum_{k\in K}S_k=\textrm{sup}\left\{\sum_{k'\in K'} S_{k'}|K'\subseteq K, K'\textrm{ finite}\right\}
+\sum_{k\in K}S_k=\sup\left\{\sum_{k'\in K'} S_{k'}|K'\subseteq K, K'\textrm{ finite}\right\}
 \end{equation}
 Since each $S_k$ is itself a supremum over a finite subset, the set on the right hand side is in fact just the set of finite sums from $J$ itself, and therefore equation $(\ref{split_sum_arb})$ must be true.
 \end{proof}
@@ -210,52 +210,52 @@ For $n\in\mathbb{N}$, consider the number of $a_j\ge\frac{1}{n}$. Since the sum 
 
 \section{Sigma algebras}
 \begin{definition}
-An \textit{algebra} $\mathcal{F}$ over a set $\Omega$ is a non-empty collection of subsets of $\Omega$ such that:
+An \textit{algebra} $\mathbb{E}$ over a set $X$ is a non-empty collection of subsets of $X$ such that:
 \begin{equation}
-\textrm{(i) }A\in\mathcal{F}\Rightarrow A^c\in\mathcal{F}
+\textrm{(i) }A\in\mathbb{E}\Rightarrow A^c\in\mathbb{E}
 \end{equation}
 \begin{equation}
-\textrm{(ii) }A, B\in\mathcal{F}\Rightarrow A\cup B\in\mathcal{F}
+\textrm{(ii) }A, B\in\mathbb{E}\Rightarrow A\cup B\in\mathbb{E}
 \end{equation}
-In other words, $\mathcal{F}$ is closed under complements and finite unions.
+In other words, $\mathbb{E}$ is closed under complements and finite unions.
 \end{definition}
 
-For any $\Omega$ we may always form the \textit{trivial algebra}, which is simply $\mathcal{F}=\mathcal{P}(\Omega)$, the set of all subsets of $\Omega$.
+For any $X$ we may always form the \textit{trivial algebra}, which is simply $\mathbb{E}=\mathcal{P}(X)$, the set of all subsets of $X$.
 
 \begin{theorem}
-Given an algebra $\mathcal{F}$ over $\Omega$, $\Omega\in\mathcal{F}$ and $\emptyset\in\mathcal{F}$.
+Given an algebra $\mathbb{E}$ over $X$, $X\in\mathbb{E}$ and $\emptyset\in\mathbb{E}$.
 \end{theorem}
 \begin{proof}
-Since an algebra is non-empty, there exists an $A\in\mathcal{F}$. By (i) $A^c\in\mathcal{F}$. By (ii) $A\cup A^c=\Omega\in\mathcal{F}$. By (i) $\Omega^c=\emptyset=\Omega\in\mathcal{F}$.
+Since an algebra is non-empty, there exists an $A\in\mathbb{E}$. By (i) $A^c\in\mathbb{E}$. By (ii) $A\cup A^c=X\in\mathbb{E}$. By (i) $X^c=\emptyset\in\mathbb{E}$.
 \end{proof}
 
-In fact, for any $\Omega$, the set $\{\emptyset,\Omega\}$ is an algebra. If $A\subseteq\Omega$, so is the set $\{\emptyset,A,A^c,\Omega\}$.
+In fact, for any $X$, the set $\{\emptyset,X\}$ is an algebra. If $A\subseteq X$, so is the set $\{\emptyset,A,A^c,X\}$.
 
 \begin{theorem}
 \label{finite_union}
-An algebra $\mathcal{F}$ over $\Omega$ is closed under finite intersections:
+An algebra $\mathbb{E}$ over $X$ is closed under finite intersections:
 \begin{equation}
-A, B\in\mathcal{F}\Rightarrow A\cap B\in\mathcal{F}
+A, B\in\mathbb{E}\Rightarrow A\cap B\in\mathbb{E}
 \end{equation}
 \end{theorem}
 \begin{proof}
-Let $A, B\in\mathcal{F}$. By (i) $A^c, B^c\in\mathcal{F}$. By (ii) $A^c\cup B^c\in\mathcal{F}$. By (i) $(A^c\cup B^c\in\mathcal{F})^c=A\cap B\in\mathcal{F}$. Here one of de Morgan's laws have been used.
+Let $A, B\in\mathbb{E}$. By (i) $A^c, B^c\in\mathbb{E}$. By (ii) $A^c\cup B^c\in\mathbb{E}$. By (i) $(A^c\cup B^c\in\mathbb{E})^c=A\cap B\in\mathbb{E}$. Here one of de Morgan's laws have been used.
 \end{proof}
 
 \begin{definition}
 A $\sigma$-algebra is an algebra that is closed under countably infinite unions instead of merely finite ones:
 \begin{equation}
-A_1, A_2,\cdots\in\mathcal{F}\Rightarrow\underset{i\in\mathbb{N}}{\bigcup}A_i\in\mathcal{F}
+A_1, A_2,\cdots\in\mathbb{E}\Rightarrow\underset{i\in\mathbb{N}}{\bigcup}A_i\in\mathbb{E}
 \end{equation}
-The tuple $(\Omega,\mathcal{F})$ is collectively known as a measurable space. The elements of $\mathcal{F}$ are called $\mathcal{F}$-measurable or simply measurable, when there's no chance of confusion.
+The tuple $(X,\mathbb{E})$ is collectively known as a measurable space. The elements of $\mathbb{E}$ are called $\mathbb{E}$-measurable or simply measurable, when there's no chance of confusion.
 \end{definition}
 
 In general, sigma refers to countable infinity.
 
 \begin{theorem}
-A $\sigma$-algebra $\mathcal{F}$ over $\Omega$ is closed under countably infinite intersections:
+A $\sigma$-algebra $\mathbb{E}$ over $X$ is closed under countably infinite intersections:
 \begin{equation}
-A_1, A_2,\cdots\in\mathcal{F}\Rightarrow\underset{i\in\mathbb{N}}{\bigcap}A_i\in\mathcal{F}
+A_1, A_2,\cdots\in\mathbb{E}\Rightarrow\underset{i\in\mathbb{N}}{\bigcap}A_i\in\mathbb{E}
 \end{equation}
 \end{theorem}
 \begin{proof}
@@ -264,25 +264,25 @@ The proof is completely analogous to the one for theorem $\ref{finite_union}$, s
 
 \begin{theorem}
 \label{sigma_intersect}
-Given a family of $\sigma$-algebras $(\mathcal{F}_i)_{i\in I}$ over $\Omega$, the intersection $\bigcap_{i\in I}\mathcal{F}_i$ is also a $\sigma$-algebra.
+Given a family of $\sigma$-algebras $(\mathbb{E}_i)_{i\in I}$ over $X$, the intersection $\bigcap_{i\in I}\mathbb{E}_i$ is also a $\sigma$-algebra.
 \end{theorem}
 \begin{proof}
-Since all $\sigma$-algebras contain $\emptyset$ and $\Omega$, the intersection is non-empty. Consider $A\in\bigcap_{i\in I}\mathcal{F}_i$. Then $A$ must be an element in all $\mathcal{F}_i$. Therefore $A^c$ is also an element in all $\mathcal{F}_i$, and thus an element of $\bigcap_{i\in I}\mathcal{F}_i$. Similarly, if $A_n\in\bigcap_{i\in I}\mathcal{F}_i$ for $n\in\mathbb{N}$, then $A_n\in\mathcal{F}_i$, and therefore $\bigcup_{n\in\mathbb{N}}A_n\in\mathcal{F}_i$ for all $i\in I$. So $\bigcup_{n\in\mathbb{N}}A_n\in\bigcap_{i\in I}\mathcal{F}_i$.
+Since all $\sigma$-algebras contain $\emptyset$ and $X$, the intersection is non-empty. Consider $A\in\bigcap_{i\in I}\mathbb{E}_i$. Then $A$ must be an element in all $\mathbb{E}_i$. Therefore $A^c$ is also an element in all $\mathbb{E}_i$, and thus an element of $\bigcap_{i\in I}\mathbb{E}_i$. Similarly, if $A_n\in\bigcap_{i\in I}\mathbb{E}_i$ for $n\in\mathbb{N}$, then $A_n\in\mathbb{E}_i$, and therefore $\bigcup_{n\in\mathbb{N}}A_n\in\mathbb{E}_i$ for all $i\in I$. So $\bigcup_{n\in\mathbb{N}}A_n\in\bigcap_{i\in I}\mathbb{E}_i$.
 \end{proof}
 
 We can use theorem $(\ref{sigma_intersect})$ to make the following useful definition:
 
 \begin{definition}
-Let $\mathbb{D}$ be a subset of a $\sigma$-algebra $\mathcal{F}$. We then define the $\sigma$-algebra generated by $\mathbb{D}$ as:
+Let $\mathbb{D}$ be a subset of a $\sigma$-algebra $\mathbb{E}$. We then define the $\sigma$-algebra generated by $\mathbb{D}$ as:
 \begin{equation}
-\sigma(\mathbb{D})=\bigcap\left\{\mathcal{G}|\mathbb{D}\subseteq\mathcal{G}\subseteq\mathcal{F}, \mathcal{G}\textrm{ is a }\sigma-\textrm{algebra}\right\}
+\sigma(\mathbb{D})=\bigcap\left\{\mathbb{G}|\mathbb{D}\subseteq\mathbb{G}\subseteq\mathbb{E}, \mathbb{G}\textrm{ is a }\sigma-\textrm{algebra}\right\}
 \end{equation}
 \end{definition}
 
 Note: The set to be intersected is non-empty, as $\mathcal{P}(\Omega)$ always is a $\sigma$-algebra over $\Omega$. $\sigma(\mathbb{D})$ can be thought of as the smallest $\sigma$-algebra containing $\mathbb{D}$.
 
 \begin{definition}
-If there is a finite $\mathbb{D}$ such that $\sigma(\mathbb{D})=\mathcal{F}$, $\mathcal{F}$ is said to be finitely generated.  
+If there is a finite $\mathbb{D}$ such that $\sigma(\mathbb{D})=\mathbb{E}$, $\mathbb{E}$ is said to be finitely generated.  
 \end{definition}
 
 \subsection{The Borel algebra}
@@ -550,10 +550,10 @@ But according to theorem $\ref{measurable_f}$ (v) this simply means that the coo
 \subsection{Limits of measurable functions}
 \begin{theorem}
 \label{function_limit}
-Let $(X,\mathbb{E})$ be a non-empty measurable space. Let $f_1,f_2,\cdots$ be a series of $\mathbb{E}-\mathbb{B}^*$-measurable functions, $f_i: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$. Then the functions (defined in a pointwise sense) $\textrm{sup}_n f_n, \textrm{inf}_n f_n, \textrm{lim sup}_n f_n$ and $\textrm{lim inf}_n f_n$ are all $\mathbb{E}-\mathbb{B}^*$-measurable.
+Let $(X,\mathbb{E})$ be a non-empty measurable space. Let $f_1,f_2,\cdots$ be a series of $\mathbb{E}-\mathbb{B}^*$-measurable functions, $f_i: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$. Then the functions (defined in a pointwise sense) $\sup_n f_n, \inf_n f_n, \limsup_n f_n$ and $\liminf_n f_n$ are all $\mathbb{E}-\mathbb{B}^*$-measurable.
 \end{theorem}
 \begin{proof}
-Let $f=\textrm{sup}_n f_n$. That is $\forall x\in X: f(x)=\textrm{sup}\{f_i(x)|i\in\mathbb{B}\}$. Now consider the inequality:
+Let $f=\sup_n f_n$. That is $\forall x\in X: f(x)=\sup\{f_i(x)|i\in\mathbb{B}\}$. Now consider the inequality:
 \begin{equation}
 f(x)>a\Leftrightarrow\exists n\in\mathbb{R}: f_n(x)>a
 \end{equation}
@@ -565,13 +565,13 @@ But this can also be written as:
 \begin{equation}
 \bigcup_{n\in\mathbb{N}}\{x\in X|f_n(x)>a\}
 \end{equation}
-But since $f_n$ is measurable, according to theorem $\ref{measurable_f_star}$ this set is an element of $\mathbb{E}$. By the same theorem, $f$ is also measurable. A similar argument can be made for $f=\textrm{inf}_n f_n$. Limes superior and limes inferior are both successive applications of infimum and supremum, and so are both measurable as well.
+But since $f_n$ is measurable, according to theorem $\ref{measurable_f_star}$ this set is an element of $\mathbb{E}$. By the same theorem, $f$ is also measurable. A similar argument can be made for $f=\inf_n f_n$. Limes superior and limes inferior are both successive applications of infimum and supremum, and so are both measurable as well.
 \end{proof}
 
 It now immediately follows that the pointwise limit of a series of measurable functions is itself measurable:
 
 \begin{theorem}
-Let $(X,\mathbb{E})$ be a non-empty measurable space. Let $f_1,f_2,\cdots$ be a series of $\mathbb{E}-\mathbb{B}^*$-measurable functions, $f_i: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$. Then if the function $f: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$, where $f(x)=\underset{n\rightarrow\infty}{\textrm{lim}}f_n(x)$ exists, then it is $\mathbb{E}-\mathbb{B}^*$-measurable.
+Let $(X,\mathbb{E})$ be a non-empty measurable space. Let $f_1,f_2,\cdots$ be a series of $\mathbb{E}-\mathbb{B}^*$-measurable functions, $f_i: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$. Then if the function $f: (X,\mathbb{E})\rightarrow(\mathbb{R}^*,\mathbb{B}^*)$, where $f(x)=\lim_{n\rightarrow\infty}f_n(x)$ exists, then it is $\mathbb{E}-\mathbb{B}^*$-measurable.
 \end{theorem}
 \begin{proof}
 If $f$ exists, then by theorem $\ref{liminf_limsup}$: $\textrm{lim sup}_n f_n=\textrm{lim inf}_n f_n=f$, which is then measurable by theorem $\ref{function_limit}$.
@@ -584,7 +584,7 @@ Let $(X,\mathbb{E})$ be a non-empty measurable space. Let $f, g: (X,\mathbb{E})\
 \begin{equation}
 |f|, cf, f+g, f-g, f\vee g, f\wedge g, fg 
 \end{equation}
-Here $c\in\mathbb{R}, f\vee g(x)=\textrm{max}(f(x),g(x))$ and $f\wedge g(x)=\textrm{min}(f(x),g(x))$ respectively.
+Here $c\in\mathbb{R}, f\vee g(x)=\max(f(x),g(x))$ and $f\wedge g(x)=\min(f(x),g(x))$ respectively.
 \end{theorem}
 \begin{proof}
 All of these function can be made by composites of $f$ or $\varphi: X\rightarrow\mathbb{R}^2, \varphi(x)=(f(x), g(x))$ and continuous functions. By theorem $\ref{composite_measurable}$ these are all measurable.
@@ -695,22 +695,22 @@ A \textit{measure} is a function that assigns length, area, volume or other weig
 
 \begin{definition}
 \label{measure_definition}
-For a $\sigma$-algebra $\mathcal{F}$ over $\Omega$, a measure is a function $\mu: \mathcal{F}\rightarrow\mathbb{R}_+^*$ which satisfies:
+For a $\sigma$-algebra $\mathbb{E}$ over $X$, a measure is a function $\mu: \\mathbb{E}\rightarrow\mathbb{R}_+^*$ which satisfies:
 \begin{align}
 \textrm{(i) }&\mu(\emptyset)=0\\
 \textrm{(ii) }&\mu\left(\bigcup_{i\in\mathbb{N}}A_i\right)=\sum_{i\in\mathbb{N}}\mu(A_i),\quad A_i\textrm{'s pairwise disjoint}
 \end{align}
-The tuple $(\Omega, \mathcal{F}, \mu)$ is collectively known as a measure space. Sometimes referred to as $(\Omega, \mu)$ as a shorthand. Further, we define:
+The tuple $(X, \mathbb{E}, \mu)$ is collectively known as a measure space. Sometimes referred to as $(X, \mu)$ as a shorthand. Further, we define:
 \begin{itemize}
 \item $\mu(A)$ is called the measure of $A\in\mathbb{E}$.
-\item If $\mu(\Omega)<\infty$, the measure $\mu$ is called finite.
-\item If $\mu(\Omega)=1$, the measure $\mu$ is sometimes referred to as a probability measure or distribution.
+\item If $\mu(X)<\infty$, the measure $\mu$ is called finite.
+\item If $\mu(X)=1$, the measure $\mu$ is sometimes referred to as a probability measure or distribution. In this case, it is customary to use the designations $(\Omega,\mathcal{F},P)$ instead of $(X, \mathbb{E}, \mu)$.
 \end{itemize}
 \end{definition}
 
 \begin{theorem}
 \label{measure_properties}
-Let $(\Omega, \mathcal{F}, \mu)$ be a measure space. Let any set named $E$ or $E_i$ below be an element of $\mathcal{F}$. Then:
+Let $(X, \mathbb{E}, \mu)$ be a measure space. Let any set named $E$ or $E_i$ below be an element of $(X, \mathbb{E}, \mu)$. Then:
 \begin{itemize}
 \item (i): $\mu\left(\bigcup_{i=1}^n A_i\right)=\sum_{i=1}^n\mu(A_i)$ when the $A_i$'s are pairwise disjoint.
 \item (ii): $E_1\subseteq E_2\Rightarrow\mu(E_1)\le\mu(E_2)$.
@@ -772,7 +772,7 @@ We want to show that $\mu$ is a measure:
 
 \subsubsection{Restriction of a measure}
 \label{restriction_of_measure}
-If $(\Omega,\mathcal{F},\mu)$ is a measure space, and $A\in\mathcal{F}$. We might consider restricting the measure to the inherited $\sigma$-algebra $\mathcal{F}_A=\{A\cap F|F\in\mathcal{F}\}$, setting $\mu_A(F)=\mu(A\cap F)$. The measure space $(A,\mathcal{F}_A,\mu_A)$ is denoted the \textit{restriction} of $\mu$ to $A$.
+If $(X,\mathbb{E},\mu)$ is a measure space, and $A\in\mathbb{E}$. We might consider restricting the measure to the inherited $\sigma$-algebra $\mathbb{E}_A=\{A\cap F|F\in\mathbb{E}\}$, setting $\mu_A(F)=\mu(A\cap F)$. The measure space $(A,\mathbb{E}_A,\mu_A)$ is denoted the \textit{restriction} of $\mu$ to $A$.
 
 We want to show that $\mu_A$ is a measure. Both are shown using the corresponding property of $\mu$:
 \begin{itemize}
@@ -786,7 +786,7 @@ We want to show that $\mu_A$ is a measure. Both are shown using the correspondin
 
 \subsubsection{Linear combinations of measures}
 \label{linear_combination_measure}
-Let $(\mu_j)_{j\in J}$ be a family of measure on the measurable space $(\Omega,\mathcal{F})$, and $(a_j)_{j\in J}$ an associated family of numbers, $a_j\in\mathbb{R}^*_+$. We may then define a new measure by:
+Let $(\mu_j)_{j\in J}$ be a family of measure on the measurable space $(X,\mathbb{E})$, and $(a_j)_{j\in J}$ an associated family of numbers, $a_j\in\mathbb{R}^*_+$. We may then define a new measure by:
 \begin{equation}
 \mu(F)=\sum_{j\in J}a_j\mu_j(F)
 \end{equation}
@@ -820,13 +820,13 @@ We want to show that $\varepsilon_a$ is a measure:
 
 \subsection{The term "almost everywhere"}
 \begin{definition}
-Let $(\Omega,\mathcal{F},\mu)$ be a measure space. If for an $F\in\mathcal{F}$ we have $\mu(A)=0$, then $A$ and any subset of $A$, is called a null set with respect to $\mu$.
+Let $(X,\mathbb{E},\mu)$ be a measure space. If for an $F\in\mathbb{E}$ we have $\mu(A)=0$, then $A$ and any subset of $A$, is called a null set with respect to $\mu$.
 \end{definition}
 
 \begin{definition}
-Let $(\Omega,\mathcal{F},\mu)$ be a measure space. Let $P(\omega)$ be an open statement about a point $\omega\in\Omega$. We use the phrase $P$ "$\mu$-almost everywhere" (sometimes shortened to "a.o." or "p.p." for preque partout) to mean that:
+Let $(X,\mathbb{E},\mu)$ be a measure space. Let $p(x)$ be an open statement about a point $x\in X$. We use the phrase $p$ "$\mu$-almost everywhere" (sometimes shortened to "a.o." or "p.p." for preque partout) to mean that:
 \begin{equation}
-\{\omega\in\Omega|\neg P(\omega)\}\textrm{ is a null set with respect to }\mu
+\{x\in X|\neg p(\omega)\}\textrm{ is a null set with respect to }\mu
 \end{equation}
 \end{definition}
 
@@ -834,7 +834,7 @@ For instance, a real function $f: \mathbb{R}\rightarrow\mathbb{R}$ is said to be
 
 \subsubsection{Functions equal almost everywhere}
 \begin{definition}
-Let $(X,\mathbb{F},\mu)$ be a measure space, and let $f, g$ be functions from $X$ to some set $Y$. We now define the following equivalence relation:
+Let $(X,\mathbb{E},\mu)$ be a measure space, and let $f, g$ be functions from $X$ to some set $Y$. We now define the following equivalence relation:
 \begin{equation}
 f\ \sim\ g \Leftrightarrow f(x)=g(x)\ \mu\textrm{-almost everywhere}
 \end{equation}
@@ -1012,7 +1012,7 @@ Let $(X,\mathbb{E},\mu)$ be a measure space. Assume a function $I_\mu: \mathcal{
 \begin{itemize}
 \item (i) For $E\in\mathbb{E}: I_\mu(1_E)=\mu(E)$.
 \item (ii) For $f,g\in\mathcal{M}^+(X,\mathbb{E}): I_\mu(f+g)=I_\mu(f)+I_\mu(g)$
-\item (iii) For a sequence in $\mathcal{M}^+(X,\mathbb{E})$ where $f_n\nearrow f: \underset{n\rightarrow\infty}{\lim}I_\mu(f_n)=I_\mu(f)$
+\item (iii) For a sequence in $\mathcal{M}^+(X,\mathbb{E})$ where $f_n\nearrow f: \lim_{n\rightarrow\infty}I_\mu(f_n)=I_\mu(f)$
 \end{itemize}
 Then $I_\mu(f)=\int f\ d\mu$ as defined through equation $(\ref{M+integral})$.
 \end{theorem}
@@ -1026,12 +1026,12 @@ p I_\mu(f)=I_\mu(pf)=I_\mu(q(rf))=q I_\mu(rf)\Leftrightarrow I_\mu(rf)=r I_\mu(f
 \end{equation}
 This can be done for any linear map. But (iii) allows us to generalize to all positive real numbers in this case. For $c\in\mathbb{R}_+$ there exist an increasing Cauchy sequence of rationals $(q_i)_{i\in\mathbb{N}}$ such that $q_i\nearrow c$. Now apply (iii) to the sequence $q_i f\nearrow c f$ to get:
 \begin{equation}
-\underset{n\rightarrow\infty}{\lim}I_\mu(q_i f)=\underset{n\rightarrow\infty}{\lim}\left(q_i I_\mu(f)\right)=c I_\mu(f)=I_\mu(c f)
+\lim_{n\rightarrow\infty}I_\mu(q_i f)=\lim_{n\rightarrow\infty}\left(q_i I_\mu(f)\right)=c I_\mu(f)=I_\mu(c f)
 \end{equation}
 (A similar argument can be made for $c=\infty$ using the sequence $(n)_{n\in\mathbb{N}}$.) So homogeneity follows from (ii) and (iii), but for clarity, we will add it as a separate condition:
 \begin{equation}
 \label{lebesgue_integral_homogeneity}
-\textrm{(iv) }For f\in\mathcal{M}^+(X,\mathbb{E}), c\in\mathbb{R}^*_+: I_\mu(c f)=c I_\mu(f)
+\textrm{(iv) For} f\in\mathcal{M}^+(X,\mathbb{E}), c\in\mathbb{R}^*_+: I_\mu(c f)=c I_\mu(f)
 \end{equation}
 Now, above we have seen that (i), (ii) and (iv) leads to equation $(\ref{simple_integral})$. If we further require (iii) to be true. From theorem $\ref{simple_limit}$ we know that such a sequence of simple limits exists, and since the limit is equal to supremum for a non-decreasing sequence, equation $(\ref{M+integral})$ follows.
 
@@ -1040,8 +1040,8 @@ So, our analysis shows, that if $I_\mu$ exists, it is unique and must be of the 
 \paragraph{Proof of theorem $\ref{unique_integral_exists}$:}
 (i) is clearly true. Below we will prove (iii), so for now we will assume it to be true. Then (iii) $\Rightarrow$ (ii): Let $f,g\in\mathcal{M}^+(X,\mathbb{E})$. Then pr. theorem $\ref{simple_limit}$ there exists sequences of simple, measurable functions $(s_i)_{i\in\mathbb{N}}$ and $(t_i)_{i\in\mathbb{N}}$ such that $s_i\nearrow f, t_i\nearrow g$ and therefore $s_i+t_i\nearrow f+g$. So according to (iii) and theorem $\ref{simple_integral_linear}$:
 \begin{align}
-\int(f+g)d\mu=&\underset{i\rightarrow\infty}{\lim}\int(s_i+t_i)d\mu=\underset{i\rightarrow\infty}{\lim}\left(\int s_i\ d\mu+\int t_i\ d\mu\right)=\\
-&\underset{i\rightarrow\infty}{\lim}\int s_i\ d\mu+\underset{i\rightarrow\infty}{\lim}\int t_i\ d\mu=\int f\ d\mu+\int g\ d\mu
+\int(f+g)d\mu=&\underset{i\rightarrow\infty}{\lim}\int(s_i+t_i)d\mu=\lim_{n\rightarrow\infty}\left(\int s_i\ d\mu+\int t_i\ d\mu\right)=\\
+&\lim_{n\rightarrow\infty}\int s_i\ d\mu+\lim_{n\rightarrow\infty}\int t_i\ d\mu=\int f\ d\mu+\int g\ d\mu
 \end{align}
 
 So finally, we need to prove (iii). This is a famous result, so we restate it in its own theorem:
@@ -1050,26 +1050,26 @@ So finally, we need to prove (iii). This is a famous result, so we restate it in
 \label{monotone_convergence}
 (Lebesgue's monotone convergence theorem) Let $(X,\mathbb{E},\mu)$ be a measure space and $f_1, f_2,\cdots\in\mathcal{M}^+(X,\mathbb{E})$ so that $f_1\le f_2\le \cdots$. Then:
 \begin{equation}
-\int\left(\underset{i\rightarrow\infty}{\lim}f_i\right)d\mu=\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\int\left(\lim_{n\rightarrow\infty}f_i\right)d\mu=\lim_{n\rightarrow\infty}\int f_i\ d\mu
 \end{equation}
 \end{theorem}
 \begin{proof}
 Since the sequence is non-decreasing, we have:
 \begin{equation}
-f=\underset{i\rightarrow\infty}{\lim}f_i=\underset{i\rightarrow\infty}{\sup}f_i
+f=\lim_{n\rightarrow\infty}f_i=\lim_{n\rightarrow\infty}\sup f_i
 \end{equation}
 Start by noting the following: According to theorem $\ref{function_limit}, f\in\mathcal{M}^+(X,\mathbb{E})$. According to theorem $\ref{integral_ineq}$, $\int f_1\ d\mu\le\int f_2\ d\mu\le\cdots$. So both sides in the equation are well-defined. Since $f\ge f_i$ for all $i\in\mathbb{N}$ we have - again by theorem $\ref{integral_ineq}$:
 \begin{equation}
-\int f\ d\mu\ge\int f_i\ d\mu\ge\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\int f\ d\mu\ge\int f_i\ d\mu\ge\lim_{n\rightarrow\infty}\int f_i\ d\mu
 \end{equation}
 If we can show the opposite inequality, we're done. This amounts to showing, that for all $s\in\mathcal{S}^+(X,\mathbb{E}), s\le f$:
 \begin{equation}
 \label{mono_eq}
-\int s\ d\mu\le\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\int s\ d\mu\le\lim_{n\rightarrow\infty}{\lim}\int f_i\ d\mu
 \end{equation} 
 We now use an odd trick: If we could show the following for all $\alpha\in(0,1)$, this would also show equation $(\ref{mono_eq})$:
 \begin{equation}
-\alpha\int s\ d\mu=\int(\alpha\cdot s)d\mu\le\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\alpha\int s\ d\mu=\int(\alpha\cdot s)d\mu\le\lim_{n\rightarrow\infty}\int f_i\ d\mu
 \end{equation}
 The reason for the need for $\alpha$ will become clear in a minute. Now, consider the $x\in X$ for which $f(x)=0$. In this case $s(x)=f_1(x)=\cdots=0$. If not, we have $s(x)\le f(x)$. If $s(x)=f(x)$, this means $f_n(x)\nearrow s$. In this case, there might not be an $n$ where $s(x)\le f_n(x)$ (this can only happen if $s(x)=f_i(x)$ from a certain point). So we would like a sharp inequality. This is where $\alpha$ comes in, because then $\alpha\cdot s(x)<f(x)$. Now, when this is true, there must be some $n$ where $\alpha\cdot s(x)\le f_n(x)$. Now we construct the following sequence of sets:
 \begin{equation}
@@ -1090,7 +1090,7 @@ Here $\mu(A_i\cap E)$ is the restriction measure of $\mu$ to $(A_i\cap E)$. As s
 \end{equation}
 By construction $\alpha\cdot s\cdot 1_{E_n}\le f_n$, so $\alpha\int s\cdot 1_{E_n}d\mu\le\int f_n\ d\mu$, by theorem $\ref{integral_ineq}$. So restating equation $(\ref{mono_eq2})$ from the right:
 \begin{equation}
-\alpha\int s\ d\mu=\underset{i\rightarrow\infty}{\lim}\alpha\int(s\cdot 1_{E_n})d\mu\le\underset{i\rightarrow\infty}{\lim}\int f_i\ d\mu
+\alpha\int s\ d\mu=\lim_{n\rightarrow\infty}\alpha\int(s\cdot 1_{E_n})d\mu\le\lim_{n\rightarrow\infty}\int f_i\ d\mu
 \end{equation}
 \end{proof}
 
@@ -1132,8 +1132,8 @@ Let $(X,\mathbb{E},\mu)$ be a measure space with a sequence $f_1,f_2,\cdots\in\m
 \begin{proof}
 From $\sum_{i=1}^n f_i\nearrow\sum_{i=1}^\infty f_i$ the monotone convergence theorem implies:
 \begin{align}
-\int\left(\sum_{i=1}^\infty f_i\right)d\mu=&\int\left(\underset{i\rightarrow\infty}{\lim}\sum_{i=1}^n f_i\right)d\mu=\underset{i\rightarrow\infty}{\lim}\int\left(\sum_{i=1}^n f_i\right)d\mu=\\
-&\underset{i\rightarrow\infty}{\lim}\sum_{i=1}^n\int f_i\ d\mu=\sum_{i=1}^\infty\int f_i\ d\mu
+\int\left(\sum_{i=1}^\infty f_i\right)d\mu=&\int\left(\lim_{n\rightarrow\infty}\sum_{i=1}^n f_i\right)d\mu=\lim_{n\rightarrow\infty}\int\left(\sum_{i=1}^n f_i\right)d\mu=\\
+&\lim_{n\rightarrow\infty}\sum_{i=1}^n\int f_i\ d\mu=\sum_{i=1}^\infty\int f_i\ d\mu
 \end{align}
 \end{proof}
 
@@ -1394,7 +1394,7 @@ g\in\mathcal{L}(V,\mathbb{E}_V,\mu_V)\Leftrightarrow \tilde{g}\in\mathcal{L}(X,\
 Furthermore equation $(\ref{g_tilde})$ remains true if this is the case.
 \end{theorem}
 \begin{proof}
-According to theorem $\ref{unique_integral_exists}$ (i) applied to the two measures, for $E\in\mathbb{E}_V$, $\int \widetilde{1_E}\ d\mu=\mu(E)$, but also $\int 1_E\ d\mu_V=\mu_V(E)$. But since $\widetilde{1_E}=1_E$ and $\mu(E)=\mu_V(E)$, is follows that for $s\in\mathcal{S}(V,\mathbb{E}_V)$:
+According to theorem $\ref{unique_integral_exists}$ (i) applied to the two measures, for $E\in\mathbb{E}_V$, $\int \widetilde{1_E}\ d\mu=\mu(E)$, but also $\int 1_E\ d\mu_V=\mu_V(E)$. But since $\widetilde{1_E}=1_E$ and $\mu(E)=\mu_V(E)$, is follows that for $s\in\mathcal{S}^+(V,\mathbb{E}_V)$:
 \begin{equation}
 \int \tilde{s}\ d\mu=\int s\ d\mu_V
 \end{equation}
