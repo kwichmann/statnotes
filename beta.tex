@@ -7,12 +7,16 @@
 \usepackage{pgfplots}
 \pgfplotsset{width=10cm,compat=1.9}
 
+\title{The beta distribution}
+\author{Kristian Wichmann}
+
 \begin{document}
 
-\section{The beta distribution}
+\maketitle
+
 The beta distribution is useful in a number of applications. Specifically, it is often used in Bayesian inference.
 
-\subsection{Definition}
+\section{Definition}
 The pdf of the beta distribution has the interval $[0,1]$ as closed support. The pdf $f$ depends on two parameters, $\alpha$ and $\beta$:
 \begin{equation}
 \label{pdf1}
@@ -25,7 +29,7 @@ f(x)=\frac{1}{B(\alpha,\beta)} x^{\alpha-1}(1-x)^{\beta-1}
 \end{equation}
 Here, $B(\alpha,\beta)$ is known as the \textit{beta function}.
 
-\subsection{The beta and gamma function relationship}
+\section{The beta and gamma function relationship}
 It turns out that the beta function can be expressed in terms of the gamma function, which is defined as
 \begin{equation}
 \label{gamma}
@@ -103,7 +107,7 @@ A few of the possible pdf's are graphed below:
 \end{axis}
 \end{tikzpicture}
 
-\subsection{Moments}
+\section{Moments}
 Consider the raw $n$'th moment of a beta distribution with parameters $\alpha$ and $\beta$:
 \begin{equation}
 \mu_n=\int_0^1 x^n f(x)\ dx=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\int_0^1 x^n x^{\alpha-1}(1-x)^{\beta-1}
@@ -113,7 +117,7 @@ But this integral is simply the reciprocal of the normalization constant for a b
 \mu_n=\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\frac{\Gamma(\alpha+n)\Gamma(\beta)}{\Gamma(\alpha+\beta+n)}=\frac{\Gamma(\alpha+\beta)\Gamma(\alpha+n)}{\Gamma(\alpha)\Gamma(\alpha+\beta+n)}
 \end{equation}
 
-\subsubsection{Mean}
+\subsection{Mean}
 When $n=1$, this becomes:
 \begin{equation}
 \mu=\frac{\Gamma(\alpha+\beta)\Gamma(\alpha+1)}{\Gamma(\alpha)\Gamma(\alpha+\beta+1)}
@@ -123,7 +127,7 @@ But we know that $\Gamma(x+1)=x\Gamma(x)$, so:
 \mu=\frac{\Gamma(\alpha+\beta)\alpha\Gamma(\alpha)}{\Gamma(\alpha)(\alpha+\beta)\Gamma(\alpha+\beta)}=\frac{\alpha}{\alpha+\beta}
 \end{equation}
 
-\subsubsection{Second moment and variance}
+\subsection{Second moment and variance}
 When $n=2$, we get:
 \begin{equation}
 \mu_2=\frac{\Gamma(\alpha+\beta)\Gamma(\alpha+2)}{\Gamma(\alpha)\Gamma(\alpha+\beta+2)}

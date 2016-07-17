@@ -5,12 +5,16 @@
 \usepackage{mathtools}
 \newtheorem{theorem}{Theorem}
 
+\title{The linear model}
+\author{Kristian Wichmann}
+
 \begin{document}
 
-\section{The linear model}
+\maketitle
+
 The \textit{linear model} is a theoretical framework that unifies a number of statistical concepts, like ANOVA and regression.
 
-\subsection{Derivatives and linear algebra}
+\section{Derivatives and linear algebra}
 We will need a few results concerning derivatives of linear algebra expressions. Consider a linear function:
 \begin{equation}
 f: \mathbb{R}^n\rightarrow\mathbb{R}, f(\beta)=A\beta=
@@ -64,9 +68,9 @@ Or more compactly:
 \frac{\partial g}{\partial \beta}=\nabla_\beta g=2A\beta
 \end{equation}
 
-\subsection{Least squares estimation}
+\section{Least squares estimation}
 
-\subsubsection{Statement of the problem}
+\subsection{Statement of the problem}
 The general problem is this: We wish to model a linear relationship between a response variables $Y$ and $p$ predictor variables $X_1, X_2,\cdots X_p$. In other words:
 \begin{equation}
 \label{linear1}
@@ -97,7 +101,7 @@ X =
 \end{equation}
 $X$ is known as the \textit{design matrix}. Given $y$ and $X$, we seek the best fit for $\beta$.
 
-\subsubsection{Least squares}
+\subsection{Least squares}
 There's a number of criteria one could use to pick the best fitting $\beta$. Here, we will search for the one that minimizes the square of the differences in predicted and actual $y$ values. We'll denote this set of parameters as $\hat{\beta}$. The squared difference is:
 \begin{align*}
 ||y-X\hat{\beta}||^2 &=(y-X\hat{\beta})^t(y-X\hat{\beta})=(y^t-\hat{\beta}^t X^t)(y-X\hat{\beta})\\
@@ -121,10 +125,10 @@ The matrix $H=X(X^t X)^{-1}X^t$ is often called the \textit{hat matrix}, since i
 e=y-\hat{y}=y-Hy=\underbrace{(I-H)}_{M} y
 \end{equation}
 
-\subsection{Geometric picture}
+\section{Geometric picture}
 It is useful to adapt the picture of the columns of $X$ spanning a $p$-dimensional hyperplane in $n$-dimensional space. $y$ is then a vector, and $X\hat{\beta}$ is found by projecting $y$ onto the hyperplane; The corresponding point is exactly the one that minimizes the distance between $y$ (as a point) and the hyperplane.
 
-\subsubsection{Projection operators}
+\subsection{Projection operators}
 A linear map that is symmetric and idempotent is called a \textit{projection}. A matrix corresponding to such a mapping is a projection matrix.
 
 \begin{theorem}
@@ -157,7 +161,7 @@ M^2=(I-H)^2=I^2+H^2-2H=I+H-2H=I-H=M
 \end{equation}
 \end{proof}
 
-\subsection{The error term}
+\section{The error term}
 Obviously, the model described by equation $(\ref{linear2})$ allows for no random variation as written. We need an \textit{error term} to describe the random variation:
 \begin{equation}
 y=X\beta + \epsilon

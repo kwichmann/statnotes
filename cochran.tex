@@ -4,11 +4,14 @@
 \usepackage{mathtools}
 \newtheorem{theorem}{Theorem}
 
+\title{Cochran's theorem}
+\author{Kristian Wichmann}
 
 \begin{document}
 
-\section{Cochran's theorem for dummies}
-\subsection{Basic ingredients}
+\maketitle
+
+\section{Basic ingredients}
 \label{ingredients}
 Let $U_1, U_2, \ldots , U_n$ be i.i.d. standard normally distributed random variables. Now, consider the sum:
 \begin{equation}
@@ -30,7 +33,7 @@ From this we immediately see that the following must be true:
 \end{equation}
 Here $I_n$ is the unit matrix of size $n$ as usual. We will also use the notation $r_i$ for the rank of $B^{(i)}$.
 
-\subsubsection{Example: Standard normal sample}
+\subsection{Example: Standard normal sample}
 As a simple example, consider a population that is standard normally distributed. A random sample of size $n$ corresponds to the $U_i$'s above. Of interest is the usual estimators of means and sum of squares (for estimating variance):
 \begin{equation}
 \bar{U}=\frac{1}{n}\sum_{i=1}^n U_i,\quad SS_U=\sum_{i=1}^n(U_i-\bar{U})^2
@@ -58,14 +61,14 @@ Q_1=\sum_{i=1}^n(U_i-\bar{U})^2=\sum_{i=1}^n U_i^2 + \sum_{i=1}^n\bar{U}^2 - 2\b
 Once again, the definition of $\bar{U}$ has been used. This means (using the result for $Q_1$, that $B^{(1)}=I_n-\frac{1}{n}J_n$.\par
 It may superficially seem that this is just a roundabout way of stating the trivial identity $I_n = \left(I_n-\frac{1}{n}J_n\right) + \left(\frac{1}{n}J_n\right)$, which is indeed what equation $(\ref{b_sum})$ already told us. But the important part is the decomposition into estimators of mean and variance.
 
-\subsubsection{Example: Normal sample}
+\subsection{Example: Normal sample}
 Things don't change too much if we consider a sample from a general, normal distributed population. If the stochastic variables $X_1, X_2, \ldots, X_n$ are i.i.d. and $X_i\sim N(\mu,\sigma^2)$, simply transform as usual:
 \begin{equation}
 U_i=\frac{X_i-\mu}{\sigma}
 \end{equation}
 Since these will all be standard normally distributed, everything proceeds as in the previous section.
 
-\subsection{Statement of Cochran's theorem}
+\section{Statement of Cochran's theorem}
 We're now ready to state the actual theorem:
 \begin{theorem}
 \label{cochran}
@@ -81,7 +84,7 @@ where $Q_i=\sum_{jk}U_j B^{(i)}_{jk}U_k$ with $B^{(i)}$ being a symmetric, posit
 \end{enumerate}
 \end{theorem}
 
-\subsubsection{Example: Standard normal sample (cont.)}
+\subsection{Example: Standard normal sample (cont.)}
 Let's determine the ranks of $B^{(1)}$ and $B^{(2)}$ to see if the prerequisites of the theorem holds. $B^{(2)}$ is the simplest: all the rows are exactly the same (and non-zero), so the rank must be $1$. So we need to prove that the rank of $Q_1$ is $n-1$:
 \begin{theorem}
 The rank of the matrix $I_n-\frac{1}{n}J_n$ is $n-1$.
@@ -145,7 +148,7 @@ n SS_U\sim\chi^2_{n-1}\quad\bar{U}^2\sim\chi^2_1
 \end{equation}
 This is the source of the (in)famous $n-1$ term in the variance of a sample.
 
-\subsubsection{Normal sample (cont.)}
+\subsection{Normal sample (cont.)}
 When the samples $X_i$ are normal distributed as opposed to standard normally distributed, i.e. $X_i\sim N(\mu,\sigma^2)$, equation $(\ref{sn_dist})$ still holds, but now the $U$'s are given by:
 \begin{equation}
 U_i=\frac{X_i-\mu}{\sigma}
@@ -166,7 +169,8 @@ Therefore the distribution of the sum of squares of the $X$'es can be expressed:
 \begin{equation}
 n SS_X\sim\sigma^2\chi^2_{n-1}
 \end{equation}
-\subsection{A detour: Idempotent matrices}
+
+\section{A detour: Idempotent matrices}
 It turns out that the concept of an \textit{idempotent} matrix will be of use to us here. A square matrix $A$ is called idempotent if $A^2=A$. Such matrices have some interesting properties. Let's start with this:
 \begin{theorem}
 The eigenvalues of an idempotent matrix $A$ are either $0$ or $1$. 
@@ -215,7 +219,7 @@ $A$ is diagonalizable, so there exists an orthogonal matrix $O$ such that $A=O^T
 Since trace is invariant under similarity transformations, this means that $\textrm{tr}A=\textrm{tr}D=r$.
 \end{proof}
 
-\subsubsection{Example: Normal sample yet again}
+\subsection{Example: Normal sample yet again}
 It turns out, that the matrices $B^{(1)}$ and $B^{(2)}$ are indeed idempotent. Recall that $B^{(1)}=I_n-\frac{1}{n}J_n$. So:
 \begin{equation}
 \begin{multlined}
@@ -229,7 +233,7 @@ Here, we've used that $J_n^2=nJ_n$. Similarly, since $B^{(2)}=\frac{1}{n}J_n$:
 \end{equation}
 So both matrices are indeed idempotent, and we can immediately conclude that the traces, and therefore the ranks are $n-1$ and $1$ respectively.
 
-\subsection{Idempotency of the $B^{(i)}$ matrices}
+\section{Idempotency of the $B^{(i)}$ matrices}
 In our example. The $B^{(i)}$ matrices happened to be idempotent. The question is if this is a coincidence? It turns out it is not:
 \begin{theorem}
 \label{b_idempotent}
@@ -270,7 +274,7 @@ C^{(i)}=O^T\left[\textrm{diag}\{1-\lambda_1,1-\lambda_2,\cdots,1-\lambda_{r_i},\
 So $C^{(i)}$ is diagonalized by the same orthogonal transformation as $B^{(i)}$. Now, we know the rank of $C^{(i)}$ is $n-r_i$, but there's already $n-r_i$ eigenvalues equal to one, so the rest of the eigenvalues must be zero. In other words $1-\lambda_1=0$, $1-\lambda_2=0, \ldots, 1-\lambda_{r_i}=0$ which means that the first $r_i$ $\lambda$'s must be zero! So $B^{(i)}$ has only eigenvalues of $0$ and $1$ and therefore is idempotent.
 \end{proof}
 
-\subsection{Quadratic forms of idempotent matrices}
+\section{Quadratic forms of idempotent matrices}
 As the last theorem shows, we'll be dealing with such quadratic forms. The following will be useful:
 \begin{theorem}
 \label{quadform}
@@ -323,27 +327,27 @@ Q_A=U^T O_A^T D_A O_A U^T = (O_A U)^T D_A (O_A U),\quad Q_B=(O_B U)^T D_B (O_B U
 Using the standard formula for the covariance of a product, we get:
 \begin{align*}
 \textrm{Cov}(Q_A,Q_B) & =E[Q_AQ_b]-E[Q_A]E[Q_B]=\\
-& E[(O_A U)^T D_A (O_A U)(O_B U)^T D_B (O_B U)]-E[(O_A U)^T D_A (O_A U)]E[(O_B U)^T D_B (O_B U)]
+& E[(O_A U)^T D_A (O_A U)(O_B U)^T D_B (O_B U)]-\\
+& E[(O_A U)^T D_A (O_A U)]E[(O_B U)^T D_B (O_B U)]
 \end{align*}
-
 
 If $Q_A$ and $Q_B$ are independent, then they're also uncorrelated. The covariance must therefore be zero. 
 \end{proof}
 
-\subsection{Proof of Cochran's theorem}
+\section{Proof of Cochran's theorem}
 By now we've done most of the heavy lifting needed to actually prove theorem $\ref{cochran}$. We need to show that the three conditions are equivalent.
 
-\subsubsection{Proof that 1 $\Rightarrow$ 2}
+\subsection{Proof that 1 $\Rightarrow$ 2}
 \begin{proof}
 By theorem $\ref{b_idempotent}$ the matrix $B^{(i)}$ is idempotent. By theorem $\ref{quadform}$ $Q_i\sim\chi^2_{r_i}$.
 \end{proof}
 
-\subsubsection{Proof that 2 $\Rightarrow$ 1}
+\subsection{Proof that 2 $\Rightarrow$ 1}
 \begin{proof}
 This follows directly from theorem $\ref{quadform}$ and the definition of $\chi^2$ distributions.
 \end{proof}
 
-\subsubsection{Proof that 2 $\Rightarrow$ 3}
+\subsection{Proof that 2 $\Rightarrow$ 3}
 \begin{proof}
 From the proof of theorem $\ref{b_idempotent}$ we know that the same orthogonal matrix $O$ diagonalizes all the $B^{(i)}$ matrices simultaneously: $B^{(i)}=O^T D_i O$, where each $D_i$ is diagonal. Furthermore idempotency also means all diagonal elements are either $0$ or $1$. We can now write:
 \begin{equation}
@@ -352,7 +356,7 @@ U^TU=U^T\left[O^T\left(\sum_{i=1}^k D_i\right)O\right]U=(OU)^T\left(\sum_{i=1}^k
 Since eigenvalues does not depend on basis, we must have $I_n=\sum_{i=1}^k D_i$. But since all diagonal $D$ elements are $0$ or $1$ there can be only exactly one $1$ in a single $D$ matrix for each of the $n$ basis vectors. Since orthogonal transformation maps standard multinormal to standard multinormal, the basis $V=OU$ consists of i.i.d. standard normally distributed stochastic variables. But each of the $n$ basis vectors $V_i$ will appear only in exactly one quadratic form. Hence the $Q$'s must be pairwise independent.
 \end{proof}
 
-\subsubsection{Proof that 3 $\Rightarrow$ 2}
+\subsection{Proof that 3 $\Rightarrow$ 2}
 \begin{proof}
 According to equation $(\ref{b_sum})$ for any natural number $m$ we must have:
 \begin{equation}
