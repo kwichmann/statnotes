@@ -235,16 +235,92 @@ Usually, our assumption will be that the likelihood function of the data takes o
 \subsection{Beta as conjugate prior to binomial}
 We've already seen the beta distribution in action in the example above. The distribution is useful, because it's appropriate to assign to something that is itself a probability, which is often the case with parameters in Bayesian statistics.
 
-\subsubsection{Prior and posterior}
-Assume posterior distribution is a beta distribution with parameters $\alpha$ and $\beta$. If the evidence consists of $S$ successes and $F$ failures, then the math in the example easily generalizes, and we get that the posterior is again a beta distribution with parameters $\alpha+S$ and $\beta+F$.
+\subsubsection{Beta as prior and posterior}
+Assume posterior distribution is a beta distribution with parameters $\alpha$ and $\beta$. If the evidence consists of $S$ successes and $F$ failures, then the math in the example easily generalizes, and we get that the posterior is again a beta distribution with parameters $\alpha+S$ and $\beta+F$. Which shows that the beta is a conjugate prior to the binomial.
 
 \subsubsection{The prior as a quasi-sample}
-Assume we have no previous information on the distribution, so that our prior a uniform. This corresponds to $\alpha=\beta=1$. If the evidence is $S$ successes and $F$ failures, the posterior is a beta distribution with parameters $S+1$ and $F+1$. This shows that the information contained in the prior is equivalent to having observed $\alpha-1$ successes and $\beta-1$ failures. So information-wise, the prior can be regarded as a \textit{quasi-sample}.
+Assume we have no previous information on the distribution, so that our prior a uniform. This corresponds to $\alpha=\beta=1$. If the evidence is $S$ successes and $F$ failures, the posterior is a beta distribution with parameters $S+1$ and $F+1$. This shows that the information contained in the prior is equivalent to having observed $\alpha-1$ successes and $\beta-1$ failures. So information-wise, the prior can be regarded as a \textit{quasi-sample} with $\alpha+\beta-2$ \textit{quasi-observations} in it.
 
 \subsection{Gamma as conjugate prior to Poisson}
+Sometimes, however, the parameter associated with the likelihood is not a probability. A prime example is the Poisson distribution. Remember that the Poisson distribution shows the probability of a number of independent "extraordinary events" in a given time interval. The probability mass function is:
+\begin{equation}
+P(j)=\frac{\lambda^j}{j!}e^{-\lambda},\quad n\in\mathbb{N}_0
+\end{equation}
+Here, the parameter $\lambda$ is the average number of events in the time interval\footnote{It also happens to be the variance of the distribution.}. If can take on any positive value, so we're looking for a family of distributions that reflects this.
 
+\subsubsection{Gamma as prior and posterior}
+It turns out that the family of gamma distributions is a good choice here. Recall, that a gamma distribution has two parameters $\alpha$ and $\beta$. However, here we will use the parametrization $k=\alpha$ and $\theta=\frac{1}{\beta}$. With these parameters, the probability density function is:
+\begin{equation}
+\label{gamma}
+f(\lambda)=\frac{1}{\theta^k \Gamma(k)}\lambda^{k-1}e^{-\lambda/\theta}
+\end{equation}
 
-\subsection{Normal as conjugate prior to normal}
+The graph below shows a few of the possible shapes:
+
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $\lambda$,
+    ylabel = Probability density,
+    ymin = 0,
+    ymax = 0.5,
+]
+\addplot [
+    domain=0:10, 
+    samples=100, 
+    color=red,
+	]
+	{pow(2.71828,-x / 3) / 3};
+\addlegendentry{$k=1,\theta=3$}
+\addplot [
+    domain=0:10, 
+    samples=100, 
+    color=blue,
+    ]
+    {x * pow(2.71828,-x)};
+\addlegendentry{$k=2,\theta=1$}
+\addplot [
+    domain=0:10, 
+    samples=100, 
+    color=green,
+    ]
+    {2^10 * x^9 * pow(2.71828,-x * 2) / 362880};
+\addlegendentry{$k=10,\theta=\frac{1}{2}$}
+ 
+\end{axis}
+\end{tikzpicture}
+
+The mean turns out to be $k\theta$ and the variance $\theta\sqrt{k}$. Now, assume a prior of the form above and let $j_1, j_2,\cdots,j_n$ represent new evidence. Then Bayes' theorem tells us that the posterior is:
+\begin{align}
+P(k,\theta|j_1, j_2,\cdots,j_n)&\propto P(j_1, j_2,\cdots,j_n|k,\theta)P(k,\theta)\propto\\
+\prod_{i=1}^n\left(\lambda^{j_i}e^{-\lambda}\right)\lambda^{k-1}e^{-\lambda/\theta}&=\lambda^{k+\sum_{i=1}^n j_i-1}e^{-n\lambda-\lambda/\theta}
+\end{align}
+This is a integration kernel of the same form as in equation $(\ref{gamma})$, so this must also be a gamma distribution. We can rewrite:
+\begin{equation}
+n\lambda+\frac{\lambda}{\theta}=\lambda\left(n+\frac{1}{\theta}\right)=\lambda\frac{n\theta+1}{\theta}
+\end{equation}
+So the posterior parameters are:
+\begin{equation}
+\label{gamma_poisson_posterior}
+k^*=k+\sum_{i=1}^n j_i,\quad\theta^*=\frac{\theta}{n\theta+1}
+\end{equation}
+
+\subsubsection{Example:}
+The Russian statician Ladislaus Bortkiewicz famously analyzed data from fifteen Prussian cavalry units. He showed that the yearly numbers of cavalrists kicked to death by their own horses followed a Poisson distribution. Which makes sense, since it counts the number of extraordinary events during the fixed time period of year. Let's assume a general, who assesses that the average number of soldiers kicked to death in a unit pr. year is 0.75, and that the variance of this number is 1. The corresponding $k$ and $\theta$ are found by solving:
+\begin{equation}
+k\theta=\frac{3}{4},\quad\theta\sqrt{k}=1
+\end{equation}
+The solution is $k=\frac{9}{16}$ and $\theta=\frac{4}{3}$. Now, after recording data for a total of 200 cavalry unit-years, he find a total of 300 soldiers kicked to death by their own horses. According to equation $\ref{gamma_poisson_posterior}$ his posterior parameters are then:
+\begin{equation}
+k^*=\frac{9}{16}+200=\frac{3209}{16}\approx 200.56,\quad\theta^*=\frac{\frac{4}{3}}{300\cdot\frac{4}{3}+1}=\frac{4}{1203}\approx 0.0033
+\end{equation}
+The corresponding mean and variance is:
+\begin{equation}
+\textrm{Mean: }k^*\theta^*\approx0.67,\quad\textrm{Variance: }\theta^*\sqrt{k^*}\approx 0.047
+\end{equation}
+So, the general's new estimate is somewhat lower, but much more precise, with a new standard deviation of $\sqrt{0.047}=0.22$, about a fourth of the prior.
+
+\subsection{Normal as conjugate prior to normal (known $\sigma^2$)}
 
 
 \end{document}
