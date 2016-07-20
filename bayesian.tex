@@ -194,8 +194,7 @@ So the posterior distribution also turns out to be a beta distribution:
 \begin{equation}
 P(\pi|X)\propto\pi^4(1-\pi)^5
 \end{equation}
-This is a beta distribution with parameters $\alpha=5$ and $\beta=6$. When both distributions are of the same type, we speak of \textit{conjugate distributions}. Given a likelihood function, a prior that makes the distributions conjugate is known as a \textit{conjugate prior}.\par
-The graph below shows the three distributions for comparison\footnote{The likelihood isn't a distribution, since it does not sum to 1. However, for clarity, in this figure it has been scaled as if it did.}. The prior is relatively optimistic regarding quality, and the likelihood less so. The posterior is a compromise between the two.
+This is a beta distribution with parameters $\alpha=5$ and $\beta=6$. The graph below shows the three distributions for comparison\footnote{The likelihood isn't a distribution, since it does not sum to 1. However, for clarity, in this figure it has been scaled as if it did.}. The prior is relatively optimistic regarding quality, and the likelihood less so. The posterior is a compromise between the two.
 
 \begin{tikzpicture}
 \begin{axis}[
@@ -230,16 +229,22 @@ The graph below shows the three distributions for comparison\footnote{The likeli
 \end{axis}
 \end{tikzpicture}
 
-\section{Bayesian inference for the beta distribution}
+\section{Conjugate priors}
+Usually, our assumption will be that the likelihood function of the data takes on a certain form. For instance, in the example above, the likelihood function was a binomial. In this case, we saw that a prior following a beta distribution also lead to a posterior following a beta distribution. Since both distributions are of the same type, we call them \textit{conjugate distributions}. Given a family of likelihood functions, a prior that makes the distributions conjugate is known as a \textit{conjugate prior} to the likelihood. So, for instance, the beta is a conjugate prior to the binomial.
+
+\subsection{Beta as conjugate prior to binomial}
 We've already seen the beta distribution in action in the example above. The distribution is useful, because it's appropriate to assign to something that is itself a probability, which is often the case with parameters in Bayesian statistics.
 
-\subsection{Prior and posterior}
-Assume posterior distribution is a beta distribution with parameters $\alpha$ and $\beta$. If the evidence consists of $S$ successes and $F$ failures, then the math in the example easily generalizes, and we get that the posterior is again a beta distribution with parameters $\alpha+F$ and $\beta+S$.
+\subsubsection{Prior and posterior}
+Assume posterior distribution is a beta distribution with parameters $\alpha$ and $\beta$. If the evidence consists of $S$ successes and $F$ failures, then the math in the example easily generalizes, and we get that the posterior is again a beta distribution with parameters $\alpha+S$ and $\beta+F$.
 
-\subsection{The prior as a quasi-sample}
-Assume we have no previous information on the distribution, so that our prior a uniform. This corresponds to $\alpha=\beta=1$. If the evidence is $S$ successes and $F$ failures, the posterior is a beta distribution with parameters $F+1$ and $S+1$. This shows that the information contained in the prior is equivalent to having observed $\beta-1$ successes and $\alpha-1$ failures. So information-wise, the prior can be regarded as a \textit{quasi-sample}.
+\subsubsection{The prior as a quasi-sample}
+Assume we have no previous information on the distribution, so that our prior a uniform. This corresponds to $\alpha=\beta=1$. If the evidence is $S$ successes and $F$ failures, the posterior is a beta distribution with parameters $S+1$ and $F+1$. This shows that the information contained in the prior is equivalent to having observed $\alpha-1$ successes and $\beta-1$ failures. So information-wise, the prior can be regarded as a \textit{quasi-sample}.
 
-\section{Bayesian inference for the normal distribution}
+\subsection{Gamma as conjugate prior to Poisson}
+
+
+\subsection{Normal as conjugate prior to normal}
 
 
 \end{document}
