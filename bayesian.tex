@@ -246,7 +246,7 @@ Sometimes, however, the parameter associated with the likelihood is not a probab
 \begin{equation}
 P(j)=\frac{\lambda^j}{j!}e^{-\lambda},\quad n\in\mathbb{N}_0
 \end{equation}
-Here, the parameter $\lambda$ is the average number of events in the time interval\footnote{It also happens to be the variance of the distribution.}. If can take on any positive value, so we're looking for a family of distributions that reflects this.
+Here, the parameter $\lambda$ is the average number of events in the time interval\footnote{It also happens to be the variance of the distribution.}. $\lambda$ can take on any positive value, so we're looking for a family of distributions that reflects this.
 
 \subsubsection{Gamma as prior and posterior}
 It turns out that the family of gamma distributions is a good choice here. Recall, that a gamma distribution has two parameters $\alpha$ and $\beta$. However, here we will use the parametrization $k=\alpha$ and $\theta=\frac{1}{\beta}$. With these parameters, the probability density function is:
@@ -321,6 +321,44 @@ The corresponding mean and variance is:
 So, the general's new estimate is somewhat lower, but much more precise, with a new standard deviation of $\sqrt{0.047}=0.22$, about a fourth of the prior.
 
 \subsection{Normal as conjugate prior to normal (known $\sigma^2$)}
+Let's assumme we're in a situation where we have good reason to suspect that a parameter is normally distributed with a known variance $\sigma^2$, but where the mean $\mu$ is unknown. So, when considering a prior for the parameter $\mu$ we need a distribution that can take on any real values. It turns out, that using a normal distribution for the prior will yield a normal posterior as well.
 
+\subsubsection{Normal as prior and posterior}
+Assume our prior is a normal distribution with mean $\nu$ and variance $\tau^2$. The associated probability density function is:
+\begin{equation}
+f(\mu)=\frac{1}{\sqrt{2\pi\tau^2}}\exp\left(-\frac{(\mu-\nu)^2}{2\tau^2}\right)
+\end{equation}
+Now, we're presented with evidence in the form of $x_1,x_2,\cdots,x_n$. The posterior distribution is given by Bayes' theorem:
+\begin{equation}
+P(\mu|x_1,x_1,x_2,\cdots,x_n)\propto P(x_1,x_2,\cdots,x_n|\mu)P(\mu)
+\end{equation}
+The likelihood is determined by the mean of the observations $\bar{x}=\frac{1}{n}\sum_{i=1}^n x_i$, since this is known to be normally distributed with mean $\mu$ and variance $\frac{\sigma^2}{n}$:
+\begin{equation}
+P(x_1,x_2,\cdots,x_n|\mu)=P(\bar{x}|\mu)\propto\exp\left(-\frac{(\mu-\bar{x})^2}{2\sigma^2/n}\right)
+\end{equation}
+Now, we can calculate the posterior:
+\begin{equation}
+P(\mu|\bar{x})\propto\exp\left(-\frac{(\mu-\bar{x})^2}{2\sigma^2/n}\right)\exp\left(-\frac{(\mu-\nu)^2}{2\tau^2}\right)
+\end{equation}
+We now use the general result, that the product of two normal pdf's with parameters $(\mu_1,\sigma_1^2)$ and $(\mu_2,\sigma_2^2)$ respectively, is proportional to a normal pdf with mean and standard deviation:
+\begin{equation}
+\mu^*=\frac{\sigma_1^2\mu_2+\sigma_2^2\mu_1}{\sigma_1^2+\sigma_2^2},\quad\sigma^*=\frac{\sigma_1\sigma_2}{\sqrt{\sigma_1^2+\sigma_2^2}}
+\end{equation}
+Inserting $\mu_1=\bar{x}, \sigma_1=\sigma/\sqrt{n}, \mu_2=\nu$ and $\sigma_2=\tau$ we get:
+\begin{equation}
+\mu^*=\frac{\frac{\sigma^2}{n}\nu+\tau^2\bar{x}}{\frac{\sigma^2}{n}+\tau^2},\quad\sigma^*=\frac{\frac{\sigma}{\sqrt{n}}\tau}{\sqrt{\frac{\sigma^2}{n}+\tau^2}}
+\end{equation}
+Simplify $\mu^*$:
+\begin{equation}
+\mu^*=\frac{\nu\sigma^2+n\tau^2\bar{x}}{n}/\frac{\sigma^2+n\tau^2}{n}=\frac{\nu\sigma^2+n\tau^2\bar{x}}{\sigma^2+n\tau^2}
+\end{equation}
+And $\sigma^*$:
+\begin{equation}
+\sigma^*=\frac{\sigma\tau}{\sqrt{\sigma^2+n\tau^2}}=\sqrt{\frac{\sigma^2\tau^2}{\sigma^2+n\tau^2}}
+\end{equation}
+All in all, this means that the posterior can be written:
+\begin{equation}
+P(\mu|\bar{x})\propto\exp\left(-\frac{(\mu-\mu^*)^2}{2(\sigma^*)^2}\right)
+\end{equation}
 
 \end{document}

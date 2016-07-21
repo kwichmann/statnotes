@@ -1,0 +1,91 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+
+\title{Product of normal pdf's}
+\author{Kristian Wichmann}
+
+\begin{document}
+
+\maketitle
+
+While the product of two normal distributions is not a normal, it turns out that a distribution whose pdf is the product of two normal pdf's is proportional to a normal.
+
+\section{The normal pdf}
+The probability density function of a normally distributed variable with mean $\mu$ and variance $\sigma^2$ is:
+\begin{equation}
+\phi(x;\mu,\sigma^2)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+\end{equation}
+
+\section{Product of normals}
+Consider the product of two different normals:
+\begin{align}
+\phi(x;\mu_1,\sigma_1^2)\phi(x;\mu_2,\sigma_2^2)=&\\
+\frac{1}{\sqrt{2\pi\sigma_1^2}}\exp\left(-\frac{(x-\mu_1)^2}{2\sigma_1^2}\right)&\frac{1}{\sqrt{2\pi\sigma_2^2}}\exp\left(-\frac{(x-\mu_2)^2}{2\sigma_2^2}\right)=\\
+\frac{1}{2\pi\sigma_1\sigma_2}&\exp\left[-\frac{1}{2}\left(\frac{(x-\mu_1)^2}{\sigma_1^2}+\frac{(x-\mu_2)^2}{\sigma_2^2}\right)\right]
+\end{align}
+Consider the contents of the inner parenthesis:
+\begin{equation}
+\label{inner_parenthesis}
+\frac{(x-\mu_1)^2}{\sigma_1^2}+\frac{(x-\mu_2)^2}{\sigma_2^2}=\frac{\sigma_2^2(x-\mu_1)^2+\sigma_1^2(x-\mu_2)^2}{\sigma_1^2\sigma_2^2}
+\end{equation}
+Expand the numerator:
+\begin{align}
+\sigma_2^2(x^2-2\mu_1 x+\mu_1^2)+\sigma_1^2(x^2-2\mu_2 x+\mu_2^2)=\\
+(\sigma_1^2+\sigma_2^2)x^2-2(\sigma_1^2\mu_2+\sigma_2\mu_1)x+\sigma_1^2\mu_2^2+\sigma_2^2\mu_1^2
+\end{align}
+If we reduce the fraction from equation $(\ref{inner_parenthesis})$ by $\sigma_1^2+\sigma_2^2$, the denominator becomes $\sigma_1^2\sigma_2^2/(\sigma_1^2+\sigma_2^2)$ and the numerator:
+\begin{equation}
+x^2-2\underbrace{\frac{\sigma_1^2\mu_2+\sigma_2^2\mu_1}{\sigma_1^2+\sigma_2^2}}_{\alpha}x+\underbrace{\frac{\sigma_1^2\mu_2^2+\sigma_2^2\mu_1^2}{\sigma_1^2+\sigma_2^2}}_{\beta}
+\end{equation}
+Completing the square, this can be rewritten:
+\begin{equation}
+(x-\alpha)^2+\beta-\alpha^2
+\end{equation}
+This means that the product is proportional to:
+\begin{equation}
+\exp\left(-\frac{(x-\alpha)^2}{2\left(\sigma_1^2\sigma_2^2/(\sigma_1^2+\sigma_2^2)\right)}\right)
+\end{equation}
+In other words, the new distribution is proportional to a normal with mean and standard deviation:
+\begin{equation}
+\mu^*=\frac{\sigma_1^2\mu_2+\sigma_2^2\mu_1}{\sigma_1^2+\sigma_2^2},\quad\sigma^*=\frac{\sigma_1\sigma_2}{\sqrt{\sigma_1^2+\sigma_2^2}}
+\end{equation}
+
+\section{Proportionality constant}
+Sometimes, the proportionality constant from the example above may be of interest as a normalization constant. We have:
+\begin{equation}
+\phi(x;\mu_1,\sigma_1^2)\phi(x;\mu_2,\sigma_2^2)=C\cdot\phi\left(x;\mu^*,(\sigma^*)^2\right)
+\end{equation}
+From the previous section, we know this implies:
+\begin{align}
+\frac{1}{2\pi\sigma_1\sigma_2}\exp\left(-\frac{(x-\mu^*)^2}{(\sigma^*)^2}\right)\exp\left(-\frac{\beta-\alpha^2}{2\sigma_1\sigma_2(\sigma_1^2+\sigma_2^2)}\right)=\\
+C\cdot\frac{1}{\sqrt{2\pi}\frac{\sigma_1\sigma_2}{\sqrt{\sigma_1^2+\sigma_2^2}}}\exp\left(-\frac{(x-\mu^*)^2}{(\sigma^*)^2}\right)
+\end{align}
+From this $C$ can be isolated:
+\begin{equation}
+C=\frac{\sqrt{2\pi}\sigma_1\sigma_2}{2\pi\sigma_1\sigma_2\sqrt{\sigma_1^2+\sigma_2^2}}\exp\left(-\frac{\beta-\alpha^2}{2\sigma_1\sigma_2(\sigma_1^2+\sigma_2^2)}\right)
+\end{equation}
+The fraction simplifies to $\frac{1}{\sqrt{2\pi(\sigma_1^2+\sigma_2^2})}$. The hard part is simplifying $\beta-\alpha^2$:
+\begin{equation}
+\beta-\alpha^2=\frac{\sigma_1^2\mu_2^2+\sigma_2^2\mu_1^2}{\sigma_1^2+\sigma_2^2}-\left(\frac{\sigma_1^2\mu_2+\sigma_2^2\mu_1}{\sigma_1^2+\sigma_2^2}\right)^2
+\end{equation}
+Common denominator:
+\begin{equation}
+\frac{(\sigma_1^2+\sigma_2^2)(\sigma_1^2\mu_2^2+\sigma_2^2\mu_1^2)-(\sigma_1^2\mu_2+\sigma_2^2\mu_1)^2}{(\sigma_1^2+\sigma_2^2)^2}
+\end{equation}
+Expand the numerator:
+\begin{align}
+\sigma_1^4\mu_2^2+\sigma_1^2\sigma_2^2\mu_1^2+\sigma_1^2\sigma_2^2\mu_2^2+\sigma_2^4\mu_1^2-(\sigma_1^4\mu_2^2+\sigma_2^4\mu_1^2+2\sigma_1^2\sigma_2^2\mu_1\mu_2)=\\
+\sigma_1^2\sigma_2^2(\mu_1^2+\mu_2^2-2\mu_1\mu_2)=\sigma_1^2\sigma_2^2(\mu_1-\mu_2)^2
+\end{align}
+We now have:
+\begin{equation}
+\frac{\beta-\alpha^2}{2\sigma_1\sigma_2(\sigma_1^2+\sigma_2^2)}=\frac{(\mu_1-\mu_2)^2}{2(\sigma_1^2+\sigma_2^2)}
+\end{equation}
+This means that $C$ can be expressed as:
+\begin{equation}
+C=\frac{1}{\sqrt{2\pi(\sigma_1^2+\sigma_2^2})}\exp\left(-\frac{(\mu_1-\mu_2)^2}{2(\sigma_1^2+\sigma_2^2)}\right)=\phi(\mu_1;\mu_2,\sigma_1^2+\sigma_2^2)
+\end{equation}
+\end{document}
