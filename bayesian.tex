@@ -550,4 +550,50 @@ So, there's next to no information contained in the prior. This is reflected by 
 \section{Credible intervals}
 \textit{Credible intervals} are the Bayesian version of the frequentist confidence intervals. Remember that the interpretation of a confidence interval is, that "95\% of \textit{similarly constructed} intervals will contain the true value". In frequentist statistics, the true parameter actually takes on a certain, true value, and therefore this true value is either in or not it a given confidence interval. In Bayesian statistics this is not so - the parameter itself is a random variable, and therefore there's actually a probability distribution associated with it. Credible intervals can be obtained by the same techniques as is usually used for finding confidence intervals.
 
+\subsection{Credible intervals for beta posteriors}
+Here (unless one or both of the parameters happen to be less than one) the extreme values will be around 0 and 1. So there's two critical regions, each containing a probability of half the significance level. The critical values can be easily found in R using the \verb|qbeta| function.
+
+\subsubsection{Example: Radio quality revisited}
+\textbf{What is the 95\% credible interval for this example?} The posterior beta distribution had $\alpha=5$ and $\beta=6$ as parameters. The credible interval is found as follows:
+\begin{verbatim}
+> qbeta(c(0.025, 0.975), shape1 = 5, shape2 = 6)
+[1] 0.1870860 0.7376219
+\end{verbatim}
+This is a rather wide interval, which reflects that the values of the parameters are on the low side.
+
+\subsection{Credible intervals for beta posteriors}
+Here, the \verb|qgamma| function can be used with \verb|scale| set to $k$ and \verb|shape| set to $\theta$. For the $\alpha-\beta$-parametrization, use \verb|rate| for $\beta$ instead.
+
+\subsubsection{Example: Workplace accidents}
+\textbf{What is the 90\% credible interval for this example?} The posterior gamma distribution has $k=9$ and $\theta=1/8$. So the credible interval is:
+\begin{verbatim}
+> qgamma(c(0.05, 0.95), shape = 9, scale = 1/8)
+[1] 0.5869034 1.8043312
+\end{verbatim}
+
+\subsubsection{Example: Cavalrists kicked to death by horses}
+\textbf{What is the 99\% credible interval for this example?}
+The posterior gamma distribution has $k=3209/16$ and $\theta=4/1203$. The credible interval is:
+\begin{verbatim}
+> qgamma(c(0.005, 0.995), shape = 3209/16, scale = 4/1203)
+[1] 0.5518294 0.7944037
+\end{verbatim}
+
+\subsection{Credible intervals for normal posteriors}
+Analagously to the previous cases, \verb|qnorm| can be used to find the credible intervals in this case.
+
+\subsubsection{Example: Steel beam strength}
+\textbf{What is the 95\% credible interval for this example?} The posterior mean is 68.00 and the posterior standard deviation 4.47. The credible interval is:
+\begin{verbatim}
+> qnorm(c(0.025, 0.975), mean = 68.00, sd = 4.47)
+[1] 59.23896 76.76104
+\end{verbatim}
+
+\subsubsection{Example: Weighing ammonium nitrate}
+\textbf{What is the 99\% credible interval for this example?} With a posterior mean of 10.499 mg and a posterior standard deviation of 0.089 mg, the credible interval becomes:
+\begin{verbatim}
+> qnorm(c(0.005, 0.995), mean = 10.499, sd = 0.089)
+[1] 10.26975 10.72825
+\end{verbatim}
+
 \end{document}
