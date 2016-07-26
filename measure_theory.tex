@@ -1693,20 +1693,29 @@ Now, the dominated convergence theorem tells us that the differential operator $
 \end{proof}
 
 \section{The Lebesgue measure}
-Given a standard box $I=(a_1,b_1]\times(a_2,b_2]\times\cdots\times(a_k,b_k]$ in $\mathbb{R}^k$ (from definition $\ref{interval_def}$), it seems reasonable to assign it a (hyper-)volume of $v(I)=(b_1-a_1)\cdot(b_2-a_2)\cdot\cdots(b_k-a_k)$. It turns out, that this condition is enough to define a unique measure on $\mathbb{R}^k$:
+
+Given a standard box (from definition $\ref{interval_def}$) $I=(a_1,b_1]\times(a_2,b_2]\times\cdots\times(a_k,b_k]$ in $\mathbb{R}^k$, it seems reasonable to assign it a (hyper-)volume of $v(I)=(b_1-a_1)\cdot(b_2-a_2)\cdot\cdots(b_k-a_k)$.
+
+\begin{definition}
+Denote the collection of standard boxes in $k$ dimensions by $\mathbb{I}_k$. The $k$-dimensional volume function $v_k: \mathbb{I}_k\rightarrow\mathbb{R}^*_+$ is defined as above.
+\end{definition}
+
+It turns out, that requiring this volume for standard boxes, is enough to define a unique measure on $\mathbb{R}^k$:
 
 \begin{theorem}
-There exists a unique measure $m_k$ on $(\mathbb{R}^k,\mathbb{B}_k)$ which satisfies $m_k(I)=v(I)$ for all standard boxes $I\subseteq\mathbb{R}^k$. This measure is called the Lebesgue measure in $k$ dimensions.
+There exists a unique measure $m_k$ on $(\mathbb{R}^k,\mathbb{B}_k)$ which satisfies $m_k(I)=v_k(I)$ for all standard boxes $I\subseteq\mathbb{R}^k$. This measure is called the Lebesgue measure in $k$ dimensions. It has the form:
+\begin{equation}
+\label{lebesgue_measure_definition}
+m_k(B)=\inf\left\{\sum_{n=1}^\infty v_k(I_n)|\bigcup_{i=1}^\infty I_n\subseteq B, I_n\in\mathbb{I}_k\right\}
+\end{equation}
 \end{theorem}
 
 The proof of this important result is rather long, so we will devote a subsection to each of the existence and uniqueness parts.
 
 \subsection{Existence of the Lebesgue measure}
-\begin{definition}
-Denote the collection of standard boxes in $k$ dimensions by $\mathbb{I}_k$. The $k$-dimensional volume function $v_k: \mathbb{I}_k\rightarrow\mathbb{R}^*_+$ is defined as above.
-\end{definition}
 
 \begin{theorem}
+\label{diceup}
 Let $I_1, I_2,\cdots, I_n\in\mathbb{I}_k$. Then the union, intersection or set difference between any sets in the collection can be expressed as union of a subset of a finite set of disjoint standard boxes $J=\{J_1,J_2,\cdots J_m\}$.
 \end{theorem}
 \begin{proof}
@@ -1721,6 +1730,45 @@ J=\{(C^1_{j_1},C^1_{j_1+1}]\times(C^2_{j_2},C^2_{j_2+1}]\times\cdots\times(C^k_{
 This corresponds to dicing up the smallest standard box that contains all the $I_i$ along cuts that corresponds to the extended sides of all the $I_i$'s. The result is at most $(2n-1)^k$ disjoint standard boxes. From this it clear, that any union, intersection or difference between two $I$'s can be made by a disjoint union of $J$. Since $J$ is finite the union is finite. From this is clear that any finite amount of set operations can still be written as a finite, disjoint union from elements of $J$.
 \end{proof}
 
+\begin{theorem}
+The map $v_k: \mathbb{I}_k\rightarrow\mathbb{R}^*_+$ has the following properties:
+\begin{itemize}
+\item (i) Additivity: If $I_1,\cdots,I_n$ are pairwise disjoint and $\bigcup_{i=1}^n I_i=I$, then:
+\begin{equation}
+v_k(I)=\sum_{i=1}^n v_k(I_n)
+\end{equation}
+\item (ii) Subadditivity: If $I\subseteq\bigcup_{i=1}^n I_i$, then:
+\begin{equation}
+v_k(I)\le\sum_{i=1}^n v_k(I_i)
+\end{equation}
+\item (iii) Countable subadditivity: If $I\subseteq\bigcup_{i\in\mathbb{N}} I_i$, then:
+\begin{equation}
+v_k(I)\le\sum_{i\in\mathbb{N}} v_k(I_i)
+\end{equation}
+\end{itemize}
+\end{theorem}
+\begin{proof}
+\begin{itemize}
+
+\item (i) According to theorem $\ref{diceup}$, the union of the $I_i$'s can always be written as a finite unions of standard cubes $J_1,\cdots,J_m$ as described in the theorem. Since $I=(a_1,b_1]\times(a_2,b_2]\times\cdots\times(a_k,b_k]$ is itself a standard cube, the union must contain all the $J$ sets. Adding up the volumes of the $J$'s, $\sum_{j=1}^m v_k(I_j)$, can - using the notation of theorem $\ref{diceup}$ - be written as:
+\begin{equation}
+\sum_{j_1=1}^{|C_1|-1}\sum_{j_2=1}^{|C_2|-1}\cdots\sum_{j_k=1}^{|C_k|-1}v_k\left((C^1_{j_1},C^1_{j_1+1}]\times(C^2_{j_2},C^2_{j_2+1}]\times\cdots\times(C^k_{j_k},b_{j_k+1}]\right)
+\end{equation}
+Expressing the volume as a product:
+\begin{equation}
+\sum_{j_1=1}^{|C_1|-1}\sum_{j_2=1}^{|C_2|-1}\cdots\sum_{j_k=1}^{|C_k|-1}\prod_{i=1}^k(C^i_{j_{i+1}}-C^i_{j_i})
+\end{equation}
+Now consider only the last sum. We can now pull out all but the $k$'th factor:
+\begin{equation}
+\sum_{j_k=1}^{|C_k|-1}\prod_{i=1}^k(C^i_{j_{i+1}}-C^i_{j_i})=\sum_{j_k=1}^{|C_k|-1}(C^k_{j_k+1}-C^k_{j_k})\prod_{i=1}^{k-1}(C^i_{j_{i+1}}-C^i_{j_i})
+\end{equation}
+But the sum is simply equal to $b_k-a_k$ by the construction of the $J$'s. We can now iterate this process for the $k-1$'th, $k-2$'th and so on all the way to 1. Then we see that we get exactly $v_k(I)$.
+\item (ii) By theorem $\ref{diceup}$ both sets can be written as a finite union of disjoint $J$'s. But since $I\subseteq\bigcup_{i=1}^n I_i$, all the $J$'s that are part of the left hand sum must also be part of the right hand sum. The desired result follows.
+\item (iii) 
+\end{itemize}
+\end{proof}
+
 \subsection{Uniqueness of the Lebesgue measure}
+
 
 \end{document}
