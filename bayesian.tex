@@ -7,7 +7,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{width=10cm,compat=1.9}
 
-\title{Bayesian statistics}
+\title{Bayesian inference}
 \author{Kristian Wichmann}
 
 \begin{document}
@@ -16,7 +16,7 @@
 
 This document is based primarily on chapter 19 from Wonnacott and Wonnacott's "Introductory Statistics" (fifth edition) and the Coursera course "Bayesian Statistics" offered by Duke University.
 
-\section{Bayesian inference}
+\section{Basic Bayesian statistics}
 
 \subsection{The Bayesian view of probability}
 
@@ -229,67 +229,34 @@ This is a beta distribution with parameters $\alpha=5$ and $\beta=6$. The graph 
 \end{axis}
 \end{tikzpicture}
 
-\section{Conjugate priors}
+\subsection{Conjugate priors}
 Usually, our assumption will be that the likelihood function of the data takes on a certain form. For instance, in the example above, the likelihood function was a binomial. In this case, we saw that a prior following a beta distribution also lead to a posterior following a beta distribution. Since both distributions are of the same type, we call them \textit{conjugate distributions}. Given a family of likelihood functions, a prior that makes the distributions conjugate is known as a \textit{conjugate prior} to the likelihood. So, for instance, the beta is a conjugate prior to the binomial.
 
-\subsection{Beta as conjugate prior to binomial}
+\section{Beta as conjugate prior to binomial}
 We've already seen the beta distribution in action in the example above. The distribution is useful, because it's appropriate to assign to something that is itself a probability, which is often the case with parameters in Bayesian statistics.
 
-\subsubsection{Beta as prior and posterior}
+\subsection{Beta as prior and posterior}
 Assume posterior distribution is a beta distribution with parameters $\alpha$ and $\beta$. If the evidence consists of $S$ successes and $F$ failures, then the math in the example easily generalizes, and we get that the posterior is again a beta distribution with parameters $\alpha+S$ and $\beta+F$. Which shows that the beta is a conjugate prior to the binomial.
 
-\subsubsection{The prior as a quasi-sample}
+\subsection{The prior as a quasi-sample}
 Assume we have no previous information on the distribution, so that our prior a uniform. This corresponds to $\alpha=\beta=1$. If the evidence is $S$ successes and $F$ failures, the posterior is a beta distribution with parameters $S+1$ and $F+1$. This shows that the information contained in the prior is equivalent to having observed $\alpha-1$ successes and $\beta-1$ failures. So information-wise, the prior can be regarded as a \textit{quasi-sample} with $\alpha+\beta-2$ \textit{quasi-observations} in it.
 
-\subsection{Gamma as conjugate prior to Poisson}
+\subsubsection{Example: Radio quality revisited}
+In the example above, the prior has parameters $\alpha=2$ and $\beta=4$. This means that the prior is equivalent to $2+4-2=4$ observations, one being a defective radio, and three being functional.
+
+\section{Gamma as conjugate prior to Poisson}
 Sometimes, however, the parameter associated with the likelihood is not a probability. A prime example is the Poisson distribution. Remember that the Poisson distribution shows the probability of a number of independent "extraordinary events" in a given time interval. The probability mass function is:
 \begin{equation}
 P(j)=\frac{\lambda^j}{j!}e^{-\lambda},\quad n\in\mathbb{N}_0
 \end{equation}
 Here, the parameter $\lambda$ is the average number of events in the time interval\footnote{It also happens to be the variance of the distribution.}. $\lambda$ can take on any positive value, so we're looking for a family of distributions that reflects this.
 
-\subsubsection{Gamma as prior and posterior}
+\subsection{Gamma as prior and posterior}
 It turns out that the family of gamma distributions is a good choice here. Recall, that a gamma distribution has two parameters $\alpha$ and $\beta$. However, here we will use the parametrization $k=\alpha$ and $\theta=\frac{1}{\beta}$. With these parameters, the probability density function is:
 \begin{equation}
 \label{gamma}
 f(\lambda)=\frac{1}{\theta^k \Gamma(k)}\lambda^{k-1}e^{-\lambda/\theta}
 \end{equation}
-
-The graph below shows a few of the possible shapes:
-
-\begin{tikzpicture}
-\begin{axis}[
-    axis lines = left,
-    xlabel = $\lambda$,
-    ylabel = Probability density,
-    ymin = 0,
-    ymax = 0.5,
-]
-\addplot [
-    domain=0:10, 
-    samples=100, 
-    color=red,
-	]
-	{pow(2.71828,-x / 3) / 3};
-\addlegendentry{$k=1,\theta=3$}
-\addplot [
-    domain=0:10, 
-    samples=100, 
-    color=blue,
-    ]
-    {x * pow(2.71828,-x)};
-\addlegendentry{$k=2,\theta=1$}
-\addplot [
-    domain=0:10, 
-    samples=100, 
-    color=green,
-    ]
-    {2^10 * x^9 * pow(2.71828,-x * 2) / 362880};
-\addlegendentry{$k=10,\theta=\frac{1}{2}$}
- 
-\end{axis}
-\end{tikzpicture}
-
 The mean turns out to be $k\theta$ and the variance $\theta\sqrt{k}$. Now, assume a prior of the form above and let $j_1, j_2,\cdots,j_n$ represent new evidence. Then Bayes' theorem tells us that the posterior is:
 \begin{align}
 P(k,\theta|j_1, j_2,\cdots,j_n)&\propto P(j_1, j_2,\cdots,j_n|k,\theta)P(k,\theta)\propto\\
@@ -305,12 +272,71 @@ So the posterior parameters are:
 k^*=k+\sum_{i=1}^n j_i,\quad\theta^*=\frac{\theta}{n\theta+1}
 \end{equation}
 
-\subsubsection{Example:}
+\subsubsection{Posterior in terms of $\alpha$ and $\beta$}
+When expressing the gamma distribution in terms of the parameters $\alpha$ and $\beta$, the updating formula is a bit different (and actually simpler). Since $k=\alpha$, this remains the same. But for $\beta=1/\theta$ we have:
+\begin{equation}
+\beta^*=\frac{1}{\theta^*}=\frac{n(1/\beta)+1}{1/\beta}=n+\beta
+\end{equation}
+To sum it up:
+\begin{equation}
+\alpha^*=\alpha+\sum_{i=1}^n j_i,\quad\beta^*=\beta+n
+\end{equation}
+
+\subsection{Example: Workplace accidents}
+A company keeps a record of major workplace accidents. After 5 years, they've found that a gamma distribution with parameters $k=7$ and $\theta=1/5$ is a reasonable prior for the parameter $\lambda$. Three years later, they've recorded two major accidents during this timespan. This corresponds to a likelihood function of:
+\begin{equation}
+P(\lambda|2\textrm{ accidents in }3\textrm{ years})\propto \lambda^{2}e^{-3\lambda}
+\end{equation}
+The corresponding mean is $k\theta=7/5=1.4$ and the variance $\theta\sqrt{k}\approx 0.53$. According to equation $(\ref{gamma_poisson_posterior})$ the posterior distribution has the parameters:
+\begin{equation}
+k^*=7+2=9,\quad\theta^*=\frac{1/5}{3\cdot 1/5+1}=\frac{1/5}{8/5}=\frac{1}{8}
+\end{equation}
+The posterior mean is $\frac{9}{8}=1.125$ and the variance $\frac{3}{8}=0.375$. The graph below shows the three distributions.
+
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $\lambda$,
+    ylabel = Probability density,
+    ymin = 0,
+    ymax = 1.2,
+]
+\addplot [
+    domain=0:3, 
+    samples=100, 
+    color=red,
+	]
+	{x^6 * pow(2.71828,-5*x) * 78125 / 720};
+\addlegendentry{Prior}
+\addplot [
+    domain=0:3, 
+    samples=100, 
+    color=blue,
+    ]
+    {x^2 * pow(2.71828,-3*x) * 27 / 2};
+\addlegendentry{Likelihood}
+\addplot [
+    domain=0:3, 
+    samples=100, 
+    color=green,
+    ]
+    {x^8 * pow(2.71828,-x * 8) * 134217728 / 40320};
+\addlegendentry{Posterior}
+ 
+\end{axis}
+\end{tikzpicture}
+
+
+\subsection{Example: Cavalrists kicked to death by horses}
 The Russian statician Ladislaus Bortkiewicz famously analyzed data from fifteen Prussian cavalry units. He showed that the yearly numbers of cavalrists kicked to death by their own horses followed a Poisson distribution. Which makes sense, since it counts the number of extraordinary events during the fixed time period of year. Let's assume a general, who assesses that the average number of soldiers kicked to death in a unit pr. year is 0.75, and that the variance of this number is 1. The corresponding $k$ and $\theta$ are found by solving:
 \begin{equation}
 k\theta=\frac{3}{4},\quad\theta\sqrt{k}=1
 \end{equation}
-The solution is $k=\frac{9}{16}$ and $\theta=\frac{4}{3}$. Now, after recording data for a total of 200 cavalry unit-years, he find a total of 300 soldiers kicked to death by their own horses. According to equation $\ref{gamma_poisson_posterior}$ his posterior parameters are then:
+The solution is $k=\frac{9}{16}$ and $\theta=\frac{4}{3}$. Now, after recording data for a total of 300 cavalry unit-years, he find a total of 200 soldiers kicked to death by their own horses. This means that the likelihood is:
+\begin{equation}
+P(\lambda|\textrm{evidence})\propto\lambda^{200}e^{-300\lambda},\quad n\in\mathbb{N}_0
+\end{equation}
+According to equation $\ref{gamma_poisson_posterior}$ his posterior parameters are then:
 \begin{equation}
 k^*=\frac{9}{16}+200=\frac{3209}{16}\approx 200.56,\quad\theta^*=\frac{\frac{4}{3}}{300\cdot\frac{4}{3}+1}=\frac{4}{1203}\approx 0.0033
 \end{equation}
@@ -318,12 +344,54 @@ The corresponding mean and variance is:
 \begin{equation}
 \textrm{Mean: }k^*\theta^*\approx0.67,\quad\textrm{Variance: }\theta^*\sqrt{k^*}\approx 0.047
 \end{equation}
-So, the general's new estimate is somewhat lower, but much more precise, with a new standard deviation of $\sqrt{0.047}=0.22$, about a fourth of the prior.
+So, the general's new estimate is somewhat lower, but much more precise, with a new standard deviation of $\sqrt{0.047}=0.22$, about a fourth of the prior. The graph below shows the three distributions.
 
-\subsection{Normal as conjugate prior to normal (known $\sigma^2$)}
+\begin{tikzpicture}
+\begin{axis}[
+	domain=0:1.5, restrict y to domain=-10:10,    
+    axis lines = left,
+    xlabel = $\lambda$,
+    ylabel = Probability density,
+    ymin = 0,
+    ymax = 9,
+]
+\addplot [
+    samples=100, 
+    color=red,
+	]
+	{0.5377 * e^(-3*x/4) / x^(7/16)};
+\addlegendentry{Prior}
+\addplot [
+    domain=0.1:1.5, 
+    samples=100, 
+    color=blue,
+    ]
+    {8.463 * e^(-(x - 2/3)^2 / (2 * 0.002222))};
+\addlegendentry{Likelihood}
+\addplot [
+    domain=0.1:1.5, 
+    samples=100, 
+    color=green,
+    ]
+    {1.838 * e^(-(x - 0.66687)^2 / (2 * 0.047089))};
+\addlegendentry{Posterior}
+ 
+\end{axis}
+\end{tikzpicture}
+
+\subsection{The prior as quasi-sample}
+Like we did in the beta-binomial case, we may also think of the prior as containing information comparable to the sample. Here, a prior with parameters $k$ and $\theta$ corresponds to $k$ quasi-observations over $1/\theta$ periods. When considering the update rules in the $\alpha, \beta$-parametrization, this is especially clear.
+
+\subsubsection{Example: Workplace accidents}
+Here, the prior is equivalent to 7 accidents over the 5 years. Compared to the samples 2 accidents over 3 years, both are important for the posterior, though the prior weighs a little heavier.
+
+\subsubsection{Example: Cavalrists kicked to death by horses}
+The prior now corresponds to $9/16$ observations over $4/3$ cavalry-years. Compared to the 200 observations over 300 cavalry-years in the sample, it is clear why the posterior is so close to the likelihood.
+
+\section{Normal as conjugate prior to normal with known $\sigma^2$}
 Let's assumme we're in a situation where we have good reason to suspect that a parameter is normally distributed with a known variance $\sigma^2$, but where the mean $\mu$ is unknown. So, when considering a prior for the parameter $\mu$ we need a distribution that can take on any real values. It turns out, that using a normal distribution for the prior will yield a normal posterior as well.
 
-\subsubsection{Normal as prior and posterior}
+\subsection{Normal as prior and posterior}
 Assume our prior is a normal distribution with mean $\nu$ and variance $\tau^2$. The associated probability density function is:
 \begin{equation}
 f(\mu)=\frac{1}{\sqrt{2\pi\tau^2}}\exp\left(-\frac{(\mu-\nu)^2}{2\tau^2}\right)
@@ -350,15 +418,136 @@ Inserting $\mu_1=\bar{x}, \sigma_1=\sigma/\sqrt{n}, \mu_2=\nu$ and $\sigma_2=\ta
 \end{equation}
 Simplify $\mu^*$:
 \begin{equation}
+\label{posterior_mu_formula}
 \mu^*=\frac{\nu\sigma^2+n\tau^2\bar{x}}{n}/\frac{\sigma^2+n\tau^2}{n}=\frac{\nu\sigma^2+n\tau^2\bar{x}}{\sigma^2+n\tau^2}
 \end{equation}
 And $\sigma^*$:
 \begin{equation}
+\label{posterior_sigma_formula}
 \sigma^*=\frac{\sigma\tau}{\sqrt{\sigma^2+n\tau^2}}=\sqrt{\frac{\sigma^2\tau^2}{\sigma^2+n\tau^2}}
 \end{equation}
 All in all, this means that the posterior can be written:
 \begin{equation}
 P(\mu|\bar{x})\propto\exp\left(-\frac{(\mu-\mu^*)^2}{2(\sigma^*)^2}\right)
 \end{equation}
+
+\subsection{Example: Steel beam strength}
+Steelco makes thousands of shipments of steel beams. The breaking strength of a shipments is normally distributed within the shipment, with a standard deviation of $\sigma=17.3$, but due to poor quality control, the means $\mu$ varies from shipment to shipment. However, the mean is well known to be normally distributed around a mean of $\nu=60$ with a standard deviation of $\tau=10$. This is our prior. We now inspect a specific shipment of steel beams. After sampling 12 beams randomly, we find the sample mean to be $\bar{x}=70$. So the likelihood has mean 70 and standard deviation $17.3/\sqrt{12}\approx 4.99$. What is the posterior distribution? We can calculate the parameters using equations $(\ref{posterior_mu_formula})$ and $(\ref{posterior_sigma_formula})$:
+\begin{align}
+\mu^*=\frac{60\cdot 17.3^2+12\cdot 10^2\cdot 70}{17.3^2+12\cdot 10^2}&\approx 68.00\\
+\sigma^*=\sqrt{\frac{17.3^2\cdot 10^2}{17.3^2+12\cdot 10^2}}&\approx 4.47
+\end{align}
+
+The pictures below graphs the three distributions\footnote{Again, the likelihood is not a distribution, but it has been normalized for easy comparison to the prior and posterior.}.
+
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = Beam strength,
+    ylabel = Probability density,
+    ymin = 0,
+    ymax = 0.13,
+]
+\addplot [
+    domain=50:80, 
+    samples=100, 
+    color=red,
+	]
+	{(pow(2.71828, -(x - 60)^2 / (2 * 10^2)) / (pow(2 * 3.14159, 0.5) * 10)};
+\addlegendentry{Prior}
+\addplot [
+    domain=50:80, 
+    samples=100, 
+    color=blue,
+    ]
+    {(pow(2.71828, -(x - 70)^2 / (2 * 4.99^2)) / (pow(2 * 3.14159, 0.5) * 4.99)};
+\addlegendentry{Likelihood}
+\addplot [
+    domain=50:80, 
+    samples=100, 
+    color=green,
+    ]
+    {(pow(2.71828, -(x - 68)^2 / (2 * 4.47^2)) / (pow(2 * 3.14159, 0.5) * 4.47)};
+\addlegendentry{Posterior}
+ 
+\end{axis}
+\end{tikzpicture}
+
+Again, we see that the posterior is a compromise between the prior and the likelihood. Also, the evidence has lowered the standard deviation. The following section shows a more extreme example of this.
+
+\subsection{Example: Weighing ammonium nitrate}
+An analytical chemist is going to weigh a sample of ammonium nitrate. She knows that the scale she is using has a standard deviation of 0.2 mg. Looking at the sample, she estimates it to weigh about 10 mg, while assigning a standard deviation on that guess to 2 mg. In other words, her prior is the normal distribution $N(10, 2)$. Now, she weighs the sample 5 times, getting an average weight of 10.5 mg. So the likelihood standard deviation is $0.2/\sqrt{5}\approx 0.089$. Her posterior distribution for the sample weight has the following mean:
+\begin{equation}
+\mu^*=\frac{10\cdot 0.2^2+5\cdot 2^2\cdot 10.5}{0.2^2+5\cdot 2^2}\approx 10.499
+\end{equation}
+And the standard deviation:
+\begin{equation}
+\sigma^*=\sqrt{\frac{0.2^2\cdot 2^2}{0.2^2+5\cdot 2^2}}\approx 0.089
+\end{equation}
+As we can see, the evidence dramatically lowers the standard deviation - it is actually almost equal to the likelihood's! The pictures below graphs the three distributions.
+
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = Weight in mg,
+    ylabel = Probability density,
+    ymin = 0,
+    ymax = 5,
+]
+\addplot [
+    domain=8:12, 
+    samples=100, 
+    color=red,
+	]
+	{(pow(2.71828, -(x - 10)^2 / (2 * 2^2)) / (pow(2 * 3.14159, 0.5) * 2)};
+\addlegendentry{Prior}
+\addplot [
+    domain=8:12, 
+    samples=100, 
+    color=blue,
+    ]
+	{(pow(2.71828, -(x - 10.5)^2 / (2 * 0.08944^2)) / (pow(2 * 3.14159, 0.5) * 0.08944)};
+\addlegendentry{Likelihood}
+\addplot [
+    domain=8:12, 
+    samples=120, 
+    color=green,
+    ]
+    {(pow(2.71828, -(x - 10.499)^2 / (2 * 0.089^2)) / (pow(2 * 3.14159, 0.5) * 0.089)};
+\addlegendentry{Posterior}
+ 
+\end{axis}
+\end{tikzpicture}
+
+The likelihood and posterior are almost indistinguishable in the picture.
+
+\subsection{The prior as quasi-sample}
+Unlike the beta distribution, there is no normal distribution which contains no information - The prior will always contain some information. We could consider the limit $\tau\rightarrow\infty$, but this does not correspond to any actual normal distribution. It does turn out, that that following definition captures the equivalent number of samples in the prior well:
+\begin{equation}
+n_0=\frac{\sigma^2}{\tau^2}
+\end{equation}
+For starters, the limit $\tau\rightarrow\infty$ means that $n_0$ tends to zero. Let's rewrite the posteriors in terms of $n_0$:
+\begin{align}
+\mu^*=\frac{\sigma^2\nu+n\tau^2\bar{x}}{\sigma^2+n\tau^2}=\frac{n_0\tau^2\nu+n\tau^2\bar{x}}{n_0\tau^2+n\tau^2}&=\frac{n_0\nu+n\bar{x}}{n_0+n}\\
+\sigma^*=\frac{\sigma\tau}{\sqrt{\sigma^2+n\tau^2}}=\frac{\sigma\tau}{\sqrt{n_0\tau^2+n\tau^2}}&=\frac{\sigma}{\sqrt{n_0+n}}
+\end{align}
+In the limit of $n_0\rightarrow 0$, these turn into the likelihood parameters, and we can draw same conclusion as we did for the beta-binomial conjugate families: The information contained in the prior has equivalent weight to $n_0$ observations.
+
+\subsubsection{Example: Steel beam strength}
+Consider the example above once more. Here, the number of quasi-samples is:
+\begin{equation}
+n_0=\frac{\sigma^2}{\tau^2}=\frac{17.3^2}{10^2}\approx 2.99
+\end{equation}
+Compare to the 12 real samples - the prior accounts for about one fifth of the information. This is reflected in the associated graphs: The prior affects the posterior somewhat, but the likelihood is more influential.
+
+\subsubsection{Example: Weighing ammonium nitrate}
+In the ammonium nitrate example, things are different. Here the number of quasi-samples is:
+\begin{equation}
+n_0=\frac{\sigma^2}{\tau^2}=\frac{0.2^2}{2^2}=0.01
+\end{equation}
+So, there's next to no information contained in the prior. This is reflected by the fact that the likelihood and prior are almost identical: The prior doesn't have much effect at all.
+
+\section{Credible intervals}
+\textit{Credible intervals} are the Bayesian version of the frequentist confidence intervals. Remember that the interpretation of a confidence interval is, that "95\% of \textit{similarly constructed} intervals will contain the true value". In frequentist statistics, the true parameter actually takes on a certain, true value, and therefore this true value is either in or not it a given confidence interval. In Bayesian statistics this is not so - the parameter itself is a random variable, and therefore there's actually a probability distribution associated with it. Credible intervals can be obtained by the same techniques as is usually used for finding confidence intervals.
 
 \end{document}
