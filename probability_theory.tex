@@ -1,0 +1,37 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+
+\title{Probability theory}
+\author{Kristian Wichmann}
+
+\begin{document}
+
+\maketitle
+
+This is an overview of probability theory expressed in the language of measure theory.
+
+\section{Probability spaces}
+\begin{definition}
+A probability space is a measure space $(\Omega, \mathcal{F}, P)$ for which $P(\Omega)=1$. The elements of $\Omega$ are called outcomes, the elements of $\mathcal{F}$ events and $P(F)$ is the probability of the event $F\in\mathcal{F}$.
+\end{definition}
+
+\section{Random variables}
+\begin{definition}
+An $E$-valued random variable $X$ on a probability space $(\Omega, \mathcal{F}, P)$ is a measurable function $X: \Omega\rightarrow E$. Here $(E,\mathcal{E})$ is a measurable space. Often this measurable space is $(\mathbb{R},\mathbb{B})$, so that $X: \Omega\rightarrow\mathbb{R}$. Such a real-valued random variable is usually simply denoted a random variable for brevity.
+\end{definition}
+
+
+\subsection{Distribution}
+Billedmålet giver pdf
+
+\section{Statistical models}
+
+\section{Likelihood}
+
+
+\end{document}

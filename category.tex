@@ -1,0 +1,130 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{tikz-cd}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+
+\DeclareMathOperator{\src}{src}
+\DeclareMathOperator{\tar}{tar}
+\DeclareMathOperator{\id}{id}
+
+\title{Category theory}
+\author{Kristian Wichmann}
+
+\begin{document}
+
+\maketitle
+
+\section{Definition of a category}
+\begin{definition}
+A category $\mathcal{C}$ is a collection of objects called $\mathcal{C}$-objects and a collection of relations called $\mathcal{C}$-arrows. A $\mathcal{C}$-arrow $f$ points from one $\mathcal{C}$-object called the source or $\src(f)$, to another $\mathcal{C}$-object called the target or $\tar(f)$. If $\src(f)=A$ and $\tar(f)=B$, this is written:
+\begin{equation}
+f: A\rightarrow B\quad\textrm{or}\quad A\xrightarrow{f}B
+\end{equation}
+The arrows must fulfil the following:
+\begin{itemize}
+\item Composition: Given that two $\mathcal{C}$-arrows $f: A\rightarrow B$ and $g:B\rightarrow C$ exists, then $\mathcal{C}$ should also contain a composite arrow $g\circ f: A\rightarrow C$.
+\item Associativity: The composition rule should be associative, so that $(f\circ g)\circ h=f\circ(g\circ h)$ when defined.
+\item Identity arrow: For any $\mathcal{C}$-object $A$, there should be an identity arrow $1_A: A\rightarrow A$, such that for any $\mathcal{C}$-arrows $f: A\rightarrow B$ and $g: B\rightarrow A$:
+\begin{equation}
+f\circ 1_A=f\quad\textrm{and}\quad 1_A\circ g=g
+\end{equation}
+\end{itemize}
+\end{definition}
+
+Very often, the arrows will be \textit{morphisms}, i.e. maps preserving the \textit{structure} associated with the category. In this case, source and target are identified with domain and co-domain respectively. However in general, arrows need not be maps.
+
+Note that $\mathcal{C}$ is not necessarily a set - most categories we will be interested in are too large to be sets. In fact, we will naively work without necessarily worrying about set theory. Different set theories will each have categories of their own.
+
+\subsection{Diagrams}
+To visualize objects and arrows, diagrams are often used. Of particular interest here are \textit{commutative diagrams}. In such diagrams, following different compositions from objects $A$ to $B$ by following arrows, should result in the same combined arrow. For instance, the associative axiom can be expressed by demanding that the following diagrams commutes:
+\begin{equation*}
+\begin{tikzcd}
+A\arrow[r, "f"]
+\arrow[dr, swap, "g\circ f"]
+&
+B\arrow[dr, "g\circ h"]
+\arrow[d, swap, "g"]
+\\
+{}&
+C\arrow[r, swap, "h"]
+&
+D
+\end{tikzcd}
+\end{equation*}
+No matter which arrow path we follow from $A$ to $D$, we should get the same result. Similarly, the identity arrow axiom can be expressed by requiring that the following diagram commutes:
+\begin{equation*}
+\begin{tikzcd}
+A\arrow[r, "f"]
+\arrow[loop left,"id_A"] &
+B\arrow[loop right,"id_B"]
+\end{tikzcd}
+\end{equation*}
+
+\section{Examples of categories}
+
+\subsection{The category of sets}
+Here, $\mathcal{C}$ is the collection of sets\footnote{Of a given set theory. Therefore the title should technically be 'categories of sets'.}. This is, at least from a mathematical point of view, a category with minimal structure. So \textit{any} map from one set to another will preserve set structure. Hence, the arrows consist of all (total) maps between sets. Composition is ordinary functions composition, and the identity element corresponding to a set $A$ is $\id_A$. These clearly satisfy the category axioms.
+
+\subsection{Monoids, and the category of monoids}
+\begin{definition}
+A monoid is a set $M$ with a composition rule $M\times M\rightarrow M$ that satisfies:
+\begin{itemize}
+\item Associativity.
+\item Existence of an identity element.
+\end{itemize}
+\end{definition}
+
+So one can informally think of monoids as "groups that does not necessarily have inverse elements".
+
+We may take any monoid $M$ and turn it into a category $\mathcal{M}$ with just one element - let's call it $\star$. Now let each element $f$ of $M$ correspond to an arrow $f:\star\rightarrow\star$ with the composition rule being given by the monoid composition. Because of the monoid axoims, this is a category.
+
+We can also think of the collection of monoids as a category. Here the arrows are morphisms between monoids. The structure to be preserved is the composition. In other words, $f(a_1a_2)=f(a_1)f(a_2)$, where $f: A\rightarrow B$ is an arrow and $a_1,a_2\in A$. This is analogous to group homomorphisms.
+
+\subsection{Groups, and Abelian groups}
+
+\subsection{Orderings}
+
+\subsection{Equivalence relations}
+
+\section{Duality: The opposite category}
+Given a category $\mathcal{C}$, it is always possible to construct the \textit{opposite} or \textit{dual} category $\mathcal{C}^{\textrm{op}}$:
+
+\begin{definition}
+The opposite of the category $\mathcal{C}$ is the category $\mathcal{C}^{\textrm{op}}$ defined as:
+\begin{itemize}
+\item The objects of $\mathcal{C}^{\textrm{op}}$ are the same as the objects of $\mathcal{C}$.
+\item For each $\mathcal{C}$-arrow $f: A\rightarrow B$ there is a corresponding $\mathcal{C}^{\textrm{op}}$-arrow with source and target reversed.
+\item Composition in $\mathcal{C}^{\textrm{op}}$ is defined by letting $f\circ^{\textrm{op}}g$ correspond to $g\circ f$.
+\item The identity arrows stay the same.
+\end{itemize}
+\end{definition}
+
+It is clear, that because $\mathcal{C}$ obeys the category axioms, so must $\mathcal{C}^{\textrm{op}}$.
+
+\subsection{The duality principle}
+Consider $\mathcal{L}$, the elementary pure language of categories. This is loosely speaking the collection of statements that are possible to form about categories. Or rather, that's what \textit{well-formed formulas} (wff's) are, loosely speaking: The subset of $\mathcal{L}$ that makes syntactic sense.
+
+\begin{definition}
+Given a wff $\varphi$ from $\mathcal{L}$, the dual $\varphi^{\textrm{op}}$ is the wff obtained by:
+\begin{itemize}
+\item Swapping $\src$ and $\tar$.
+\item Reversing composition, such that $f\circ g$ becomes $g\circ f$ etc.
+\end{itemize}
+\end{definition}
+
+\textit{The duality principle} builds on the fact that $\mathcal{C}^{\textrm{op}}$ is a category. It will often be a shortcut for proofs, basically giving us a bonus theorem each time one is proven.
+
+\begin{theorem}
+(The duality principle). Given a wff $\varphi$ which contains no free variables - i.e. all variables must be category objects or arrows. Then if $\varphi$ is provable from the axioms of category theory, then so is the dual wff $\varphi^{\textrm{op}}$.
+\end{theorem}
+\begin{proof}
+The proof of $\varphi$ consists of a string of wff's derived by using the axioms. So by taking the dual of each of these, we obtain a proof of $\varphi^{\textrm{op}}$ following from the dual axioms. But the dual axioms are themselves axioms, and so the proof is valid.
+\end{proof}
+
+\end{document}

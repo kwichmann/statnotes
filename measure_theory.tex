@@ -1770,5 +1770,37 @@ But the sum is simply equal to $b_k-a_k$ by the construction of the $J$'s. We ca
 
 \subsection{Uniqueness of the Lebesgue measure}
 
+\section{Product measures}
+Given two measure spaces $(X,\mathbb{E},\mu)$ and $(Y,\mathbb{F},\nu)$ we would like to find a new, combined measure space $(X\times Y,\mathbb{E}\otimes\mathbb{F},\mu\otimes\nu)$ such that:
+\begin{equation}
+\forall E\in\mathbb{E}, F\in\mathbb{F}: \mu\otimes\nu(E\times F)=\mu(E)\mu(F)
+\end{equation}
+Such a measure is called the \textit{product measure}. In this chapter we will investigate how and when such a measure might be constructed.
+
+\subsection{Measurabilty of product spaces}
+Let's start with tackling the following problem: Given two measurable spaces $(X,\mathbb{E})$ and $(Y,\mathbb{F})$ is there a 'natural' $\sigma$-algebra $\mathbb{G}$ on $X\times Y$? Consider the projection operators:
+\begin{equation}
+\pi_1: X\times Y\rightarrow X, (x,y)\mapsto x,\quad\pi_2: X\times Y\rightarrow Y, (x,y)\mapsto y
+\end{equation}
+We will choose to search for a $\sigma$-algebra $\mathbb{G}$ which makes both of these functions measurable. If this is the case, then for $E\in\mathbb{E}$ and $F\in\mathbb{F}$ we must have:
+\begin{equation}
+\pi_1^{-1}(E)=E\times Y\in\mathbb{G},\quad\pi_2^{-1}(F)=X\times F\in\mathbb{G}
+\end{equation}
+This means that $E\times Y\cap X\times F=E\times F\in\mathbb{G}$. We will refer to products such as $E\times F$ as \textit{rectangles}. We will use the set of rectangles as a basis of our definition of a product $\sigma$-algebra:
+\begin{definition}
+The product $\sigma$-algebra between two measurable spaces $(X,\mathbb{E})$ and $(Y,\mathbb{F})$ is the smallest possible containing all rectangles. In other words:
+\begin{equation}
+\mathbb{E}\otimes\mathbb{F}=\sigma\{E\times F|E\in\mathbb{E},F\in\mathbb{F}\}
+\end{equation}
+\end{definition}
+As per the construction above, another way to characterize the product algebra is as the smallest $\sigma$-algebra that makes $\pi_1$ and $\pi_2$ measurable.
+\begin{definition}
+Given two functions $f:X\rightarrow\mathbb{R}$ and $g:Y\rightarrow\mathbb{R}$ we define the tensor product $f\otimes g: X\times Y\rightarrow\mathbb{R}$ by:
+\begin{equation}
+(f\otimes g)(x,y)=f(x)g(y)
+\end{equation}
+(Alternatively the co-domains could all be $\mathbb{R}^*$ or $\mathbb{C}$).
+\end{definition}
+
 
 \end{document}
