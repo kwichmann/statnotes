@@ -61,15 +61,62 @@ No matter which arrow path we follow from $A$ to $D$, we should get the same res
 \begin{equation*}
 \begin{tikzcd}
 A\arrow[r, "f"]
-\arrow[loop left,"id_A"] &
-B\arrow[loop right,"id_B"]
+\arrow[loop left,"1_A"] &
+B\arrow[loop right,"1_B"]
 \end{tikzcd}
 \end{equation*}
+
+\subsection{Uniqueness of identity arrows}
+This will be our very first baby step result:
+\begin{theorem}
+Let $\mathcal{C}$ be a category, and let $A$ be a $\mathcal{C}$-object. Then the corresponding identity arrow $1_A: A\rightarrow A$ is unique.
+\end{theorem}
+\begin{proof}
+Let $1'_A: A\rightarrow A$ be another arrow that satisfies the identity arrow axioms. Then:
+\begin{equation}
+1'_A=1'_A\circ 1_A=1_A
+\end{equation}
+\end{proof}
 
 \section{Examples of categories}
 
 \subsection{The category of sets}
 Here, $\mathcal{C}$ is the collection of sets\footnote{Of a given set theory. Therefore the title should technically be 'categories of sets'.}. This is, at least from a mathematical point of view, a category with minimal structure. So \textit{any} map from one set to another will preserve set structure. Hence, the arrows consist of all (total) maps between sets. Composition is ordinary functions composition, and the identity element corresponding to a set $A$ is $\id_A$. These clearly satisfy the category axioms.
+
+\subsubsection{Characterizing sets in terms of arrows}
+We usually talk about sets in terms of elements, but we would like to characterize sets purely in terms of category terms, i.e. arrows. Let's start with the empty set $\emptyset$. A map with $\emptyset$ as domain and $B$ as co-domain is uniquely determined, since there's only one way to map zero elements to another set. Hence $\emptyset$ can be characterized as the only object which has exactly one arrow to every other object:
+\begin{equation*}
+\begin{tikzcd}
+A &
+\emptyset\arrow[l]\arrow[ld]\arrow[d]\arrow[rd]\arrow[loop right, "id_\emptyset"]
+\\
+B & C & \cdots
+\end{tikzcd}
+\end{equation*}
+Next step is singletons. Any function with a singleton $\star$ as co-domain is uniquely defined, since all elements in the domain must map to the single element. Hence, we can characterize a singleton $\star$ as an object for which there is only one arrow pointing to it from any other object:
+\begin{equation*}
+\begin{tikzcd}
+A\arrow[r] &
+\star\arrow[loop right, "id_\star"]
+\\
+B\arrow[ur] & C\arrow[u] & \cdots\arrow[ul]
+\end{tikzcd}
+\end{equation*}
+We can now use singletons to describe elements of a set purely in categorical terms: Let $\star$ be any singleton. Then consider an arrow $x:\star\rightarrow A$. Such a map picks out exactly one element from $A$. It is clear that there is one-to-one correspondence between the elements of $A$ and such arrows. We may informally write $x\in A$.
+\begin{equation*}
+\begin{tikzcd}
+\star\arrow[r, "x"] & A
+\end{tikzcd}
+\end{equation*}
+It will also be practical to consider the image of an element $x\in A$ under the map $f:A\rightarrow B$. Since $f(x)\in B$, in category-speak it must be arrow $f(x):\star\rightarrow B$. This naturally corresponds to a composition of the arrows $x$ and $f$, such that $f(x)=f\circ x$.
+\begin{equation*}
+\begin{tikzcd}
+\star\arrow[r, "x"] &
+A\arrow[r, "f"] &
+B
+\end{tikzcd}
+\end{equation*}
+
 
 \subsection{Monoids, and the category of monoids}
 \begin{definition}
@@ -91,6 +138,8 @@ We can also think of the collection of monoids as a category. Here the arrows ar
 \subsection{Orderings}
 
 \subsection{Equivalence relations}
+
+\subsection{Programming language types}
 
 \section{Duality: The opposite category}
 Given a category $\mathcal{C}$, it is always possible to construct the \textit{opposite} or \textit{dual} category $\mathcal{C}^{\textrm{op}}$:
@@ -126,5 +175,57 @@ Given a wff $\varphi$ from $\mathcal{L}$, the dual $\varphi^{\textrm{op}}$ is th
 \begin{proof}
 The proof of $\varphi$ consists of a string of wff's derived by using the axioms. So by taking the dual of each of these, we obtain a proof of $\varphi^{\textrm{op}}$ following from the dual axioms. But the dual axioms are themselves axioms, and so the proof is valid.
 \end{proof}
+
+\section{Types of arrows}
+In this section we want to generalize certain characteristics of mappings to the language of arrows. Our starting point will be the category of sets, which will serve as a familiar territory from which we will then generalize.
+
+\subsection{Monomorphisms}
+Recall that a map $f:B\rightarrow C$ is injective or one-to-one iff:
+\begin{equation}
+\forall x, y\in B: f(x)=f(y)\Rightarrow x=y
+\end{equation}
+Now, we need to translate this into a statement about arrows. Since an element of a set may be thought of as a map from a singleton $\star$ into the set, this is equivalent to:
+\begin{equation}
+\forall x:\star\rightarrow B, y:\star\rightarrow A:f\circ x=f\circ y\Rightarrow x=y
+\end{equation}
+So, if we assume the following stronger criterium, $f$ must certainly be an injection:
+\begin{equation}
+\label{injective_equivalent}
+\forall g:A\rightarrow B, h:A\rightarrow B: f\circ g=f\circ h\Rightarrow f=g
+\end{equation}
+However, assume $f$ to be an injection. Then $f(g(x))=f(h(x))$ implies $g(x)=h(x)$, which means $g=h$. Hence injectivity is equivalent to equation ($\ref{injective_equivalent}$). We now define:
+
+\begin{definition}
+Let $\mathcal{C}$ be a category. Then a $\mathcal{C}$-arrow $f: B\rightarrow C$ is said to be monomorphic (or monic for short) iff it is left-cancelable in the following sense:
+\begin{equation}
+\forall\ g:A\rightarrow B,\ h:A\rightarrow B: f\circ g=f\circ h\Rightarrow g=h  
+\end{equation}
+\end{definition}
+
+So what we have just proved above is, that in the category of sets, the monic arrows are exactly the injective maps.
+
+\subsection{Epimorphisms}
+Recall that a map $f:B\rightarrow C$ is surjective or unto iff:
+\begin{equation}
+\forall c\in C\ \exists x\in B: f(x)=c
+\end{equation}
+Assume this is true, and consider two functions $g:C\rightarrow D, h:C\rightarrow D$, so that $g\neq h$. This means that there must be a $c\in C$ such that $g(c)\neq h(c)$. Since $f$ is surjective, there is an $x\in B$ such that $f(x)=c$, so $g(f(x))=g(c)\neq h(c)=h(f(x))$. So $g\circ f\neq h\circ f$. To sum up:
+\begin{equation}
+g\neq h\Rightarrow g\circ f\neq h\circ f
+\end{equation}
+But this is logically equivalent to:
+\begin{equation}
+\label{epic_def}
+g\circ f=h\circ f\Rightarrow g=h
+\end{equation}
+Thus surjectivity implies \textit{right-cancelability}. The converse is also true: Assume $f$ is not surjective. Then there is some $c\in C$, so that no $x\in B$ satisfies $f(x)=c$. Let $g, h:C\rightarrow H$ be functions that take on equal values except for $c$. Then $g\neq h$, but still $g\circ f=h\circ f$. In other words non-surjectivity implies that equation (\ref{epic_def}) is false. This is logically equivalent to the desired result. We now define:
+\begin{definition}
+Let $\mathcal{C}$ be a category. Then a $\mathcal{C}$-arrow $f: B\rightarrow C$ is said to be epimorphic (or epic for short) iff it is right-cancelable in the following sense:
+\begin{equation}
+\forall\ g:C\rightarrow D,\ h:C\rightarrow D: g\circ f=h\circ f\Rightarrow g=h  
+\end{equation}
+\end{definition}
+So in the category of sets, epic arrows are exactly the surjective maps.
+
 
 \end{document}
