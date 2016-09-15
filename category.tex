@@ -12,6 +12,7 @@
 \DeclareMathOperator{\src}{src}
 \DeclareMathOperator{\tar}{tar}
 \DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\Hom}{Hom}
 
 \title{Category theory}
 \author{Kristian Wichmann}
@@ -26,7 +27,7 @@ A category $\mathcal{C}$ is a collection of objects called $\mathcal{C}$-objects
 \begin{equation}
 f: A\rightarrow B\quad\textrm{or}\quad A\xrightarrow{f}B
 \end{equation}
-The arrows must fulfil the following:
+The collection of all arrows from $A$ to $B$ is called $\Hom(A,B)$. The arrows must fulfil the following:
 \begin{itemize}
 \item Composition: Given that two $\mathcal{C}$-arrows $f: A\rightarrow B$ and $g:B\rightarrow C$ exists, then $\mathcal{C}$ should also contain a composite arrow $g\circ f: A\rightarrow C$.
 \item Associativity: The composition rule should be associative, so that $(f\circ g)\circ h=f\circ(g\circ h)$ when defined.
@@ -37,9 +38,14 @@ f\circ 1_A=f\quad\textrm{and}\quad 1_A\circ g=g
 \end{itemize}
 \end{definition}
 
-Very often, the arrows will be \textit{morphisms}, i.e. maps preserving the \textit{structure} associated with the category. In this case, source and target are identified with domain and co-domain respectively. However in general, arrows need not be maps.
+Very often, the arrows will be \textit{(homo)morphisms}, i.e. maps preserving the \textit{structure} associated with the category. The $\Hom$-notation is inspired by this fact. In this case, source and target are identified with domain and co-domain respectively. However in general, arrows need not be maps.
 
-Note that $\mathcal{C}$ is not necessarily a set - most categories we will be interested in are too large to be sets. In fact, we will naively work without necessarily worrying about set theory. Different set theories will each have categories of their own.
+Note that $\mathcal{C}$ is not necessarily a set - most categories we will be interested in are too large to be sets and are thus classes. In fact, we will naively work without necessarily worrying too much about set theory\footnote{Different set theories will each have categories of their own. See below}. Still, we do make the following definition.
+
+\begin{definition}
+A category for which the collection of objects is a set is called small. A category for which all $\Hom(A,B)$ are sets is called locally small.
+\end{definition}
+Do note that some presentations of category theory have local smallness as an additional axiom.
 
 \subsection{Diagrams}
 To visualize objects and arrows, diagrams are often used. Of particular interest here are \textit{commutative diagrams}. In such diagrams, following different compositions from objects $A$ to $B$ by following arrows, should result in the same combined arrow. For instance, the associative axiom can be expressed by demanding that the following diagrams commutes:
@@ -81,7 +87,7 @@ Let $1'_A: A\rightarrow A$ be another arrow that satisfies the identity arrow ax
 \section{Examples of categories}
 
 \subsection{The category of sets}
-Here, $\mathcal{C}$ is the collection of sets\footnote{Of a given set theory. Therefore the title should technically be 'categories of sets'.}. This is, at least from a mathematical point of view, a category with minimal structure. So \textit{any} map from one set to another will preserve set structure. Hence, the arrows consist of all (total) maps between sets. Composition is ordinary functions composition, and the identity element corresponding to a set $A$ is $\id_A$. These clearly satisfy the category axioms.
+Here, $\mathcal{C}$ is the collection of sets\footnote{Of a given set theory. Therefore the title should technically be 'categories of sets'.}. This is, at least from a mathematical point of view, a category with minimal structure. So \textit{any} map from one set to another will preserve set structure. Hence, the arrows consist of all (total) maps between sets. Composition is ordinary function composition, and the identity element corresponding to a set $A$ is $\id_A$. These clearly satisfy the category axioms.
 
 \subsubsection{Characterizing sets in terms of arrows}
 We usually talk about sets in terms of elements, but we would like to characterize sets purely in terms of category terms, i.e. arrows. Let's start with the empty set $\emptyset$. A map with $\emptyset$ as domain and $B$ as co-domain is uniquely determined, since there's only one way to map zero elements to another set. Hence $\emptyset$ can be characterized as the only object which has exactly one arrow to every other object:
@@ -129,11 +135,12 @@ A monoid is a set $M$ with a composition rule $M\times M\rightarrow M$ that sati
 
 So one can informally think of monoids as "groups that does not necessarily have inverse elements".
 
-We may take any monoid $M$ and turn it into a category $\mathcal{M}$ with just one element - let's call it $\star$. Now let each element $f$ of $M$ correspond to an arrow $f:\star\rightarrow\star$ with the composition rule being given by the monoid composition. Because of the monoid axoims, this is a category.
+We may take any monoid $M$ and turn it into a category $\mathcal{M}$ with just one element - let's call it $\star$. It's common to set $\star=\{M\}$, but any singleton will do. Now let each element $f$ of $M$ correspond to an arrow $f:\star\rightarrow\star$ with the composition rule being given by the monoid composition. Because of the monoid axoims, this is a category.
 
 We can also think of the collection of monoids as a category. Here the arrows are morphisms between monoids. The structure to be preserved is the composition. In other words, $f(a_1a_2)=f(a_1)f(a_2)$, where $f: A\rightarrow B$ is an arrow and $a_1,a_2\in A$. This is analogous to group homomorphisms.
 
 \subsection{Groups, and Abelian groups}
+Groups are essentially monoids with invertible elements. So every group $G$ is a monoid, and we may turn it into its own category using the method from the last subsection. Similarly, the collection of all groups is a category with group homomorphisms playing the role of arrows. The same is true for the collection of abelian groups.
 
 \subsection{Orderings}
 
@@ -176,7 +183,7 @@ Given a wff $\varphi$ from $\mathcal{L}$, the dual $\varphi^{\textrm{op}}$ is th
 The proof of $\varphi$ consists of a string of wff's derived by using the axioms. So by taking the dual of each of these, we obtain a proof of $\varphi^{\textrm{op}}$ following from the dual axioms. But the dual axioms are themselves axioms, and so the proof is valid.
 \end{proof}
 
-\section{Types of arrows}
+\section{Monic and epic arrows}
 In this section we want to generalize certain characteristics of mappings to the language of arrows. Our starting point will be the category of sets, which will serve as a familiar territory from which we will then generalize.
 
 \subsection{Monomorphisms}
@@ -225,7 +232,92 @@ Let $\mathcal{C}$ be a category. Then a $\mathcal{C}$-arrow $f: B\rightarrow C$ 
 \forall\ g:C\rightarrow D,\ h:C\rightarrow D: g\circ f=h\circ f\Rightarrow g=h  
 \end{equation}
 \end{definition}
-So in the category of sets, epic arrows are exactly the surjective maps.
+So in the category of sets, epic arrows are exactly the surjective maps. Note that the definitions of being monic and epic are each others duals.
+
+\subsection{Diagrammatic representation}
+Monomorphisms and epimorphisms are sometimes given special arrow notations in diagrams: 
+\begin{equation*}
+\begin{tikzcd}
+A\arrow[r, "f", rightarrowtail] & B &
+A\arrow[r, "g", twoheadrightarrow] & B
+\end{tikzcd}
+\end{equation*}
+Here $f$ is monic, and $g$ is epic.
+
+\subsection{Some basic properties}
+\begin{theorem}
+Identity arrows are always monic as well as epic.
+\end{theorem}
+\begin{proof}
+Assume $id_A\circ g=id_A\circ h$. Then by definition of the identity arrow $g=h$, so $id_A$ is monic. Similarly for epic. It also follows as it is the dual statement.
+\end{proof}
+
+\begin{theorem}
+Assume $f$ and $g$ are monic (epic). Then $f\circ g$, if defined, is monic (epic) as well. 
+\end{theorem}
+\begin{proof}
+Assume $f$ and $g$ to be monic. Further assume $(f\circ g)\circ j=(f\circ g)\circ k$. By associativity $f\circ(g\circ j)=f\circ(g\circ k)$. Since $f$ is monic, this means $g\circ j=g\circ k$. And since $g$ is also monic $j=k$. The epic case follows from duality.
+\end{proof}
+
+\begin{theorem}
+If $f\circ g$ is monic, so is $g$. If $f\circ g$ is epic, so is $f$.
+\end{theorem}
+\begin{proof}
+Assume $f\circ g$ is monic. Further assume $g\circ j=g\circ k$. Apply $f$ from the left on both sides and use associativity to get $(f\circ g)\circ j=(f\circ g)\circ k$. Because $f\circ g$ is monic $j=k$ and so $g$ is monic. The epic case follows by duality.
+\end{proof}
+
+\section{Inverses}
+Inverses of arrows are defined much like matrix inverses:
+\begin{definition}
+Let $\mathcal{C}$ be a category and $f:A\rightarrow B$ be a $\mathcal{C}$-arrow. Then $g:B\rightarrow A$ is\ldots
+\begin{itemize}
+\item\ldots a right-inverse of $f$ iff $f\circ g=id_B$.
+\item\ldots a left-inverse of $f$ iff $g\circ f=id_A$.
+\item\ldots an inverse of $f$ iff it is both a right-inverse and a left-inverse of $f$.
+\end{itemize}
+\end{definition}
+Note that if $f\circ g=1_B$ in $\mathcal{C}$, then $g\circ^{\textrm{op}} f=1_B$ in $\mathcal{C}^{\textrm{op}}$. Hence right- and left-inverses are dual concepts of each other, and inverses are dual to themselves. Right- and left-inverses need not be unique. However:
+\begin{theorem}
+If the arrow $f$ has both a right- and a left-inverse, then these are equal. Hence inverses are unique.
+\end{theorem}
+\begin{proof}
+Assume $f:A\rightarrow B$ has a right-inverse $r:B\rightarrow A$ and a left-inverse $l:B\rightarrow A$. Then:
+\begin{equation}
+r=1_A\circ r=(l\circ f)\circ r=l\circ(f\circ r)=l\circ 1_B=l
+\end{equation}
+\end{proof}
+This is equivalent to requiring the following diagram to commute:
+\begin{equation*}
+\begin{tikzcd}
+B\arrow[r, "r"]\arrow[rr, swap, bend right, "1_B"]
+\arrow[rrr, shift left = 2ex, bend left, "r"]
+\arrow[rrr, shift right = 2ex, swap, bend right, "l"] &
+A\arrow[r, "f"]\arrow[rr, bend left, "1_A"] &
+B\arrow[r, "l"] &
+A
+\end{tikzcd}
+\end{equation*}
+
+So monomorpisms are natural generalizations of injective mappings, and epimorphisms for surjective ones. Maps are left-invertible iff they are injective, and right-invertible iff they are surjective. How does this generalize to categories? The following theorem sheds some light on the situation:
+\begin{theorem}
+Not every monomorphism has a left-inverse. But every left-invertible arrow is a monomorphism. Dually, not every epimorphism has a right-inverse, but every right-invertible arrow is an epimorphism.
+\end{theorem}
+\begin{proof}
+Consider the following two-element category:
+\begin{equation*}
+\begin{tikzcd}
+A\arrow[loop left, "1_A"]\arrow[r, "f"] &
+B\arrow[loop right, "1_B"]
+\end{tikzcd}
+\end{equation*}
+If $f\circ g=f\circ h$, the only option is $g=h=1_A$, and so $f$ is monic. Similarly, if $g\circ f=h\circ f$ the only option is $g=h=1_B$ and so $f$ is also epic. However, since there are no arrows from $B$ to $A$ in the category, $f$ cannot have any kind of inverse. So $f$ proves both "not every \ldots" statements.
+
+As for the "converses", assume $f:A\rightarrow B$ to have a left inverse $l:B\rightarrow A$. Further assume $f\circ g=f\circ h$. Now apply $l$ to both sides of the equation:
+\begin{equation}
+l\circ(f\circ g)=l\circ(f\circ h)\Leftrightarrow(l\circ f)\circ g=(l\circ f)\circ h\Rightarrow g=h
+\end{equation}
+This proves that $f$ is monic. Dually for right-inverse/epic.
+\end{proof}
 
 
 \end{document}
