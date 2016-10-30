@@ -1,0 +1,87 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+
+\title{Time series}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Stochastic processes and time series}
+\begin{definition}
+Let $T$ be a set, called the index set, and $(\Omega, \mathcal{F}, P)$ be a probability space. Then a stochastic process is a set of random variables $\{X_t|t\in T\}$, i.e. $\mathcal{F}$-measurable functions $X_t: \Omega\rightarrow\mathbf{R}$.
+\end{definition}
+
+\begin{definition}
+For each $\omega\in\Omega^T$ we can define a function $x:T\rightarrow\mathbf{R}$ by:
+\begin{equation}
+x(t)=x_t=X_t(\omega(t))
+\end{equation}
+These are known as realizations or sample-paths of the stochastic process.
+\end{definition}
+
+\begin{definition}
+The distribution function for a stochastic process is a function $F:\mathbf{R}^T\rightarrow [0,1]$ defined by:
+\begin{equation}
+F(x)=P(\forall\ t\in T: X_t\le x_t)
+\end{equation}
+Here $x$ may be any function $T\rightarrow\mathbf{R}$.
+\end{definition}
+
+\begin{definition}
+A stochastic process for which the index set $T\subseteq\mathbf{Z}$ is called a time series.
+\end{definition}
+As long as there's no chance of confusion, we will use the term 'time series' interchangeably for the stochastic process itself, and any relevant realizations of it.
+
+\section{Simple random walk}
+Let the random variables $Y_1, Y_2, Y_3,\ldots$ be i.i.d. with the distribution:
+\begin{equation}
+P(Y_i=1)=1/2,\quad P(Y_i=-1)=1/2
+\end{equation}
+Now let a time series be defined as:
+\begin{equation}
+X_0=0,\quad X_n=\sum_{i=1}^n Y_i
+\end{equation}
+This is known as the \textit{simple random walk}.
+
+\subsection{Asymptotic behaviour}
+For each of the $Y$'s we have:
+\begin{equation}
+E[Y_i]=\frac{1}{2}\cdot 1+\frac{1}{2}\cdot(-1)=0,\quad\textrm{var}[Y_i]=\frac{1}{2}1^2+\frac{1}{2}(-1)^2=1
+\end{equation}
+So, according to the central limit theorem, for large $n$, $X_n$ will be approximately normally distributed:
+\begin{equation}
+X_n\sim N(0,n),\quad n\gg 1
+\end{equation}
+This means that the standard deviation for large $n$ is $\sqrt{n}$.
+
+\section{Markov chains}
+A \textit{Markov chain} is a time series, in which the conditional distribution of $X_{n+1}$ given the realizations of $X_0, X_1,\ldots, X_n$ only depends on the realization of $X_n$. Formally:
+\begin{equation}
+P(X_{n+1}=s|X_0=x_0, X_1=x_1,\ldots, X_n=x_n)=P(X_{n+1}=s|X_n=x_n)
+\end{equation}
+
+\subsection{Markov chains with a finite number of states}
+In the case where each $X$ only has a finite number of realizations $n$, the Markov chain can be conveniently specified in matrix form. Assume the realization of $X_n$ is state $i$, then we might ask what to probability of $X_{n+1}$ being realized as state $j$. This probability is called $p_{ij}$. These probabilities can be neatly organized in matrix form:
+\begin{equation}
+A=\begin{pmatrix}
+p_{11}	& p_{21}	& \cdots	& p_{n1} \\
+p_{12}	& p_{22}	& \cdots	& p_{n2} \\
+\vdots	& \vdots	& \ddots	& \vdots \\
+p_{1n}	& p_{2n}	& \cdots	& p_{nn}
+\end{pmatrix}
+\end{equation}
+Since the $n$ states exhaust the possibilities, each column must sum to 1:
+\begin{equation}
+\sum_{j=1}^n p_{ij}=1,\quad i\in{1,2,\ldots n}
+\end{equation}
+
+\section{Martingales}
+
+\end{document}

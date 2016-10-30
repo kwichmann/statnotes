@@ -17,17 +17,75 @@ This is an overview of probability theory expressed in the language of measure t
 
 \section{Probability spaces}
 \begin{definition}
-A probability space is a measure space $(\Omega, \mathcal{F}, P)$ for which $P(\Omega)=1$. The elements of $\Omega$ are called outcomes, the elements of $\mathcal{F}$ events and $P(F)$ is the probability of the event $F\in\mathcal{F}$.
+A probability space is a measure space $(\Omega, \mathcal{F}, P)$ for which $P(\Omega)=1$. The elements of $\Omega$ are called outcomes, the elements of $\mathcal{F}$ events and $P(A)$ is the probability of the event $A\in\mathcal{F}$.
 \end{definition}
+
+Note that we can trivially express the probability of the event $A\in\mathcal{F}$ happening as:
+\begin{equation}
+\label{unit_density}
+P(A)=\int_A\ dP
+\end{equation}
 
 \section{Random variables}
 \begin{definition}
 An $E$-valued random variable $X$ on a probability space $(\Omega, \mathcal{F}, P)$ is a measurable function $X: \Omega\rightarrow E$. Here $(E,\mathcal{E})$ is a measurable space. Often this measurable space is $(\mathbb{R},\mathbb{B})$, so that $X: \Omega\rightarrow\mathbb{R}$. Such a real-valued random variable is usually simply denoted a random variable for brevity.
 \end{definition}
 
+\subsection{Distribution and expectation values}
+Consider a random variable $X$ as described above. Since $X$ is a measurable function, it induces an image measure $P(X)$ on $E$. This is also sometimes known as a \textit{pushforward measure}, or the \textit{distribution}. This measure is used in the following definition:
+\begin{definition}
+The expectation value of $X$ (if it exists) is given by:
+\begin{equation}
+E[X]=\int_\Omega X(\omega)\ dP(X)
+\end{equation}
+\end{definition}
 
-\subsection{Distribution}
-Billedmålet giver pdf
+\subsection{Moments}
+If the random variable $X$ is real-valued, we may make the following definition:
+\begin{definition}
+The $n$'th moment of a real-valued random variable $X$ is:
+\begin{equation}
+m_n=E[X^n]
+\end{equation}
+Here, $X^n$ is the function $X^n:\omega\mapsto \left(X(\omega)\right)^n$ as usual.
+\end{definition}
+
+\subsection{Distribution with respect to other measures}
+Let's start this section with a reminder from measure theory:
+
+\subsubsection{Absolute continuity and the Radon-Nikodym theorem}
+Consider two measures $\mu$ and $\nu$ on the measurable space $(X,\mathbb{E})$. Then $\nu$ is said to be \textit{absolutely continuous} with respect to $\mu$ is all null sets of $\mu$ are also null sets of $\nu$. We also say $\nu$ is \textit{dominated} by $\mu$ and write $\nu\ll\mu$.
+
+\begin{theorem}
+\label{radon_nikodym}
+(Radon-Nikodym) Let $\nu\ll\mu$. If $\mu$ is $\sigma$-finite, then there exists a function $f: X\rightarrow\mathbb{R}$ such that:
+\begin{equation}
+\forall\ A\in\mathbb{E}:\ \nu(A)=\int_A f\ d\mu
+\end{equation}
+\end{theorem}
+
+The function $f$ is known as the \textit{Radon-Nikodym derivate} of $\nu$ with respect to $\mu$ and is sometimes written:
+\begin{equation}
+f=\frac{d\nu}{d\mu}
+\end{equation}
+
+\subsubsection{Application to probability theory}
+We now return to the case of $X$ being a random variable on the probability space $(\Omega, \mathcal{F}, P)$.
+
+Let $\mu$ be a $\sigma$-finite measure on $\Omega$ so that $P\ll\mu$. This is known as a \textit{dominating measure}. We can now use theorem $\ref{radon_nikodym}$ to write:
+\begin{equation}
+\forall\ A\in\mathcal{F}:\ P(A)=\int_A f\ d\mu
+\end{equation}
+Here, $f=\frac{dP}{d\mu}$, the Radon-Nikodym derivative of $P$ with respect to $\mu$. Comparing to equation $(\ref{unit_density})$ we might think of this as a "change of variable", and it is now natural to say:
+
+\begin{definition}
+If $\mu$ is a $\sigma$-finite measure, dominating P, then the Radon-Nikodym derivative with respect to $P$ is called the probability density function with respect to $\mu$:
+\begin{equation}
+f_\mu=\frac{dP}{d\mu}
+\end{equation}
+\end{definition}
+
+Specifically note, that the probability density function with respect to $P$ itself is just the constant unit function. The probability density function is sometimes abbreviated as \textit{pdf}. In practice, the dominating measure is usually the Lebesgue measure, the counting measure, or a combination of the two.
 
 \section{Statistical models}
 

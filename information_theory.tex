@@ -1,0 +1,70 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+
+\title{Information theory}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Self-information}
+Let $X$ be a random variable. Consider an event $A$. We may ask ourselves how much information $I(A)$ - also known as \textit{self-information} or \textit{surprisal} - we have gained by having this event occuring. It is clear, that such a quantity must depend only on the probability of the event:
+\begin{equation}
+I(A)=I(P(A))
+\end{equation}
+Therefore, we can express self-information through a function $f(p)$, so that if $P(A)=p$, then $I(A)=f(p)$.
+
+If the outcome of an event $A$ is certain, i.e. if $P(A)=1$ then we have gained no information. So we must have $P(A)=1\Rightarrow I(A)=0$. or in other words $f(1)=0$. Non-certain events occuring, on the other hand, should give us non-zero information. So for $p<1$ we should have $f(p)>0$.
+
+Further, if two events $A$ and $B$ are independent it seems reasonable to require that self-information is additive is the following sense:
+\begin{equation}
+\label{self_information_additivity}
+I(A\cap B)=I(A)+I(B)
+\end{equation}
+So if two independent events happen at the same time, self-information should simply add up. Because of independence, we also have:
+\begin{equation}
+P(A\cap B)=P(A)\cdot P(B)
+\end{equation}
+Applying $f$ to both sides of this equation we get:
+\begin{equation}
+I(A\cap B)=f(P(A)\cdot P(B))
+\end{equation}
+Combine this with equation $(\ref{self_information_additivity})$ to get:
+\begin{equation}
+f(P(A)\cdot P(B))=f(P(A))+f(P(B))
+\end{equation}
+The only functions having this property are logarithms. Hence, the self-information must be of the form:
+\begin{equation}
+f(p)=-k\cdot\log(p)
+\end{equation}
+The minus sign comes from requiring $f(p)>0$ for $p<1$. This means that $k$ will be positive, but apart from that can be chosen freely. Since all logarithms are proportional to each other, this is equivalent to choice of base $b$ being free:
+\begin{equation}
+f(p)=-\log_b(p)
+\end{equation}
+
+\subsection{Formal details}
+Let $(\Omega,\mathcal{F},P)$ be a probability space. A random variable $X$ is a $\mathcal{F}$-measurable function $X:\mathcal{F}\rightarrow\mathbb{R}$.
+If $\mathcal{F}$ is $\sigma$-finite, there is a dominating measure $\mu$ such that a probability density function $f_X:\Omega\rightarrow\mathbb{R}_+$ exists for any random variable X. So for any $A$ in the image algebra $X(\mathcal{F})$:
+\begin{equation}
+P(A)=\int_A f_X(\omega)d\mu
+\end{equation}
+
+
+\section{Entropy}
+The \textit{entropy} of a random variable $X$ is the expectation value of the self-information:
+\begin{equation}
+H(X)=E[I(X)]=E[-\log_b(X)]
+\end{equation}
+Here, $I(X)$ is itself a stochastic variable. Thus, entropy can be interpreted as the expected surprisal.
+Using the probability density function, the entropy can be expressed as:
+\begin{equation}
+H(X)=-\int f(x)\log_b(f(x)) d\mu
+\end{equation}
+
+\end{document}
