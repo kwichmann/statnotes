@@ -7,10 +7,23 @@
 \newtheorem{definition}{Definition}[section]
 \numberwithin{equation}{section}
 
-\title{Association rules}
+\title{Association rule data mining}
 \author{Kristian Wichmann}
 
 \begin{document}
 \maketitle
+
+\section{Transactions and patterns}
+Let $\mathcal{I}$ be a set of so-called \textit{transactions}. A \textit{pattern} $t$ is a subset of $\mathcal{I}$. So we might consider a dataset $\mathcal{T}$ with $n$ different transactions and $m$ patterns:
+\begin{equation}
+\mathcal{I}=\{I_1, I_2,\ldots,I_n\},\qquad \mathcal{T}=\{t_1, t_2,\ldots,t_n\}
+\end{equation}
+\textit{Association rule data mining} is an unsupervised learning discipline trying to reveal systematics in the database.
+
+\subsection{Support of a pattern}
+A pattern $X\subseteq\mathcal{I}$ is said to have a \textit{support} equal to the number of elements of $\mathcal{T}$ in which $X$ is a subset. Support may be specified absolutely or relatively.
+
+\subsection{Association rules}
+An \textit{association rule} takes the form $X\Rightarrow Y$, where $X$ and $Y$ are disjoint patterns.
 
 \end{document}
