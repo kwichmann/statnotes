@@ -8,6 +8,8 @@
 \numberwithin{equation}{section}
 \usepackage{pgfplots}
 \pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
 
 \title{Information theory}
 \author{Kristian Wichmann}
@@ -51,7 +53,7 @@ f(p)=-\log_b(p)
 \end{equation}
 
 \subsection{Continous distributions?}
-The section above deals with discrete random variables? However, we run into problems if we try to mindlessly generalize to continous variables: The "obvious" analogue of the self-information for the outcome $X=x$ the would be $-\log_b f(x)$, where $f(x)$ is the probablity density function of $X$. But since this function need not be below 1, the associated surprisal is actually negative! Clearly, something is fishy. But for now, we will only consider discrete random variables.
+The section above deals with discrete random variables? However, we run into problems if we try to mindlessly generalize to continous variables: The "obvious" analogue of the self-information for the outcome $X=x$ the would be $-\log_b f(x)$, where $f(x)$ is the probablity density function of $X$. But since this function need not be below 1, the associated surprisal may actually be negative! Clearly, something is fishy. But for now, we will only consider discrete random variables.
 
 \section{Entropy}
 The \textit{entropy} of a discrete random variable $X$ is the expectation value of the self-information:
@@ -62,7 +64,8 @@ Here, $I(X)$ is itself a stochastic variable. Thus, entropy can be interpreted a
 \begin{equation}
 H(X)=-\sum_x p(x)\log_b p(x)
 \end{equation}
-Figure $\ref{fig:entropy_graph}$ shows how much an outcome of $p$ contributes to the total entropy. Since the limit for $p\rightarrow 0$ tends to zero, we will extend the definition to outcomes with zero probability; these do not contribute to the entropy.
+
+Figure \ref{fig:entropy_graph} shows how much an outcome of $p$ contributes to the total entropy. Since the limit for $p\rightarrow 0$ tends to zero, we will extend the definition to outcomes with zero probability; these do not contribute to the entropy.
 
 \begin{figure}
 \centering
@@ -103,5 +106,116 @@ As mentioned above, we're free to choose $b$, but some choices are common. Each 
 \item $b=10$: The corresponding unit is known as a Hartley.
 \end{itemize}
 Unless explicitly mentioned, we will use Shannon entropy from now on.
+
+\subsection{Example: Entropy of a coin toss}
+Let's consider the simplest possible non-trivial situation: and experiment with two outcomes, $A$ and $B$. If the probability of $A$ is $p$, then the probability of $B$ must be $1-p$.
+For a fair coin, both probabilities are $\frac{1}{2}$, and the entropy is:
+\begin{equation}
+H=-\frac{1}{2}\log_2\frac{1}{2}-\frac{1}{2}\log_2\frac{1}{2}=\frac{1}{2}+\frac{1}{2}=1
+\end{equation}
+If the coin is not fair, but the probability of tails ($A$) is $p$, instead we get:
+\begin{equation}
+H(p)=-p\log_2 p-(1-p)\log_2(1-p)
+\end{equation}
+This function is plotted in figure $\ref{fig:coin_entropy}$.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $p$,
+    ylabel = {Surprisal/entropy},
+    ymin = 0,
+    ymax = 1.1,
+]
+\addplot [
+    domain=0:1, 
+    samples=50, 
+    color=blue,
+]
+{-x*ln(x)/ln(2)-(1-x)*ln(1-x)/ln(2)};
+\addlegendentry{$H(p)$}
+\end{axis}
+\end{tikzpicture}
+\caption{Entropy for an unfair coin toss.}
+\label{fig:coin_entropy}
+\end{figure}
+
+\section{Conditional entropy and mutual information}
+
+\subsection{Entropy of a joint distribution}
+Given two discrete random variables $X$ and $Y$, we may define their \textit{joint entropy} simply as the entropy of their joint distribution:
+\begin{equation}
+H(X,Y)=-\sum_{x,y}P(X=x, Y=y)\log_2\left(P(X=x, Y=y)\right)
+\end{equation}
+Or using the joint distribution function $p(x,y)=P(X=x, Y=y)$:
+\begin{equation}
+H(X,Y)=-\sum_{x,y}p(x,y)\log_2 p(x,y)
+\end{equation}
+
+\subsection{Conditional entropy}
+Similarly, we may define \textit{conditional entropy}. If we already know the outcome of one random variable, this will limit the number of outcomes that contributes to the entropy. But the probabilities become conditional:
+\begin{equation}
+H(X|Y=y)=-\sum_x p(x|y)\log_2 p(x|y)
+\end{equation}
+Since $p(x|y)=\frac{p(x,y)}{p(y)}$ this means:
+\begin{equation}
+\label{conditional1}
+H(X|Y=y)=-\sum_x\frac{p(x,y)}{p(y)}\log_2\frac{p(x,y)}{p(y)}
+\end{equation}
+The total conditional entropy is found by weighing all of these:
+\begin{equation}
+\label{conditional2}
+H(X|Y)=\sum_y p(y)\cdot H(X|Y=y)
+\end{equation}
+Here $p(y)=\sum_x p(x,y)$ is the marginal probability for $Y$. (Similarly $p(x)=\sum_y p(x,y)$). Inserting equation \ref{conditional1} into equation \ref{conditional2} we get:
+\begin{equation}
+H(X|Y)=-\sum_y p(y)\sum_x \frac{p(x,y)}{p(y)}\log_2\frac{p(x,y)}{p(y)}=-\sum_{xy}p(x,y)\log_2\frac{p(x,y)}{p(y)}
+\end{equation}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{mutual_information}
+\caption{Visualization of the different entropies and mutual information. Image source: Wikipedia.}
+\label{fig:mutual_information}
+\end{figure}
+
+Looking at figure $\ref{fig:mutual_information}$, we would expect that $H(X,Y)-H(Y)=H(X|Y)$. Let's check that this is indeed the case:
+\begin{equation}
+H(X,Y)-H(Y)=-\sum_{x,y}p(x,y)\log_2 p(x,y)-\left(-\sum_y p(y)\log_2 p(y)\right)
+\end{equation}
+Use the definition of $p(y)$:
+\begin{equation}
+\sum_y p(y)\log_2 p(y)=\sum_{xy}p(x,y)\log_2 p(y)
+\end{equation}
+Hence:
+\begin{equation}
+H(X,Y)-H(Y)=-\sum_{x,y}p(x,y)\left(\log_2 p(x,y)-\log_2 p(y)\right)
+\end{equation}
+This is the same as:
+\begin{equation}
+-\sum_{x,y}p(x,y)\log_2\frac{p(x,y)}{p(y)}=H(X|Y)
+\end{equation}
+
+\subsection{Mutual information}
+If we look at figure $\ref{fig:mutual_information}$ once again, we also notice $I(X;Y)$, the \textit{mutual information} between two discrete random variables $X$ and $Y$. It should be equal to:
+\begin{equation}
+I(X;Y)=H(X)-H(X|Y)
+\end{equation}
+Inserting we get:
+\begin{equation}
+-\sum_x p(x)\log_2 p(x)-\left(-\sum_{x,y}p(x,y)\log_2\frac{p(x,y)}{p(y)}\right)
+\end{equation}
+Now use $p(x)=\sum_y p(x,y)$ to rewrite the first term:
+\begin{equation}
+\sum_x p(x)\log_2 p(x)=\sum_{xy}p(x,y)\log_2 p(x)
+\end{equation}
+Combine terms to get:
+\begin{equation}
+I(X;Y)=\sum_{x,y}p(x,y)\log_2\frac{p(x,y)}{p(x)p(y)}
+\end{equation}
+This is clearly symmetrical: $I(X;Y)=I(Y;X)$. Also, if $X$ and $Y$ are independent, then $p(x,y)=p(x)p(y)$ which makes the fraction $1$ and logarithm zero, so the mutual information vanishes in this case.
+
 
 \end{document}
