@@ -265,6 +265,28 @@ Moving averages are stationary as is evident from the properties derived in prev
 
 Random walks turn out not to be stationary, as correlation is dependent on both times chosen, not just the difference.
 
+\subsection{Joint stationarity}
+Two time series $X_t$ and $Y_t$ are said to be \textit{jointly stationary} if they are both stationary and if the cross-covariance function is a function of lag only:
+\begin{equation}
+\gamma_{XY}(t,t+h)=\gamma_{XY}(h)
+\end{equation}
+This function satisfies:
+\begin{align}
+\gamma_{XY}(h)=\gamma_{XY}(t,t+h)=&\textrm{cov}(X_t,Y_{t+h})=\\
+&\textrm{cov}(Y_{t+h},X_t)=\gamma_{YX}(t+h,t)=\gamma_{YX}(-h)
+\end{align}
+
+We can now define the \textit{cross-correlation function} (or CCF for short):
+\begin{equation}
+\rho_{XY}(h)=\frac{\gamma_{XY}(h)}{\sqrt{\gamma_X(0)\gamma_Y(0)}}
+\end{equation}
+
+\subsubsection{Example}
+Let $W_t$ be a white noise time series. Define two new time series as:
+\begin{equation}
+X_t=W_t+W_{t-1},\qquad Y_t=W_t-W_{t-1}
+\end{equation}
+
 \section{Markov chains}
 A \textit{Markov chain} is a time series, in which the conditional distribution of $X_{n+1}$ given the realizations of $X_0, X_1,\ldots, X_n$ only depends on the realization of $X_n$. Formally:
 \begin{equation}
