@@ -6,6 +6,10 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{definition}{Definition}[section]
 \numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
 
 \title{Time series}
 \author{Kristian Wichmann}
@@ -15,7 +19,7 @@
 
 \section{Stochastic processes and time series}
 \begin{definition}
-Let $T$ be a set, called the index set, and $(\Omega, \mathcal{F}, P)$ be a probability space. Then a stochastic process is a set of random variables $\{X_t|t\in T\}$, i.e. $\mathcal{F}$-measurable functions $X_t: \Omega\rightarrow\mathbf{R}$.
+Let $T$ be a set, called the index set, and $(\Omega, \mathcal{F})$ be a measurable space. Then a stochastic process is a set of probability distributions and associated random variables $\{X_t|t\in T\}$, i.e. $\mathcal{F}$-measurable functions $X_t: \Omega\rightarrow\mathbf{R}$.
 \end{definition}
 
 \begin{definition}
@@ -27,39 +31,239 @@ These are known as realizations or sample-paths of the stochastic process.
 \end{definition}
 
 \begin{definition}
-The distribution function for a stochastic process is a function $F:\mathbf{R}^T\rightarrow [0,1]$ defined by:
-\begin{equation}
-F(x)=P(\forall\ t\in T: X_t\le x_t)
-\end{equation}
-Here $x$ may be any function $T\rightarrow\mathbf{R}$.
-\end{definition}
-
-\begin{definition}
 A stochastic process for which the index set $T\subseteq\mathbf{Z}$ is called a time series.
 \end{definition}
 As long as there's no chance of confusion, we will use the term 'time series' interchangeably for the stochastic process itself, and any relevant realizations of it.
 
-\section{Simple random walk}
+\section{White noise}
+\textit{White noise} is a time series $W_t$ with the following characteristics:
+\begin{itemize}
+\item The $W_t$'s are pairwise uncorrelated.
+\item $E(W_t)=0$
+\item The variances for all $W_t$ are equal and finite.
+\end{itemize}
+We then write $W_t\sim\textrm{wn}(0,\sigma_w^2)$, where $\sigma_w^2$ is the variance.
+
+A slightly stronger criterium, is for the random variables to be i.i.d. In this case we may write $W_t\sim\textrm{iid}(0,\sigma_w^2)$.
+
+Even stronger, the noise may be normally distributed. We then write $W_t\sim \textrm{iid}\ N(0,\sigma_w^2)$.
+
+\subsection{Moving averages of white noise}
+In order to smooth out a white noise time series $W_t$, one could average over the values in the immediate vicinity of each $t$. Such a series might be realized as:
+\begin{equation}
+\label{moving_average}
+V_t=\frac{1}{3}(W_{t-1}+W_t+W_{t+1})
+\end{equation}
+$V_t$ is not a white noise, as the first criterium is no longer satisfied. Such a linear combination of time series data/variables is known as a \textit{filter}.
+
+\subsection{Autoregression}
+Imagine two initial values $x_1, x_2$ being given. Then we may form a time series from a white noise $w_t$ as follows:
+\begin{equation}
+x_t=\alpha x_{t-2}+\beta x_{t-1}+w_t
+\end{equation}
+Here $\alpha$ and $\beta$ are some constants. This is an example of an \textit{autoregression} - using the last few data points to make predictions about the next one. More about these later.
+
+\section{Random walks}
+
+\subsection{Simple random walk}
 Let the random variables $Y_1, Y_2, Y_3,\ldots$ be i.i.d. with the distribution:
 \begin{equation}
-P(Y_i=1)=1/2,\quad P(Y_i=-1)=1/2
+P(Y_t=1)=1/2,\quad P(Y_t=-1)=1/2
 \end{equation}
 Now let a time series be defined as:
 \begin{equation}
-X_0=0,\quad X_n=\sum_{i=1}^n Y_i
+X_0=0,\quad X_t=\sum_{i=1}^t Y_i
 \end{equation}
 This is known as the \textit{simple random walk}.
 
-\subsection{Asymptotic behaviour}
+\subsubsection{Asymptotic behaviour}
 For each of the $Y$'s we have:
 \begin{equation}
-E[Y_i]=\frac{1}{2}\cdot 1+\frac{1}{2}\cdot(-1)=0,\quad\textrm{var}[Y_i]=\frac{1}{2}1^2+\frac{1}{2}(-1)^2=1
+E[Y_t]=\frac{1}{2}\cdot 1+\frac{1}{2}\cdot(-1)=0,\quad\textrm{var}[Y_t]=\frac{1}{2}1^2+\frac{1}{2}(-1)^2=1
 \end{equation}
-So, according to the central limit theorem, for large $n$, $X_n$ will be approximately normally distributed:
+So, according to the central limit theorem, for large $t$, $X_t$ will be approximately normally distributed:
 \begin{equation}
-X_n\sim N(0,n),\quad n\gg 1
+X_t\sim N(0,t),\quad t\gg 1
 \end{equation}
-This means that the standard deviation for large $n$ is $\sqrt{n}$.
+This means that the standard deviation for large $t$ is $\sqrt{t}$.
+
+\subsection{Random walk}
+Instead of the discrete variables $Y_t$ given above, we might use white noise $W_t\sim\textrm{wn}(0,\sigma_w^2)$. The result is the \textit{random walk} with variance $\sigma_w^2$:
+\begin{equation}
+X_0=0,\quad X_t=\sum_{i=1}^t W_i
+\end{equation}
+The second equation could also have been expressed $X_t=X_{t-1}+W_t$.
+
+\subsubsection{Asymptotic behaviour}
+Again, we may apply the central limit theorem. For large $t$ we approximately have:
+\begin{equation}
+X_t\sim N(0,t\sigma_w^2),\quad t\gg 1
+\end{equation}
+So the standard deviation for large $t$ is $\sqrt{t}\sigma_w$.
+
+\subsection{Random walk with drift}
+We now modify the random walk by adding a linear term:
+\begin{equation}
+X_0=0,\quad X_t=\delta t+\sum_{i=1}^t W_i
+\end{equation}
+Here $\delta$ is some constant. The second equation could also have been expressed $X_t=\delta+X_{t-1}+W_t$.
+
+\subsubsection{Asymptotic behaviour}
+In this case, the central limit theorem gives us
+\begin{equation}
+X_t\sim N(\delta t,t\sigma_w^2),\quad t\gg 1
+\end{equation}
+The standard deviation for large $t$ is still $\sqrt{t}\sigma_w$.
+
+\section{Time series descriptors}
+
+Formally, a time series can be described by the family of finite point distribution functions:
+\begin{equation}
+\label{ts_distribution}
+F(c_1,c_2,\ldots,c_n)=P(x_{t_1}\le c_1,x_{t_2}\le c_2,\ldots x_{t_n}\le c_n) 
+\end{equation}
+Here $t_1, t_2,\ldots,t_n\in T$. While this family does contain all the information about the time series, there's a number of other descriptors that are usually a lot easier easier to compute and/or visualize.
+
+\subsection{The mean function}
+For a time series $X_t$, this is simply the series of expectation values:
+\begin{equation}
+\mu_X(t)=\mu_t=E(X_t)
+\end{equation}
+
+\subsubsection{Examples}
+The different types of white noise all have a mean function of zero by definition. A moving average is a linear combination of such, so the mean function is still zero. The simple random walk and the random walk are sums of variables with expectation zero, so again we get zero. However, the random walk with drift has a non-zero mean function:
+\begin{equation}
+\mu(t)=\delta t
+\end{equation}
+
+\subsection{The autocovariance function}
+For a time series $X_t$, the \textit{autocovariance function} is:
+\begin{equation}
+\gamma_X(s,t)=\textrm{cov}(X_s,X_t)
+\end{equation}
+When $s=t$ we get the \textit{variance function} for the series.
+
+\subsubsection{Examples}
+For the various types of white noise, these are uncorrelated pr. definition when $s\neq t$. When $s=t$ we simply get the variance $\sigma_w^2$. This may be summed up as:
+\begin{equation}
+\gamma_W(s,t)=\delta_{s,t}\sigma_w^2
+\end{equation}
+
+For the moving average, things get a little more interesting. First, when $s=t$:
+\begin{equation}
+\gamma_V(t,t)=\textrm{cov}\left(\frac{1}{3}(W_{t-1}+W_t+W_{t+1}),\frac{1}{3}(W_{t-1}+W_t+W_{t+1})\right)
+\end{equation}
+Since the $W$'s are uncorrelated unless the times are equal, this is:
+\begin{equation}
+\frac{1}{9}(\textrm{cov}(W_{t-1},W_{t-1})+\textrm{cov}(W_t,W_t)+\textrm{cov}(W_{t+1},W_{t+1}))=\frac{1}{3}\sigma_w^2
+\end{equation}
+When $s=t\pm 1$ we get a similar calculation, but now only two of the terms contribute, so we get $\gamma_V(t\pm 1,t)=\frac{2}{9}\sigma_w^2$. Finally when $s=t\pm 2$ only one term contribute so $\gamma_V(t\pm 2,t)=\frac{1}{9}\sigma_w^2$. Otherwise, the autocorrelation function is zero. Here $\gamma$ only depends on $|s-t|$.
+
+For a simple random walk we have:
+\begin{equation}
+\gamma_X(s,t)=\textrm{cov}\left(\sum_{i=1}^s Y_i,\sum_{i=1}^t Y_i\right)
+\end{equation}
+Since the $Y$'s are i.i.d. we only get a contribution at equal times. Hence we get:
+\begin{equation}
+\gamma_X(s,t)=\min\{s,t\}
+\end{equation}
+
+For a random walk, the situation is the same as above, but now each contribution is $\sigma_w^2$, so:
+\begin{equation}
+\gamma_X(s,t)=\min\{s,t\}\cdot\sigma_w^2
+\end{equation}
+
+For a random walk with drift, the added constants do not correlate with the $Y$'s so the result is the same as the case without drift.
+
+\subsection{The autocorrelation function}
+It is often convenient to normalize the autocovariance function to get the \textit{autocorrelation function} (or ACF for short):
+\begin{equation}
+\rho_X(s,t)=\frac{\gamma_X(s,t)}{\sqrt{\gamma_X(s,s)\gamma_X(t,t)}}
+\end{equation}
+Like ordinary correlations, the autocorrelation function takes on values between -1 and 1.
+
+\subsubsection{Examples}
+For white noise, the autocorrelation is zero unless $s=t$. Then we get:
+\begin{equation}
+\rho_W(t,t)=\frac{\sigma_w^2}{\sqrt{\sigma_w^2\sigma_w^2}}=1
+\end{equation}
+To sum up $\rho_W(s,t)=\delta_{s,t}$.
+
+For a simple random walk we get:
+\begin{equation}
+\rho_X(s,t)=\frac{\min\{s,t\}}{\sqrt{st}}
+\end{equation}
+
+For a random walk (with or without drift) we get the same result:
+\begin{equation}
+\rho_X(s,t)=\frac{\min\{s,t\}\cdot\sigma_w^2}{\sqrt{s\sigma_w^2 t\sigma_w^2}}=\frac{\min\{s,t\}}{\sqrt{st}}
+\end{equation}
+
+Figure \ref{fig:re_autocorr} graphs $\rho_X$ as a function of $s$ and $t$. Note how is is 1 along the $s=t$ line.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{rw_autocorr}
+\caption{The autocorrelation function for a random walk.}
+\label{fig:re_autocorr}
+\end{figure}
+
+\section{Correlation between time series}
+If we have two time series $X_t$ and $Y_t$, we may wish to evaluate if they are correlated in time. Analogously to the last section, we define the \textit{cross-covariance function} as:
+\begin{equation}
+\gamma_{XY}(s,t)=\textrm{cor}(X_s,Y_t)
+\end{equation}
+Similarly, the \textit{cross-correlation function} is:
+\begin{equation}
+\rho_{XY}(s,t)=\frac{\gamma_{XY}(s,t)}{\gamma_X(s,s)\gamma_Y(t,t)}
+\end{equation}
+
+\section{Stationarity}
+
+\subsection{Strict stationarity}
+A time series $X_t$ with finite variance for all times, is said to be \textit{strictly stationary} if its properties are invariant under time translation in the following sense:
+\begin{equation}
+\label{strict_stationarity}
+P(x_{t_1}\le c_1,x_{t_2}\le c_2,\ldots x_{t_n}\le c_n)=P(x_{t_1+h}\le c_1,x_{t_2+h}\le c_2,\ldots x_{t_n+h}\le c_n)
+\end{equation}
+This should be true for all times and translations, and any number of points in time $n$.
+
+This is a very strong condition. Specifically, for $n=1$ we get:
+\begin{equation}
+P(x_s\le c)=P(x_t\le c)
+\end{equation}
+This means, that the distribution must be the same for all times. Specifically, the mean function $\mu_X$ must be a constant.
+
+For $n=2$ it similarly implies, that the autocovariance - and hence the autocorrelation - can only depend on the different $t-s$.
+
+\subsection{Weak stationarity}
+As noted, strict stationarity is very strong. And it is both rare and hard to demonstrate in a model. Therefore, a weaker condition known as \textit{weak stationarity} is useful. A time series $X_t$ is called weakly stationary (or simply stationary) if:
+\begin{itemize}
+\item It has finite variance at all times.
+\item The mean function $\mu_X$ is a constant.
+\item The autocovariance function is time translation invariant: $\gamma_X(s,t)=\gamma_X(s+h,t+h)$
+\end{itemize}
+
+From the last section it is clear, that a strictly stationary time series is also (weakly) stationary. The converse is not generally true.
+
+Because of this, for a stationary time series we may write $\mu_X(t)=\mu$ and $\gamma_X(s,t)=\gamma_X(t-s)$. Therefore, the autocorrelation function can be written:
+\begin{equation}
+\rho_X(h)=\frac{\gamma_X(t,t+h)}{\sqrt{\gamma_X(t,t)\gamma_x(t+h,t+h)}}=\frac{\gamma_X(h)}{\gamma_X(0)}
+\end{equation}
+
+In addition, because of the symmetry of the covariance, we also have:
+\begin{align}
+\gamma_X(h)=\gamma_X(t,t+h)=&\textrm{cov}(X_t,X_{t+h})=\\
+&\textrm{cov}(X_{t+h},X_t)=\gamma_X(t+h,t)=\gamma_X(-h)
+\end{align}
+This implies, that the autocorrelation function is a function of the absolute value of $h$ only: $\rho_X(h)=\rho_X(|h|)$.
+
+\subsubsection{Examples}
+All the types of white noise are clearly stationary. If the white noise is i.i.d., they are also strictly stationary, since equation \ref{strict_stationarity} reduces to a product of distribution functions.
+
+Moving averages are stationary as is evident from the properties derived in previous sections.
+
+Random walks turn out not to be stationary, as correlation is dependent on both times chosen, not just the difference.
 
 \section{Markov chains}
 A \textit{Markov chain} is a time series, in which the conditional distribution of $X_{n+1}$ given the realizations of $X_0, X_1,\ldots, X_n$ only depends on the realization of $X_n$. Formally:
