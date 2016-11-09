@@ -143,6 +143,19 @@ For a time series $X_t$, the \textit{autocovariance function} is:
 \end{equation}
 When $s=t$ we get the \textit{variance function} for the series.
 
+Using the definition of covariance, this can be written:
+\begin{equation}
+\textrm{cov}(X_s,X_t)=E[(X_s-\mu_s)(X_t-\mu_t)]=E[X_s X_t-X_s\mu_t-\mu_s X_t+\mu_s\mu_t)]
+\end{equation}
+Here $\mu_s=E(X_s), \mu_t=E(X_t)$. Since these are numbers, this is:
+\begin{equation}
+E(X_s X_t)-E(X_s)\mu_t-\mu_s E(X_t)+\mu_s\mu_t=E(X_s X_t)-\mu_s\mu_t-\mu_s\mu_t+\mu_s\mu_t
+\end{equation}
+So the autocovariance function can also be calculated as follows:
+\begin{equation}
+\gamma_X(s,t)=E(X_s X_t)-\mu_s\mu_t
+\end{equation}
+
 \subsubsection{Examples}
 For the various types of white noise, these are uncorrelated pr. definition when $s\neq t$. When $s=t$ we simply get the variance $\sigma_w^2$. This may be summed up as:
 \begin{equation}
@@ -208,6 +221,35 @@ Figure \ref{fig:re_autocorr} graphs $\rho_X$ as a function of $s$ and $t$. Note 
 \label{fig:re_autocorr}
 \end{figure}
 
+One may wonder what happens to adjacent times:
+\begin{equation}
+\rho_X(t,t+1)=\frac{t}{\sqrt{t}\sqrt{t+1}}=\sqrt{\frac{t}{t+1}}
+\end{equation}
+As $t\rightarrow\infty$, this fraction tends to 1. In other words, the adjacent values of a random walk becomes progressively more correlated for large times. Figure \ref{fig:adjacent_times_autocorrelation} graphs this.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $t$,
+    ylabel = {Autocorrelation},
+    ymin = 0,
+    ymax = 1.3,
+]
+\addplot [
+    domain=0:50, 
+    samples=50, 
+    color=red,
+]
+{(x/(x+1))^0.5};
+\addlegendentry{$\rho_X(t,t+1)$}
+\end{axis}
+\end{tikzpicture}
+\caption{Autocorrelation of adjacent times for random walk.}
+\label{fig:adjacent_times_autocorrelation}
+\end{figure}
+
 \section{Correlation between time series}
 If we have two time series $X_t$ and $Y_t$, we may wish to evaluate if they are correlated in time. Analogously to the last section, we define the \textit{cross-covariance function} as:
 \begin{equation}
@@ -268,12 +310,12 @@ Random walks turn out not to be stationary, as correlation is dependent on both 
 \subsection{Joint stationarity}
 Two time series $X_t$ and $Y_t$ are said to be \textit{jointly stationary} if they are both stationary and if the cross-covariance function is a function of lag only:
 \begin{equation}
-\gamma_{XY}(t,t+h)=\gamma_{XY}(h)
+\gamma_{XY}(t+h,t)=\gamma_{XY}(h)
 \end{equation}
 This function satisfies:
 \begin{align}
-\gamma_{XY}(h)=\gamma_{XY}(t,t+h)=&\textrm{cov}(X_t,Y_{t+h})=\\
-&\textrm{cov}(Y_{t+h},X_t)=\gamma_{YX}(t+h,t)=\gamma_{YX}(-h)
+\gamma_{XY}(h)=\gamma_{XY}(t+h,t)=&\textrm{cov}(X_{t+h},Y_t)=\\
+&\textrm{cov}(Y_t,X_{t+h})=\gamma_{YX}(t,t+h)=\gamma_{YX}(-h)
 \end{align}
 
 We can now define the \textit{cross-correlation function} (or CCF for short):
