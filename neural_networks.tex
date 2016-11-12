@@ -1,0 +1,217 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Artificial Neural Networks}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Overview of artificial neural networks}
+An \textit{artificial neural network} (ANN) superficially mimics the workings of the brain by being made up of \textit{neurons} and \textit{dendrites/axons}\footnote{In real neural networks, dendrites carry inputs to the neuron, while axons carry outputs from the neuron.}.
+
+The neurons are organized into \textit{layers}. These come in three categories:
+\begin{itemize}
+\item The \textit{input layer}, into which data the data to be processed enters.
+\item \textit{Hidden layers} - which are layers between the input and output layers.
+\item The \textit{output layer} in which the result of the ANN's data processing can be read.
+\end{itemize}
+
+An ANN has at least three layer: Input, output and at least one hidden layer. An ANN with two or more hidden layers is known as a \textit{deep network}. 
+
+Figure \ref{fig:ann_example} shows a neural network with three laters: 3 cells in the input layer, 4 cells in the hidden layer, and 2 cells in the output layer.
+
+\begin{figure}
+\centering
+\includegraphics{artificial_neural_network}
+\caption{An ANN with three layers.}
+\label{fig:ann_example}
+\end{figure}
+
+The cells in each layer are connected by dendrites/axons, which are represented as arrows in figure \ref{fig:ann_example}: Every cell in each layer is connected to all the cells in the next layer.
+
+As the data put into the input layer is translated into \textit{activity} levels in the cells. These activities then propagate via the axons through the network, causing different activity levels in each layer. The is repeated, until reaching the conclusion: The activity levels in the output layer. These are then interpreted accordingly.
+
+\section{Mathematical formulation}
+
+\subsection{Neuron activity}
+The activity of a neuron is affected by all dendrites pointing to the cell, i.e. all cells in the previous layer. To compute the activity, all the inputs are weighted corresponding to the strength of each dendrite. In addition a \textit{bias} term may be added - a constant term.
+
+The result is then put into an \textit{activation function} to yield the activity of the neuron.
+
+Mathematically, this may be formulated:
+\begin{equation}
+\label{neuron_activity}
+a_\textrm{neuron}=f\left(\sum_{i=1}^n \theta_i x_i + x_0\right)
+\end{equation}
+Here, $a$ is the activation, the $x_i$ are the inputs ($n$ total), the $\theta_i$ the corresponding weights (strength of the dendrites), $x_0$ is the bias term and finally $f$ is the activation function.
+
+\begin{figure}
+\centering
+\includegraphics[width=50mm]{neuron}
+\caption{Neuron with three inputs and a bias term}
+\label{fig:neuron}
+\end{figure}
+
+The situation is outlined in figure \ref{fig:neuron}. Note that the bias has been shown as an input, even if this is not really the case: It is merely a constant term.
+
+The inputs and weights are often written in vector form:
+\begin{equation}
+x=\begin{pmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_n
+\end{pmatrix},
+\quad
+\theta=\begin{pmatrix}
+\theta_1 \\ \theta_2 \\ \vdots \\ \theta_n
+\end{pmatrix}
+\end{equation}
+Hence, equation \ref{neuron_activity} may be written:
+\begin{equation}
+a_\textrm{neuron}=f\left(\theta^T x + x_0\right)
+\end{equation}
+
+\subsection{Activation function}
+For our activation function, we will choose the \textit{logistic function}. This is also known as the \textit{sigmoid function}\footnote{Though technically, any function with an s-shaped graph could be called a sigmoid function.}. It is defined as:
+\begin{equation}
+\label{sigmoid}
+g(z)=\frac{1}{1+e^{-z}}
+\end{equation}
+The function is graphed in figure \ref{fig:sigmoid}. It can be though of as a "smoothed out step function"\footnote{A neuron with an actual step function as an activation function is known as a \textit{perceptron}.}.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $z$,
+    ylabel = {Activation},
+    ymin = 0,
+    ymax = 1.2,
+]
+\addplot [
+    domain=-6:6, 
+    samples=50, 
+    color=red,
+]
+{1/(1+exp(-x)};
+\addlegendentry{$g(z)$}
+\end{axis}
+\end{tikzpicture}
+\caption{The sigmoid function.}
+\label{fig:sigmoid}
+\end{figure}
+
+The reason for the choice of this function is two-fold. First of all, it introduces \textit{activation saturation} into the model: Even if $\theta^T x+x_0$ turns out to be very large, the corresponding activity will still be close to 1. Similarly large negative values produce activities close to 0.
+
+However, many functions could have achieved activation saturation. But $g(z)$ also has an additional nice mathematical property. Consider its derivative:
+\begin{equation}
+g'(z)=\frac{1'\cdot(1+e^{-z})-1\cdot(1+e^{-z})'}{(1+e^{-z})^2}=\frac{e^{-z}}{(1+e^{-z})^2}=\frac{e^{-z}}{1+e^{-z}}g(z)
+\end{equation}
+It turns out the first factor is equal to $1-g(z)$:
+\begin{equation}
+1-g(z)=1-\frac{1}{1+e^{-z}}=\frac{1+e^{-z}}{1+e^{-z}}-\frac{1}{1+e^{-z}}=\frac{1+e^{-z}-1}{1+e^{-z}}=\frac{e^{-z}}{1+e^{-z}}
+\end{equation}
+So we have:
+\begin{equation}
+\label{sigmoid_derivative}
+g'(z)=g(z)\left(1-g(z)\right)
+\end{equation}
+
+\subsection{Matrix form of layer activities}
+So, given cell number $i$ in layer $L$, its activation depends on the input activities from layer $L-1$, the activity is:
+\begin{equation}
+\label{layer_activity}
+a^{(L)}_i=g\left(\left(\theta^{(L)}_i\right)^T a^{(L-1)} + b_i^{(L)}\right)
+\end{equation}
+Here, the activities from layer $L-1$ has been collected into the vector $a^{(L-1)}$ and the biases into the vector $b^{L}$. However, this may simply be expressed through matrix multiplication:
+\begin{equation}
+a^{(L)}=g\left(\theta^{(L)}a^{(L-1)}+b^{(L)}\right)
+\end{equation}
+Here, the matrix $\theta^{(L)}$ has rows consisting of weights for each cell. Also, $g$ is to be applied component-wise.
+
+\subsubsection{Dimensionalities}
+If layer $L-1$ contains $m_{L-1}$ cells and layer $L$ contains $m_L$ cells, this means the dimensionality of the matrices and vectors above are:
+\begin{equation}
+a^{(L-1)}\in\mathbb{R}^{m_{L-1}\times 1},\quad a^{(L)}, b^{(L)}\in\mathbb{R}^{m_L\times 1},\quad\theta^{(L)}\in\mathbb{R}^{m_L\times m_{L-1}} 
+\end{equation}
+
+\subsection{Output layer as a function of input layer}
+If there is a total of $K$ layers in the ANN. Then the input layer is $x\equiv a^{(1)}$ and the output layer $y\equiv a^{(K)}$. Then we may express $y$ as a function of $x$ through repeated application of equation \ref{layer_activity}. This process is known as \textit{forward propagation}:
+\begin{equation}
+y=g\Bigg(\theta^{(K)}\bigg(\cdots g\Big(\theta^{(3)} g\big(\theta^{(2)}x+b^{(2)}\big)+b^{(3)}\Big)\cdots\bigg)+b^{(K)}\Bigg)\equiv h_{\theta,b}(x)
+\end{equation}
+Here the notation $h_{\theta,b}(x)$ been introduced. Here $h$ stands for \textit{hypothesis}, i.e. the hypothesis that the particular choices of $\theta$ and $b$ are appropriate.
+
+\section{ANN used for classification}
+As an example, consider an ANN trained for picture classification. Se we imagine an ANN which has a representation of a picture for inputs $x$. The output layer is a series of $n$ numbers between 0 and 1. We may interpret these as probabilities. Maybe an ANN has been trained to recognize cats, dogs and horses. In this case, the size of the output layer is 3, and $y_1, y_2$ and $y_3$ are interpreted as the probabilities of the input picture containing a cat, dog or a horse respectively. If we know the picture only contains one animal, we would simply pick the highest value and use the corresponding animal as prediction.
+
+\section{Training an ANN}
+So the question is now how to train an ANN for classification? This is a supervised machine learning problem, as we imagine we have a large dataset to train the network on.
+
+The actual training is done using \textit{maximum likelihood estimation} of the weights and biases. In practice, this will be done using gradient or a similar optimization algorithm. The partial derivatives needed for this is found using what is known as the \textit{backpropagation algorithm}.
+
+\subsection{Likelihood of a Bernoulli process}
+Let's take a step back and consider a Bernoulli process, i.e. an experiment with two outcomes: success and failure. The probability of success is called $p$, and hence the probability of failure must be $1-p$. This may be summed up in the equation:
+\begin{equation}
+P(x|p)=p^x(1-p)^{1-x},\quad x=0,1
+\end{equation}
+Here $x=1$ indicates success and $x=0$ failure.
+
+The "probability mindset" here is, that if we know $p$ we know the distribution. The idea of likelihood swaps this around: Instead we ask what the parameter $p$ might be given the outcome $x$:
+\begin{equation}
+\mathcal{L}(p|x)=p^x(1-p)^{1-x}
+\end{equation}
+Based on the observation, we will then pick the value of $p$ that makes the observation most likely. This is known as maximum likelihood estimation\footnote{For a single observation this means the estimate is $p=1$ in case of success and $p=0$ in case of failure. In other words $p=x$.}.
+
+Often, it is more convenient to minimize the \textit{log-likelihood}, i.e. minus the logarithm of the likelihood\footnote{Not all presentations include the minus sign. It is kept here to make $L$ a cost function.}. Since $\log$ is monotone, this is equivalent. For the Bernoulli process:
+\begin{equation}
+L(p|x)=-\log\mathcal{L}(p|x)=-x\log p-(1-x)\log(1-p)
+\end{equation}
+This can also be seen as a \textit{cost function}, i.e. something we wish to minimize. Figure \ref{fig:bernoulli} graphs the function for the two values of $x$.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = $p$,
+    ylabel = {Log-likelihood},
+    ymin = 0,
+    ymax = 2,
+]
+\addplot [
+    domain=0:1, 
+    samples=50, 
+    color=red,
+]
+{-ln(x)};
+\addlegendentry{$x=1$}
+
+\addplot [
+    domain=0:1, 
+    samples=50, 
+    color=green,
+]
+{-ln(1-x)};
+\addlegendentry{$x=0$}
+
+\end{axis}
+\end{tikzpicture}
+\caption{Log-likelihoods for the Bernoulli process.}
+\label{fig:bernoulli}
+\end{figure}
+
+\subsection{Single item training set}
+Now consider a single item training set, i.e. an input $x$ that has been classified at option $a$. This means that ideally, the output layer should have $y_a$ equal to 1 and all other $y_i$ equal to 0.
+
+\end{document}
