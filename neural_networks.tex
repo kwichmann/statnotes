@@ -326,7 +326,7 @@ Reorder the summation and use that $A_{ij}=A^T_{ji}$:
 \begin{equation}
 \frac{\partial L}{\partial\alpha}=\sum_{j}\left\{\underbrace{\sum_i\left(\theta^{(K)}\right)^T_{ji}\delta^{(K)}_i}\ a_j^{(K-1)}\left(1-a_j^{(K-1)}\right)\frac{\partial z^{(K-1)}_j}{\partial\alpha}\right\}
 \end{equation}
-The underbraced part is equal to $\left[\left(\theta^{(K)}\right)^T\delta\right]_j$. So it makes sense to set the error of layer $K-1$ equal to:
+The underbraced part is equal to $\left[\left(\theta^{(K)}\right)^T\delta^{(K)}\right]_j$. So it makes sense to set the error of layer $K-1$ equal to:
 \begin{equation}
 \delta^{(K-1)}=\left(\theta^{(K)}\right)^T\delta^{(K)}\odot a^{(K-1)}\odot\left(1-a^{(K-1)}\right)
 \end{equation}
