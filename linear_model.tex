@@ -3,9 +3,10 @@
 \usepackage{amsfonts}
 \usepackage{amsthm}
 \usepackage{mathtools}
+\usepackage{MnSymbol}
 \newtheorem{theorem}{Theorem}
 
-\title{The linear model}
+\title{The Linear Model}
 \author{Kristian Wichmann}
 
 \begin{document}
@@ -13,6 +14,22 @@
 \maketitle
 
 The \textit{linear model} is a theoretical framework that unifies a number of statistical concepts, like ANOVA and regression.
+
+\section{Definition of a linear model}
+This section will deal with the \textit{linear model} in its most abstract form.
+
+Let $V$ be a vector space of finite dimension $N$. To specify a linear model we need two ingredients:
+\begin{itemize}
+\item A subspace $L\subset V$. Do note that we require $L$ to be a proper subset of $V$, i.e. $\textrm{dim}L<N$. This subspace is known as the \textit{mean value subspace}.
+\item An inner product $\langle\cdot,\cdot\rangle$ on $V$.
+\end{itemize}
+The inner product induces a family of inner products $\llangle\cdot,\cdot\rrangle_{\sigma^2}$ parametrized by $\sigma^2>0$:
+\begin{equation}
+\llangle\cdot,\cdot\rrangle_{\sigma^2}=\frac{\langle\cdot,\cdot\rangle}{\sigma^2}
+\end{equation}
+These inner products are known as \textit{precisions}. While they do not agree on distances, the precisions do agree on orthogonality.
+
+The linear model
 
 \section{Derivatives and linear algebra}
 We will need a few results concerning derivatives of linear algebra expressions. Consider a linear function:
