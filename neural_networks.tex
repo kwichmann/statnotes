@@ -148,19 +148,22 @@ a^{(L-1)}\in\mathbb{R}^{m_{L-1}\times 1},\quad a^{(L)}, b^{(L)}\in\mathbb{R}^{m_
 \subsection{Output layer as a function of input layer}
 If there is a total of $K$ layers in the ANN. Then the input layer is $x\equiv a^{(1)}$ and the output layer $y\equiv a^{(K)}$. Then we may express $y$ as a function of $x$ through repeated application of equation \ref{layer_activity}. This process is known as \textit{forward propagation}:
 \begin{equation}
-y=g\Bigg(\theta^{(K)}\bigg(\cdots g\Big(\theta^{(3)} g\big(\theta^{(2)}x+b^{(2)}\big)+b^{(3)}\Big)\cdots\bigg)+b^{(K)}\Bigg)\equiv h_{\theta,b}(x)
+\label{hypothesis}
+y=g\Bigg(\theta^{(K)}\bigg(\cdots g\Big(\theta^{(3)} g\big(\theta^{(2)}x+b^{(2)}\big)+b^{(3)}\Big)\cdots\bigg)+b^{(K)}\Bigg)\equiv h^{(\theta,b)}
 \end{equation}
 Here the notation $h_{\theta,b}(x)$ been introduced. Here $h$ stands for \textit{hypothesis}, i.e. the hypothesis that the particular choices of $\theta$ and $b$ are appropriate.
 
 \section{ANN used for classification}
 As an example, consider an ANN trained for picture classification. Se we imagine an ANN which has a representation of a picture for inputs $x$. The output layer is a series of $n$ numbers between 0 and 1. We may interpret these as probabilities. Maybe an ANN has been trained to recognize cats, dogs and horses. In this case, the size of the output layer is 3, and $y_1, y_2$ and $y_3$ are interpreted as the probabilities of the input picture containing a cat, dog or a horse respectively. If we know the picture only contains one animal, we would simply pick the highest value and use the corresponding animal as prediction.
 
-\section{Training an ANN}
+\subsection{Training an ANN - overview}
 So the question is now how to train an ANN for classification? This is a supervised machine learning problem, as we imagine we have a large dataset to train the network on.
 
 The actual training is done using \textit{maximum likelihood estimation} of the weights and biases. In practice, this will be done using gradient or a similar optimization algorithm. The partial derivatives needed for this is found using what is known as the \textit{backpropagation algorithm}.
 
-\subsection{Likelihood of a Bernoulli process}
+All of these topics will be the subject of the next set of sections.
+
+\section{Likelihood of a Bernoulli process}
 Let's take a step back and consider a Bernoulli process, i.e. an experiment with two outcomes: success and failure. The probability of success is called $p$, and hence the probability of failure must be $1-p$. This may be summed up in the equation:
 \begin{equation}
 P(x|p)=p^x(1-p)^{1-x},\quad x=0,1
@@ -211,7 +214,145 @@ This can also be seen as a \textit{cost function}, i.e. something we wish to min
 \label{fig:bernoulli}
 \end{figure}
 
-\subsection{Single item training set}
-Now consider a single item training set, i.e. an input $x$ that has been classified at option $a$. This means that ideally, the output layer should have $y_a$ equal to 1 and all other $y_i$ equal to 0.
+\section{Single item training set}
+Now consider a single item training set, i.e. an input $x$ that has been classified as option $a$. This corresponds to a Bernoulli process for each cell in the output $y$, with only the $a$'th one being a success. So the desired output is $y=\delta_a$.
+
+Now, the log-likelihood of the $i$'th such Bernoulli process depends on the actual choice of weights and biases - more specifically, it depends on the $h^{(\theta,b)}$ function defined in equation \ref{hypothesis}:
+\begin{equation}
+L_i(\theta,b|y_i)=-y_i\log\left[h^{(\theta,b)}_i\right]-(1-y_i)\log\left[1-h^{(\theta,b)}_i\right]
+\end{equation}
+If the processes are assumed to be independent (a big if, but let's go with that for now), the log-likelihoods add up, and the total likelihood is:
+\begin{equation}
+L(\theta,b|y)=\sum_i\left\{-y_i\log\left[h^{(\theta,b)}_i\right]-(1-y_i)\log\left[1-h^{(\theta,b)}_i\right]\right\}
+\end{equation}
+The task is now to find the weights and biases that minimize this. To do so, we wish to use gradient descent, and so need the partial derivatives of $L$ with respect to all weights and biases!
+
+If $\alpha$ is any weight or bias, we can differentiate $L$ with respect to it:
+\begin{equation}
+\frac{\partial L}{\partial\alpha}=\sum_i\left\{-y_i\frac{1}{h^{(\theta,b)}_i}\frac{\partial h^{(\theta,b)}_i}{\partial\alpha}-(1-y_i)\frac{1}{1-h^{(\theta,b)}_i}\left(-\frac{\partial h^{(\theta,b)}_i}{\partial\alpha}\right)\right\}
+\end{equation}
+Collecting terms:
+\begin{align}
+\frac{\partial L}{\partial\alpha}=&\sum_i\left\{\frac{-y_i\left(1-h^{(\theta,b)}_i\right)+(1-y_1)h^{(\theta,b)}_i}{h^{(\theta,b)}_i(1-h^{(\theta,b)}_i)}\frac{\partial h^{(\theta,b)}_i}{\partial\alpha}\right\}\\
+&\sum_i\left\{\frac{h^{(\theta,b)}_i-y_i}{h^{(\theta,b)}_i\left(1-h^{(\theta,b)}_i\right)}\frac{\partial h^{(\theta,b)}_i}{\partial\alpha}\right\}
+\label{general_partial_formula}
+\end{align}
+So the problem is reduced to finding partial derivatives of $h$.
+
+\subsection{Partial derivatives: Output layer}
+The values of the output layer can be expressed through their dependence on the last hidden layer as per equation \ref{layer_activity}:
+\begin{equation}
+h^{(\theta,b)}=a^{(K)}=g(\theta^{(K)}a^{(K-1)}+b^{(K)})
+\end{equation}
+Remember that this is a vector equation - we need to consider each component. The property of the sigmoid function expressed in equation \ref{sigmoid_derivative} now comes in handy when we want to calculate partial derivatives:
+\begin{equation}
+\frac{\partial h^{(\theta,b)}_i}{\partial\alpha}=g(z_i)(1-g(z_i))\frac{\partial z_i}{\partial\alpha},\quad z_i=\sum_j\theta^{(K)}_{ij}a^{(K-1)}_j+b^{(K)}_i
+\end{equation}
+But $g(z_i)=h^{(\theta,b)}_i$! So inserting into equation \ref{general_partial_formula} there's a lot of cancellation:
+\begin{equation}
+\frac{\partial L}{\partial\alpha}=\sum_i\left\{\left(h^{(\theta,b)}_i-y_i\right)\frac{\partial z_i}{\partial\alpha}\right\}=\sum_i\delta^{(K)}_i\frac{\partial z_i}{\partial\alpha}
+\label{general_partial_formula2}
+\end{equation}
+Here, the \textit{error} $\delta^{(K)}=h^{(\theta,b)}_i-y_i$ for the output layer has been introduced. This can be seen as the amount the hypothesis specified by the current weights and biases is off compared to what is desired. Be careful to distinguish between the error and Kronecker deltas in the following!
+
+Equation \ref{general_partial_formula2} may be written in vector form:
+\begin{equation}
+\frac{\partial L}{\partial\alpha}=\left(\delta^{(K)}\right)^T\frac{\partial z}{\partial\alpha}
+\end{equation}
+
+Finally, we need to find the partial derivatives of $z$. Again, remember that $z$ is a vector:
+\begin{equation}
+z_i=\sum_j\theta^{(K)}_{ij}a^{(K-1)}_j+b^{(K)}_i
+\end{equation}
+At this point we only consider weights and biases from the axons pointing at the output layer, i.e. with superscript $K$. But since the weights form a matrix and the biases a vector, the resulting derivative objects will be 3 and 2-dimensional respectively:
+\begin{equation}
+\frac{\partial z_i}{\partial\theta^{(K)}_{kl}}=\sum_j\delta_{ik}\delta_{jl}a^{(K-1)}_j=\delta_{ik}a^{(K-1)}_l,\quad\frac{\partial z_i}{\partial b^{(K)}_k}=\delta_{ik}
+\end{equation}
+This means that the only non-zero derivatives are:
+\begin{equation}
+\frac{\partial z_i}{\partial\theta^{(K)}_{ij}}=a^{(K-1)}_j,\quad\frac{\partial z_i}{\partial b^{(K)}_i}=1
+\end{equation}
+We may now calculate the derivatives of $L$:
+\begin{align}
+\label{weight_derivative}
+\frac{\partial L}{\partial\theta^{(K)}_{ij}}=&\sum_k\delta^{(K)}_k\delta_{ki}a^{(K-1)}_j=\delta^{(K)}_i a^{(K-1)}_j\\
+\label{bias_derivative}
+\frac{\partial L}{\partial b^{(K)}_i}=&\sum_k\delta^{(K)}_k\delta_{ki}=\delta^{(K)}_i
+\end{align}
+
+\subsection{Partial derivatives: Hidden layers}
+On to the hidden layers. Luckily, it turns out that most of the calculations echo the output layer one closely.
+
+Let's look at a weight or bias $\alpha$ from the last hidden layer. We need the derivative of $h$ with respect to $\alpha$. It is convenient to make the following definition:
+\begin{equation}
+z^{(N)}=\theta^{(N)}a^{(N-1)}+b^{(N)}
+\end{equation}
+Then we may write:
+\begin{equation}
+h^{(\theta,b)}=g(z^{(K)})
+\end{equation}
+Now we wish to form the partial derivative with respect to a weight/bias $\alpha$ from the last hidden layer, i.e. layer $K-1$. Here in vector form:
+\begin{equation}
+\frac{\partial h^{(\theta,b)}}{\partial\alpha}=g(z^{(K)})\odot(1-g(z^{(K)})\odot\frac{\partial z^{(K)}}{\partial\alpha}
+\end{equation}
+Here, the symbol $\odot$ is used to mean the \textit{Hadamard product} or \textit{Schur product}. It simply takes two vectors of equal length and return another vector of the same length, where each component is the product of the relevant factor components:
+\begin{equation}
+\begin{pmatrix}
+a_1 \\ a_2 \\ \vdots \\ a_n
+\end{pmatrix}
+\odot
+\begin{pmatrix}
+b_1 \\ b_2 \\ \vdots \\ b_n
+\end{pmatrix}
+=
+\begin{pmatrix}
+a_1 b_1 \\ a_2 b_2 \\ \vdots \\ a_n b_n
+\end{pmatrix}
+\end{equation}
+So what is the derivative? It is almost the same calculation as above:
+\begin{equation}
+\frac{\partial z^{(K)}}{\partial\alpha}=\frac{\partial}{\partial\alpha}g(z^{(K-1)})=g(z^{(K-1)})(1-g(z^{(K-1)}))\frac{\partial z^{(K-1)}}{\partial\alpha}
+\end{equation}
+Again, the two first factors can be expressed as activiations, and because $\alpha$ is associated with layer $K-1$, the derivative is analogous to the results from equations \ref{weight_derivative} and \ref{bias_derivative}. Inserting into equation \ref{general_partial_formula}, once again, there's some cancelling out, but this time we get some extra factors:
+\begin{equation}
+\frac{\partial L}{\partial\alpha}=\sum_i\left\{\delta^{(K)}_i a_i^{(K-1)}\left(1-a_i^{(K-1)}\right)\frac{\partial z^{(K-1)}_i}{\partial\alpha}\right\}
+\end{equation}
+Now, set the error of layer $K-1$ equal to:
+\begin{equation}
+\delta^{(K-1)}=\delta^{(K)}\odot a_i^{(K-1)}\odot\left(1-a^{(K-1)}\right)
+\end{equation}
+The calculations are now essentially the same as in the last section, and we get:
+\begin{align}
+\frac{\partial L}{\partial\theta^{(K-1)}_{ij}}=&\delta^{(K-1)}_i a^{(K-2)}_j\\
+\frac{\partial L}{\partial b^{(K-1)}_i}=&\delta^{(K-1)}_i
+\end{align}
+If $\alpha$ had been associated with an earlier hidden layer, we could have followed the same steps iteratively, defining the error of layer $N$ recursively:
+\begin{equation}
+\delta^{(N)}=\delta^{(N+1)}\odot a_i^{(N)}\odot\left(1-a^{(N)}\right),\quad N\ge 2
+\end{equation}
+The general formulas for the derivatives is then:
+\begin{align}
+\frac{\partial L}{\partial\theta^{(N)}_{ij}}=&\delta^{(N)}_i a^{(N-1)}_j\\
+\frac{\partial L}{\partial b^{(N)}_i}=&\delta^{(N)}_i
+\end{align}
+Again, $N$ should be at least 2, reflecting the fact that there's no error, weights or biases for the input layer.
+
+\subsection{Backpropagation algorithm}
+As we have seen above, calculation of derivatives is a recursive process, starting from the output layer and working backwars. Hence the name \textit{backpropagation algorithm}. Here are the steps in bullet form:
+\begin{itemize}
+\item First calculate all the activations of the neurons corresponding to the input $x$ and the current weights and biases.
+\item Using the $y$'s, calculate the error of the output layer.
+\item Repeat the following until all derivatives are calculated:
+\begin{itemize}
+\item Calculate derivatives for the current layer using the layer's error and the previousy calculated activations.
+\item Iteratively calculate the error of the previous layer.
+\end{itemize}
+\end{itemize}
+This is merely one step in the gradient descent process. The derivatives are used to generate a new set of weights/biases and the process is repeated until all derivatives are sufficiently small.
+
+\section{Full training set}
+So far, we've been dealing with the situation for a training set consisting of only one item. In practice, we ideally want to train our ANN on a large dataset.
+
+However, since each item in the training set is independent of each other, the log-likelihood of multiple items is simply equal to the sum of all of them. By additivity of the derivative, the backpropagation process essentially remains the same, except we need to sum over the entire training set in each step of the gradient descent.
 
 \end{document}
