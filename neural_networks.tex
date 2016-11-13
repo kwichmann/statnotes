@@ -22,7 +22,7 @@ An \textit{artificial neural network} (ANN) superficially mimics the workings of
 
 The neurons are organized into \textit{layers}. These come in three categories:
 \begin{itemize}
-\item The \textit{input layer}, into which data the data to be processed enters.
+\item The \textit{input layer}, into which the data to be processed enters.
 \item \textit{Hidden layers} - which are layers between the input and output layers.
 \item The \textit{output layer} in which the result of the ANN's data processing can be read.
 \end{itemize}
@@ -151,7 +151,7 @@ If there is a total of $K$ layers in the ANN. Then the input layer is $x\equiv a
 \label{hypothesis}
 y=g\Bigg(\theta^{(K)}\bigg(\cdots g\Big(\theta^{(3)} g\big(\theta^{(2)}x+b^{(2)}\big)+b^{(3)}\Big)\cdots\bigg)+b^{(K)}\Bigg)\equiv h^{(\theta,b)}
 \end{equation}
-Here the notation $h_{\theta,b}(x)$ been introduced. Here $h$ stands for \textit{hypothesis}, i.e. the hypothesis that the particular choices of $\theta$ and $b$ are appropriate.
+Here the notation $h^{(\theta,b)}$ been introduced. Here $h$ stands for \textit{hypothesis}, i.e. the hypothesis that the particular choices of $\theta$ and $b$ are appropriate.
 
 \section{ANN used for classification}
 As an example, consider an ANN trained for picture classification. Se we imagine an ANN which has a representation of a picture for inputs $x$. The output layer is a series of $n$ numbers between 0 and 1. We may interpret these as probabilities. Maybe an ANN has been trained to recognize cats, dogs and horses. In this case, the size of the output layer is 3, and $y_1, y_2$ and $y_3$ are interpreted as the probabilities of the input picture containing a cat, dog or a horse respectively. If we know the picture only contains one animal, we would simply pick the highest value and use the corresponding animal as prediction.
