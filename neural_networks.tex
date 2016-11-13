@@ -309,17 +309,26 @@ b_1 \\ b_2 \\ \vdots \\ b_n
 a_1 b_1 \\ a_2 b_2 \\ \vdots \\ a_n b_n
 \end{pmatrix}
 \end{equation}
-So what is the derivative? It is almost the same calculation as above:
+So what is the derivative?
 \begin{equation}
-\frac{\partial z^{(K)}}{\partial\alpha}=\frac{\partial}{\partial\alpha}g(z^{(K-1)})=g(z^{(K-1)})(1-g(z^{(K-1)}))\frac{\partial z^{(K-1)}}{\partial\alpha}
+\frac{\partial z^{(K)}}{\partial\alpha}=\theta^{(K)}\frac{\partial a^{(K-1)}}{\partial\alpha}
 \end{equation}
+But $a^{(K-1)}=g\left(z^{(K-1)})\right)$:
+\begin{equation}
+\frac{\partial}{\partial\alpha}g(z^{(K-1)})=g(z^{(K-1)})\odot(1-g(z^{(K-1)}))\odot\frac{\partial z^{(K-1)}}{\partial\alpha}
+\end{equation}
+
 Again, the two first factors can be expressed as activiations, and because $\alpha$ is associated with layer $K-1$, the derivative is analogous to the results from equations \ref{weight_derivative} and \ref{bias_derivative}. Inserting into equation \ref{general_partial_formula}, once again, there's some cancelling out, but this time we get some extra factors:
 \begin{equation}
-\frac{\partial L}{\partial\alpha}=\sum_i\left\{\delta^{(K)}_i a_i^{(K-1)}\left(1-a_i^{(K-1)}\right)\frac{\partial z^{(K-1)}_i}{\partial\alpha}\right\}
+\sum_i\left\{\delta^{(K)}_i\sum_j\theta^{(K)}_{ij}a_j^{(K-1)}\left(1-a_j^{(K-1)}\right)\frac{\partial z^{(K-1)}_j}{\partial\alpha}\right\}
 \end{equation}
-Now, set the error of layer $K-1$ equal to:
+Reorder the summation and use that $A_{ij}=A^T_{ji}$:
 \begin{equation}
-\delta^{(K-1)}=\delta^{(K)}\odot a_i^{(K-1)}\odot\left(1-a^{(K-1)}\right)
+\frac{\partial L}{\partial\alpha}=\sum_{j}\left\{\underbrace{\sum_i\left(\theta^{(K)}\right)^T_{ji}\delta^{(K)}_i}\ a_j^{(K-1)}\left(1-a_j^{(K-1)}\right)\frac{\partial z^{(K-1)}_j}{\partial\alpha}\right\}
+\end{equation}
+The underbraced part is equal to $\left[\left(\theta^{(K)}\right)^T\delta\right]_j$. So it makes sense to set the error of layer $K-1$ equal to:
+\begin{equation}
+\delta^{(K-1)}=\left(\theta^{(K)}\right)^T\delta^{(K)}\odot a^{(K-1)}\odot\left(1-a^{(K-1)}\right)
 \end{equation}
 The calculations are now essentially the same as in the last section, and we get:
 \begin{align}
@@ -328,7 +337,7 @@ The calculations are now essentially the same as in the last section, and we get
 \end{align}
 If $\alpha$ had been associated with an earlier hidden layer, we could have followed the same steps iteratively, defining the error of layer $N$ recursively:
 \begin{equation}
-\delta^{(N)}=\delta^{(N+1)}\odot a_i^{(N)}\odot\left(1-a^{(N)}\right),\quad N\ge 2
+\delta^{(N)}=\delta^{(N+1)}=\left(\theta^{(N+1)}\right)^T\delta^{(N+1)}\odot a^{(N)}\odot\left(1-a^{(N)}\right)
 \end{equation}
 The general formulas for the derivatives is then:
 \begin{align}
@@ -338,9 +347,9 @@ The general formulas for the derivatives is then:
 Again, $N$ should be at least 2, reflecting the fact that there's no error, weights or biases for the input layer.
 
 \subsection{Backpropagation algorithm}
-As we have seen above, calculation of derivatives is a recursive process, starting from the output layer and working backwars. Hence the name \textit{backpropagation algorithm}. Here are the steps in bullet form:
+As we have seen above, calculation of derivatives is a recursive process, starting from the output layer and working backwards. Hence the name \textit{backpropagation algorithm}. Here are the steps in bullet form:
 \begin{itemize}
-\item First calculate all the activations of the neurons corresponding to the input $x$ and the current weights and biases.
+\item First use forward propagation to calculate all the activations of the neurons corresponding to the input $x$ and the current weights and biases.
 \item Using the $y$'s, calculate the error of the output layer.
 \item Repeat the following until all derivatives are calculated:
 \begin{itemize}
