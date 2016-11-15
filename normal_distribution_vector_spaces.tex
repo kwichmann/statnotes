@@ -29,6 +29,7 @@ Here, $v\in\mathbb{R}^m$. Since translations are always bijective, we note that 
 Each component of an affine transformation is composed from measurable function - is is understood that we mean with respect to the Borel algebras of each space) - so the affine transformation itself is measurable as well.
 
 \subsection{Transformation properties of the Lebesgue measure}
+\label{euclidean_lebesgue_properties}
 Recall that the Lebesgue measure in $n$ dimensions $m_n$ is invariant under translation: If $t$ is a translation $t:\mathbb{R}^n\rightarrow\mathbb{R}^n, t(x)=x+x_0$, where $x_0\in\mathbb{R}^n$ then:
 \begin{equation}
 t(m_n)=m_n
@@ -149,8 +150,64 @@ At first this object seems to depend of the choice of basis for $V$. But it turn
 If $e_1,e_2,\ldots,e_n$ and $e^*_1,e^*_2,\ldots,e^*_n$ are bases for $V$, then the induced $\sigma$-algebra $\mathbb{B}_V$ and $\mathbb{B}^*_V$ is the same thing.
 \end{theorem}
 \begin{proof}
-We know that $\phi^{-1}$ is $\mathbb{B}_V-\mathbb{B}_n$ measurable by definition.
+We know that $\phi^{-1}$ is $\mathbb{B}_V-\mathbb{B}_n$ measurable by definition. We have:
+\begin{equation}
+(\phi^*)^{-1}=(\phi^*)^{-1}\circ\textrm{id}_V=(\phi^*)^{-1}\circ(\phi\circ\phi^{-1})=\left((\phi^*)^{-1}\circ\phi\right)\circ\phi^{-1}
+\end{equation}
+$\left((\phi^*)^{-1}\circ\phi\right)$ is a linear operator on $\mathbb{R}^n$ and so according to section \ref{euclidean_lebesgue_properties} is measurable. So $(\phi^*)^{-1}$ must be $\mathbb{B}_V-\mathbb{B}_n$-measurable. Since $\mathbb{B}_V^*$ is the smallest $\sigma$-algebra to make $(\phi^*)^{-1}$ $\mathbb{B}_V-\mathbb{B}_n$-measurable, we must have $\mathbb{B}^*_V\subseteq\mathbb{B}_V$.
+
+But by a totally symmetric argument, we must also have $\mathbb{B}_V\subseteq\mathbb{B}^*_V$. Hence $\mathbb{B}_V=\mathbb{B}^*_V$.
 \end{proof}
 
+It turns out, that $\phi$ must be measurable too. This is a direct consequence of the pipeline lemma.
+
+\begin{theorem}
+Given two finite-dimensional vector spaces $V$ and $W$, then:
+\begin{equation}
+\mathbb{B}_{V\times W}=\mathbb{B}_V\otimes\mathbb{B}_W
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let $e_1, e_2,\ldots, e_n$ be a basis for $V$ with corresponding coordinate map $\phi$. And $f_1, f_2,\ldots, f_m$ a basis for $W$ with corresponding coordinate map $\psi$. Then $(e_1, 0), (e_2, 0),\ldots,(e_n,0),(0, f_1), (0, f_2),\ldots,(0,f_m)$ is a basis for $V\times W$. The corresponding coordinate map is:
+\begin{equation}
+\phi\times\psi: (x_1, x_2,\ldots,x_{n+m})\mapsto\left(\sum_{i=1}^n x_i e_i,\sum_{j=1}^m x_{n+j}f_j\right)
+\end{equation}
+The inverse is $(\phi\times\psi)^{-1}=\phi^{-1}\times\psi^{-1}$. Since $\phi^{-1}$ is $\mathbb{B}_V-\mathbb{B}_n$-measurable and $\psi^{-1}$ is $\mathbb{B}_W-\mathbb{B}_m$-measurable, $\phi^{-1}\times\psi^{-1}$ must be $\mathbb{B}_V\otimes\mathbb{B}_W-\mathbb{B}_n\otimes\mathbb{B}_n$-measurable. But $\mathbb{B}_n\otimes\mathbb{B}_m=\mathbb{B}_{n+m}$. Since $\mathbb{B}_{V\times W}$ is the smallest $\sigma$-algebra to make $\phi^{-1}\times\psi^{-1}$ measurable, we must have $\mathbb{B}_{V\times W}\subseteq\mathbb{B}_V\otimes\mathbb{B}_W$.
+
+On the other hand, consider the projection operators:
+\begin{align}
+\pi_V:& V\times W\rightarrow V, (v,w)\mapsto v\\
+\pi_n:& \mathbb{R}^{n+m}\rightarrow\mathbb{R}^n, (x_1,\ldots,x_{n+m})\mapsto(x_1,\ldots,x_n)
+\end{align}
+Now consider $\pi_V\circ(\phi\times\psi)$. Applied to an $x\in\mathbb{R}^{n+m}$ we have:
+\begin{equation}
+\pi_V\circ(\phi\times\psi)(x)=\pi_v\left(\left(\sum_{i=1}^n x_i e_i,\sum_{j=1}^m x_{n+j}f_j\right)\right)=\sum_{i=1}^n x_i e_i
+\end{equation}
+But this is the same as:
+\begin{equation}
+\phi\circ\pi_1(x)=\phi\left((x_1,\ldots x_n)\right)=\sum_{i=1}^n x_i e_i
+\end{equation}
+So $\pi_V\circ(\phi\times\psi)=\phi\circ\pi_1$. Now apply $\phi^{-1}\times\psi^{-1}$ from the right to get:
+\begin{equation}
+\pi_V=\phi\circ\pi_1\circ(\phi^{-1}\times\psi^{-1})
+\end{equation}
+Since all the three functions on the right side are measurable, $\pi_V$ must be $\mathbb{B}_{V\times W}-\mathbb{B}_V$-measurable. By a similar argument the corresponding projection operator $\pi_W: V\times W\rightarrow W$ is $\mathbb{B}_{V\times W}-\mathbb{B}_W$-measurable. Since $\mathbb{B}_V\otimes\mathbb{B}_W$ is the smallest $\sigma$-algebra to make both $\pi_V$ and $\pi_W$ measurable, we must have: $\mathbb{B}_V\otimes\mathbb{B}_W\subseteq\mathbb{B}_{V\times W}$.
+\end{proof}
+
+\subsection{Lebesgue measures on $V$}
+We now want to define a measure on the measurable space $(V,\mathbb{B}_V)$. If $e_1, e_2,\ldots, e_n$ is a basis for $V$, we will use the associated coordinate map $\phi$ to define a measure:
+\begin{equation}
+\lambda_V=\phi(m_n)
+\end{equation}
+Here, $m_n$ is the usual Lebesgue measure in $n$ dimensions. The problem is, that this measure depends on the chosen basis! Consider another basis $e^*_1, e^*_2,\ldots,e^*_n$ and associated coordinate map $\phi^*$. Then the measure is:
+\begin{equation}
+\lambda^*_V=\phi^*(m_n)=(\phi\circ\phi^{-1})\circ\phi^*(m_n)=\phi\circ(\phi^{-1}\circ\phi^*(m_n))
+\end{equation}
+Now $\phi^{-1}\circ\phi^*$ is an isomorphism $\mathbb{R}^n\rightarrow\mathbb{R}^n$, so according to section \ref{euclidean_lebesgue_properties}, there is a constant $c$ such that $(\phi^{-1}\circ\phi^*(m_n))=c m_n$. So:
+\begin{equation}
+\lambda^*_V=c\phi(m_n)=c\lambda_V
+\end{equation}
+
+So while there are many Lebesgue measures on $V$ they only differ from each other by a constant factor. This means that they all agree on what constitutes a null set, and on which functions are integrable. They disagree on the integral, but agree on whether it is finite or not. The also agree on whether a measure $\mu$ has a density with respect to $\lambda_V$ or not.
 
 \end{document}
