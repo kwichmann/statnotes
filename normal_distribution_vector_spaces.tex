@@ -1,0 +1,156 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Normal distributions on vector spaces}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Affine transformations of euclidean spaces}
+Let $s:\mathbb{R}^n\rightarrow\mathbb{R}^m$ be a linear transformation. This means that the is an $m\times n$ matrix $A$ so $s(x)=Ax$.
+
+An \textit{affine} transformation $t$ is formed by following this linear map by a translation:
+\begin{equation}
+t:\mathbb{R}^n\rightarrow\mathbb{R}^m, t(x)=Ax+v
+\end{equation}
+Here, $v\in\mathbb{R}^m$. Since translations are always bijective, we note that $t$ is bijective iff $A$ is invertible.
+
+Each component of an affine transformation is composed from measurable function - is is understood that we mean with respect to the Borel algebras of each space) - so the affine transformation itself is measurable as well.
+
+\subsection{Transformation properties of the Lebesgue measure}
+Recall that the Lebesgue measure in $n$ dimensions $m_n$ is invariant under translation: If $t$ is a translation $t:\mathbb{R}^n\rightarrow\mathbb{R}^n, t(x)=x+x_0$, where $x_0\in\mathbb{R}^n$ then:
+\begin{equation}
+t(m_n)=m_n
+\end{equation}
+
+Also, if $s:\mathbb{R}^n\rightarrow\mathbb{R}^n, x\mapsto Ax$ is an isomorphism, then:
+\begin{equation}
+s(m_n)=m_n|\det A^{-1}|
+\end{equation}
+Combining the two, the formula for affine transformation is the same as for linear ones.
+
+\section{Orthogonal complement}
+Let $V$ be a finite-dimensional vector space with an inner product $\langle\cdot,\cdot\rangle$. Let $U$ be a subspace of $V$. Then we define the \textit{orthogonal complement} of $U$ as:
+\begin{equation}
+U^\perp=\{v\in V|\forall u\in U: \langle u, v\rangle = 0\}
+\end{equation}
+\begin{theorem}
+$U^\perp$ is a subspace of $V$.
+\end{theorem}
+\begin{proof}
+According to the subspace theorem, we need to show three things:
+\begin{itemize}
+\item $U^\perp$ is not empty: Clearly $0\in U^\perp$.
+\item Closed under addition: If $v_1,v_2\in U^\perp$, then for all $u\in U^\perp$:
+\begin{equation}
+\langle v_1+v_2,u\rangle=\langle v_1,u\rangle + \langle v_2,u\rangle = 0 
+\end{equation}
+\item Closed under scalar multiplication: If $v\in U^\perp$ and $c\in\mathbb{R}$ then for all $u\in U^\perp$:
+\begin{equation}
+\langle cv,u\rangle = c\langle v,u\rangle = 0
+\end{equation}
+\end{itemize}
+\end{proof}
+
+Since the only vector perpendicular to itself is $0$, we further conclude that $U\cap U^\perp=\{0\}$.
+
+\begin{theorem}
+If $e_1, e_2,\ldots,e_m$ is an orthonormal basis for $U$, then for any $v\in V$:
+\begin{equation}
+v-\sum_{i=1}^m\langle v,e_i\rangle e_i\in U^\perp
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let $u\in U$. Then we can write $u=\sum_{j=1}^m\lambda_j e_j$ for some coefficients $\lambda_j$. Now calculate the inner product with the vector above:
+\begin{equation}
+\langle v-\sum_{i=1}^m\langle v,e_i\rangle e_i\ ,\ \sum_{j=1}^m\lambda_j e_j\rangle=\sum_{i=j}^m\lambda_j\langle v,e_j\rangle-\sum_{i=1}^m\sum_{j=1}^m\lambda_j\langle v,e_i\rangle\langle e_i,e_j\rangle
+\end{equation}
+Since $\langle e_i,e_j\rangle=\delta_{ij}$ this vanishes.
+\end{proof}
+
+This means that we may write any $v\in V$ as a sum of vectors from $U$ and $U^\perp$ respectively:
+\begin{equation}
+\label{u_uperp}
+v=\underbrace{\sum_{i=1}^m\langle v,e_i\rangle e_i}_{\in U}\ +\ \underbrace{v-\sum_{i=1}^m\langle v,e_i\rangle e_i}_{\in U^\perp}
+\end{equation}
+
+\begin{theorem}
+The decomposition into elements from $U$ and $U^\perp$ from equation \ref{u_uperp} is unique.
+\end{theorem}
+\begin{proof}
+Let $v=u_1+u^\perp_1$ and $v=u_2+u^\perp_2$ be two such decompositions. Then $u_1+u^\perp_1=u_2+u^\perp_2$ and hence $u_1-u_2=u^\perp_2-u^\perp_1$. But this means that this vector is a member of both $U$ and $U^\perp$, and hence it must be $0$. This means $u_1=u_2$ and $u^\perp_1=u^\perp_2$.
+\end{proof}
+
+\subsection{The orthogonal projection}
+The previous section motivates the following:
+\begin{definition}
+Let $V$ be a finite-dimensional inner product vector space and $U$ a subspace of $V$. The orthogonal projection from $V$ onto $U$ is the map $p:V\rightarrow V$ which satisfies:
+\begin{equation}
+\forall v\in V:\quad p(v)\in U,\quad v-p(v)\in U^\perp
+\end{equation}
+\end{definition}
+As we see, one could also define the co-domain of $p$ to be $U$. Usually, the distinction will not matter much.
+
+\begin{theorem}
+The orthogonal projection operator is linear.
+\end{theorem}
+\begin{proof}
+We need to show additivity and homogeneity:
+\begin{itemize}
+\item Additivity: Let $v_1,v_2\in V$. Then $p(v_1)+p(v_2)\in U$ and:
+\begin{equation}
+v_1-p(v_1)+v_2-p(v_2)=v_1+v_2-(p(v_1)+p(v_2))\in U^\perp
+\end{equation}
+Adding the two we get $v_1+v_2$. So $p(v_1+v_2)=p(v_1)+p(v_2)$.
+\item Homogeneity. Let $v\in V$ and $c\in\mathbb{R}$. Then $cp(v)\in U$ and $c(v-p(v))=cv-cp(v)\in U^\perp$. Adding the two we get $cv$, so $p(cv)=cp(v)$. 
+\end{itemize}
+\end{proof}
+
+\begin{theorem}
+The orthogonal projection operator $p:V\rightarrow V$ is idempotent. I.e. $p\circ p=p$.
+\end{theorem}
+\begin{proof}
+Let $v\in V$. Then $p(v)\in U$. But this means that the decomposition of $p(v)$ is $p(v)+0$. So $p\circ p(v)=p(v)$.
+\end{proof}
+
+\section{Lebesgue measures on vector spaces}
+
+\subsection{Coordinate maps}
+Let $V$ be a finite-dimensional vector space of dimension $n$. Our question is, if we can turn $V$ into a measure space in a natural way. Since we know that $V$ is isomorphic to $\mathbb{R}^n$, it makes sense to tweak the usual Lebesgue measure in $N$ dimensions:
+
+Let $e_1,e_2,\ldots,e_n$ be a basis for $V$. Then we can define the \textit{coordinate map} as follows:
+\begin{equation}
+\phi:\mathbb{R}^n\rightarrow V,\quad
+\begin{pmatrix}
+x_1	\\	x_2	\\ \vdots	\\ x_n
+\end{pmatrix}
+\mapsto\sum_{i=1}^n x_i e_i
+\end{equation}
+This is obviously an isomorphism. Specifically, it is invertible with inverse $\phi^{-1}: V\rightarrow\mathbb{R}^n$.
+
+The coordinate map depends on the chosen basis. If we had chosen another basis $e^*_1,e^*_2,\ldots,e^*_n$ we would get another isomorphism $\phi^*$.
+
+\subsection{Borel algebra on $V$}
+We can now use $\phi^{-1}$ to induce a $\sigma$-algebra on $V$. Set $\mathbb{B}_V$ to the smallest $\sigma$-algebra that makes $\phi^{-1}$ measurable when $\mathbb{R}^n$ is equipped with the Borel algebra $\mathbb{B}_n$. We call $\mathbb{B}_V$ the \textit{Borel algebra on $V$}.
+
+At first this object seems to depend of the choice of basis for $V$. But it turns out that the use of definite article in the definition is justified:
+\begin{theorem}
+If $e_1,e_2,\ldots,e_n$ and $e^*_1,e^*_2,\ldots,e^*_n$ are bases for $V$, then the induced $\sigma$-algebra $\mathbb{B}_V$ and $\mathbb{B}^*_V$ is the same thing.
+\end{theorem}
+\begin{proof}
+We know that $\phi^{-1}$ is $\mathbb{B}_V-\mathbb{B}_n$ measurable by definition.
+\end{proof}
+
+
+\end{document}
