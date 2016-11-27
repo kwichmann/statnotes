@@ -210,4 +210,115 @@ Now $\phi^{-1}\circ\phi^*$ is an isomorphism $\mathbb{R}^n\rightarrow\mathbb{R}^
 
 So while there are many Lebesgue measures on $V$ they only differ from each other by a constant factor. This means that they all agree on what constitutes a null set, and on which functions are integrable. They disagree on the integral, but agree on whether it is finite or not. The also agree on whether a measure $\mu$ has a density with respect to $\lambda_V$ or not.
 
+
+
+\section{Random vectors}
+In this section, we consider vectors of random variables. So a random vector of dimension $n$ is:
+\begin{equation}
+X=
+\begin{pmatrix}
+X_1 \\ X_2 \\ \vdots \\ X_n
+\end{pmatrix}
+\end{equation}
+Here, each $X_i$ is a random variable.
+
+\subsection{Variance}
+The variance of a $n$-dimensional vector is the $n\times n$ matrix:
+\begin{equation}
+\textrm{Var}(X)=E[(X-\mu_X)(X-\mu_X)^t]
+\end{equation}
+Here $\mu_X=E[X]$, i.e. the vector of expectation values of the $X_i$'s. From the usual definitions of variances and covariances between random variables, we see that the diagonal of $\textrm{Var}(X)$ contains the variances of each $X_i$, while the off diagonal elements are the covariances between variables:
+\begin{equation}
+[\textrm{Var}(X)]_{ij}=\textrm{Cov}(X_i,X_j)
+\end{equation}
+Due to the symmetry of covariance, this means that $\textrm{Var}(X)$ is a symmetric matrix.
+
+\subsubsection{Variance calculation rules}
+Similarly to ordinary random variables, we might calculate the variance matrix as follows:
+\begin{align}
+\textrm{Var}(X)=&E[(X-\mu_X)(X-\mu_X)^t]=\\
+&E(XX^t)-E(X)\mu_X^t-\mu_X E(X)^t+\mu_X\mu_X^t=\\
+&E(XX^t)-\mu_X\mu_X^t
+\end{align}
+Here, we've used the linearity of the expectation value and the definition of $\mu_X$.
+
+Adding a constant vector $b$ does not change the variance, since $E[X+b]=\mu_X+b$:
+\begin{equation}
+\textrm{Var}(X+b)=E[(X+b-(\mu_X+b))(X+b-(\mu_X+b))^t]=E[(X-\mu_X)(X-\mu_X)^t]
+\end{equation}
+This is just the variance of $X$.
+
+If $A$ is a constant $m\times n$ matrix and $X$ is an $n$-dimensional random vector, then:
+\begin{align}
+\textrm{Var}(AX)=&E[(AX-A\mu_X)(AX-A\mu_X)^t]=\\
+&E[(A(X-\mu_X))(A(X-\mu_X))^t]=\\
+&E[A(X-\mu_X)(X-\mu_X)^t A^t]=\\
+&A[(X-\mu_X)(X-\mu_X)^t]A^t
+\end{align}
+So we have $\textrm{Var}(AX)=A\ \textrm{Var}(X)A^t$.
+
+\subsection{Covariance}
+The covariance matrix between two variable vectors $X$ and $Y$ is:
+\begin{equation}
+\textrm{Cov}(X,Y)=E[(X-\mu_X)(Y-\mu_Y)^t]
+\end{equation}
+If $X$ has dimension $m$ and $Y$ dimension $n$, then $\textrm{Cov}(X,Y)$ has dimension $m\times n$. Here, the matrix elements reduce to ordinary covariances between $X_i$'s and $Y_j$s:
+\begin{equation}
+[\textrm{Cov}(X,Y)]_{ij}=\textrm{Cov}(X_i,Y_j)
+\end{equation}
+We note, that the variance could have been defined as a special case of covariance, since $\textrm{Var}(X)=\textrm{Cov}(X,X)$.
+
+\subsubsection{Covariance calculation rules}
+Similarly to the rule for variances, we have:
+\begin{equation}
+\textrm{Cov}(X,Y)=E[XY^t]-\mu_X\mu_Y^t
+\end{equation}
+The proof is essentially the same.
+
+If $A$ and $B$ are constant matrices of appropriate dimesion, we also have:
+\begin{equation}
+\textrm{Cov}(AX,BY)=A\ \textrm{Cov}(X,Y)B^t
+\end{equation}
+Again, the proof is entirely analogous to the corresponding variance formula.
+
+The covariance is bilinear:
+\begin{align}
+\textrm{Cov}(X+Y,Z)=&\textrm{Cov}(X,Z)+\textrm{Cov}(Y,Z)\\
+\textrm{Cov}(X,Y+Z)=&\textrm{Cov}(X,Y)+\textrm{Cov}(X,Z)
+\end{align}
+This follows from the bilinearity of the ordinary covariance.
+
+\subsubsection{Addiational variance formulas}
+Since we noted that $\textrm{Var}(X)=\textrm{Cov}(X,X)$, we may use these rules to derive further properties of variances.
+
+For instance, the variance of a sum:
+\begin{align}
+\textrm{Var}(X+Y)=&\textrm{Cov}(X+Y,X+Y)=\\
+&\textrm{Cov}(X,X)+\textrm{Cov}(X,Y)+\textrm{Cov}(Y,X)+\textrm{Cov}(Y,Y)=\\
+&\textrm{Var}(X)+\textrm{Var}(Y)+\textrm{Cov}(X,Y)+\textrm{Cov}(Y,X)
+\end{align}
+This mirrors the formula for the covariance of sums ordinary random variables, but is complicated by the fact that the vector covariance is not symmetric.
+
+\subsection{Quadratic forms}
+If $X$ is an $n$-dimensional random variable and $A$ an $n\times n$ matrix, then the corresponding quadratic form is $Q=X^tAX$. I.e. a scalar. What is the expectation value of the quadratic form? We can use a trick here. Since $Q$ is a scalar, we can trivially write this as a trace:
+\begin{equation}
+Q=X^tAX=\textrm{tr}(X^tAX)=\textrm{tr}(AXX^t)
+\end{equation}
+Here, we've used the cyclic property of traces. Now, the expectation value is:
+\begin{equation}
+E[Q]=E[\textrm{tr}(AXX^t)]=\textrm{tr}(E[AXX^t])=\textrm{tr}(A\ E[XX^t])
+\end{equation}
+But we know, that $\textrm{Var}(X)=E(XX^t)-\mu_X\mu_X^t$, so $E[XX^t]=\textrm{Var}(X)+\mu_X\mu_X^t$:
+\begin{equation}
+E[Q]=\textrm{tr}(A(\textrm{Var}(X)+\mu_X\mu_X^t))=\textrm{tr}(A\ \textrm{Var}(X))+\textrm{tr}(A\mu_X\mu_X^t)
+\end{equation}
+The last term may be rewritten:
+\begin{equation}
+\textrm{tr}(A\mu_X\mu_X^t)=\textrm{tr}(\mu_X^t A\mu_X)=\mu_X^t A\mu_X
+\end{equation}
+In the last step we've used that the contents of the parenthesis is a scalar. So all in all:
+\begin{equation}
+E[X^tAX]=\textrm{tr}(A\ \textrm{Var}(X))+\mu_X^t A\mu_X
+\end{equation}
+
 \end{document}
