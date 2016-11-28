@@ -328,6 +328,18 @@ Let $W_t$ be a white noise time series. Define two new time series as:
 \begin{equation}
 X_t=W_t+W_{t-1},\qquad Y_t=W_t-W_{t-1}
 \end{equation}
+First, we need to check that each series is stationary in itself. It is easily seen, that $\gamma_X(t,t)=\gamma_Y(t,t)=2\sigma^2$, $\gamma_X(t+1,t)=\gamma_Y(t+1,t)=\sigma^2$, and $\sigma_Y(t+1,t)=\gamma_Y(t-1,t)=-\sigma^2$ are the only non-zero autocovariance function values. So both are stationary.
+
+What about the cross-covariance function?
+\begin{align}
+\gamma_{XY}(t,t)=&\textrm{cov}(W_t+W_{t-1},W_t-W_{t_1})\sigma^2-\sigma^2=0\\
+\gamma_{XY}(t+1,t)=&\textrm{cov}(W_{t+1}+W_t,W_t-W_{t-1})=\sigma^2\\
+\gamma_{XY}(t-1,t)=&\textrm{cov}(W_{t-1}+W_{t-2},W_t-W_{t-1})=-\sigma^2
+\end{align}
+All other values are zero. Hence, $X_i$ and $Y_i$ are jointly stationary with cross-correlation function:
+\begin{equation}
+\rho_{XY}(0)=0,\quad\rho_{XY}(\pm 1)=\frac{\pm\sigma^2}{\sqrt{2\sigma^2\cdot 2\sigma^2}}=\pm\frac{1}{2}
+\end{equation}
 
 \section{Markov chains}
 A \textit{Markov chain} is a time series, in which the conditional distribution of $X_{n+1}$ given the realizations of $X_0, X_1,\ldots, X_n$ only depends on the realization of $X_n$. Formally:
