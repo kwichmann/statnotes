@@ -23,13 +23,13 @@ The \textit{standard normal distribution} is given by the density function:
 \label{uni_snd}
 \phi(z)=\frac{1}{\sqrt{2\pi}}e^{-z^2/2}
 \end{equation}
-This, like all density functions in this section, is understood to be with respect to the Lebesgue integral on $\mathbb{R}$. A random variable $Z$ that follows this distribution is said to be standard normally distributed, and we write $Z\sim N(0,1)$.
+This, like all density functions in this section, is understood to be with respect to the Lebesgue integral on $\mathbb{R}$. A random variable $Z$ that follows this distribution is said to be standard normally distributed, and we write $Z\sim N(0,1)$. It can be shown that $E[Z]=0$ and $\textrm{Var}(Z)=1$.
 
 A general, univariate normal distribution with parameters $\mu$ and $\sigma$, is given by the distribution of $X=\mu+\sigma Z$. If $\sigma\neq 0$, we can invert to find $z=\frac{x-\mu}{\sigma}$. So $\frac{dz}{dx}=\frac{1}{\sigma}$. According to the usual transformation rules, $x$ has the density function:
 \begin{equation}
 f(x)=\phi\left(\frac{x-\mu}{\sigma}\right)\frac{1}{\sigma}=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x-\mu)^2/2\sigma^2}
 \end{equation}
-We write $X\sim N(\mu,\sigma^2)$.
+We write $X\sim N(\mu,\sigma^2)$. From the usual rules of expectation values and variances, it follows that $E[X]=\mu$ and $\textrm{Var}(X)=\sigma^2$.
 
 \subsection{What if $\sigma=0$?}
 The derivation above assumes $\sigma$ to be non-zero. But even if this is the case, $X=\mu$ still has a distribution - it is simply $\mu$ all the time. However, this random variable does not have a density function with respect to the Lebesgue measure. In light of the Radon-Nikodym theorem, this is because the Lebesgue measure does not dominate the probability measure of $X$: $P_X(\{\mu\})=1, m_1(\{\mu\})=0$.
@@ -147,12 +147,12 @@ In the last step we've used that the contents of the parenthesis is a scalar. So
 E[X^tAX]=\textrm{tr}(A\ \textrm{Var}(X))+\mu_X^t A\mu_X
 \end{equation}
 
-\section{Multivariate normal distribution}
+\section{Multivariate standard normal distribution}
 The standard normal distribution in $n$ dimensions is the distribution of $n$ independent standard normals. Hence, the density function in $\mathbb{R}^n$ is simply a product of terms like equation \ref{uni_snd}:
 \begin{equation}
-\phi(z)=\prod_{i=1}^n\frac{1}{\sqrt{2\pi}}e^{-z_i^2/2}=(2\pi)^{-n/2}e^{||z||^2/2}
+\phi(z)=\prod_{i=1}^n\frac{1}{\sqrt{2\pi}}e^{-z_i^2/2}=(2\pi)^{-n/2}e^{-||z||^2/2}
 \end{equation}
-Here $z\in\mathbb{R}^n$, and $||\cdot ||$ is the standard Euclidean norm. If a $n$-dimensional dimensional random vector $Z$ follows this distribution we write $Z\sim N(0,I_n)$, where $I_n$ is the identity matrix in $n$ dimensions. The reason for this will soon be clear.
+Here $z\in\mathbb{R}^n$, and $||\cdot ||$ is the standard Euclidean norm. If a $n$-dimensional dimensional random vector $Z$ follows this distribution we write $Z\sim N(0,I_n)$, where $I_n$ is the identity matrix in $n$ dimensions. The reason for this is, that the variance matrix of $X$ is equal to $I_n$.
 
 \section{Affine transformations of euclidean spaces}
 In order to get to the general, multidimensional normal distribution, we need yet another component:
@@ -176,14 +176,57 @@ t(m_n)=m_n
 
 Also, if $s:\mathbb{R}^n\rightarrow\mathbb{R}^n, x\mapsto Ax$ is an isomorphism, then:
 \begin{equation}
+\label{lebesgue_transform}
 s(m_n)=m_n|\det A^{-1}|
 \end{equation}
 Combining the two, the formula for affine transformation is the same as for linear ones.
 
 \section{General multivariate normal distribution}
-Given an $n$-dimension random vector $Z\sim N(0,I_n)$, we now define a general standard normal as the distribution of the random variable $X=\mu+\Sigma^{\frac{1}{2}}Z$.
+Given an $n$-dimension random vector $Z\sim N(0,I_n)$, we now define a general standard normal as the distribution of the random variable $X=\mu+AZ$, where $A$ is a matrix of dimensions $n\times n$. From our work with random vectors we immediately get that:
+\begin{equation}
+E(X)=\mu,\quad \textrm{Var}(X)=AA^t=\Sigma
+\end{equation}
+Here, we've introduced the notation $\Sigma$ for the variance matrix of $X$\footnote{Since $\Sigma$ corresponds to $\sigma^2$ in the univariate case, $\Sigma^2$ would in some sense have been a more logical naming choice, but such is tradition.}.
 
-Some notes are in order, before we procees. For now "$\Sigma^{\frac{1}{2}}$" should simply be considered a matrix of dimensions $n\times p$, not necessarily a square root of anything (we will get back to that later). It plays the roles that $\sigma$ played for the univariate case\footnote{Hence, simply calling it $\Sigma$ would be more be clearer, but such is the tradition notation.}, and hence we might expect that special care needs to be taken when it is "zero", whatever that might signify here.
+$A$ plays the roles that $\sigma$ played for the univariate case, and hence we might expect that special care needs to be taken when it is "zero", which will turn out to mean "singular" in the multivariate case.
+
+\subsection{Invertible $A$}
+Trying to solve for $Z$ we get $AZ=X-\mu$. If $A$ is invertible we have:
+\begin{equation}
+Z=A^{-1}(X-\mu)
+\end{equation}
+We may now write
+\begin{equation}
+||z||^2=z^t z=\left(A^{-1}(X-\mu)\right)^t\left(A^{-1}(X-\mu)\right)=(X-\mu)\left(A^{-1}\right)^t A^{-1}(X-\mu)
+\end{equation}
+According to equation \ref{lebesgue_transform} the density function for $X$ is:
+\begin{equation}
+f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(X-\mu)\left(A^{-1}\right)^t A^{-1}(X-\mu)\right]
+\end{equation}
+But the inverse of a transpose is the transpose of the inverse:
+\begin{equation}
+\left(A^t\right)^{-1}A^{-1}=\left(AA^t\right)^{-1}=\Sigma^{-1}
+\end{equation}
+So the density function is:
+\begin{equation}
+f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(X-\mu)\Sigma^{-1}(X-\mu)\right]
+\end{equation}
+
+\subsection{Non-invertible $A$}
+If $A$ is not invertible, $X$ does not have a density with respect to the Lebesgue measure in $\mathbb{R}^n$. This is because the rank of $A$ is less than $n$, and so $X$ only takes on values in an affine, proper subspace of $\mathbb{R}^n$. The $n$-dimensional Lebesgue measure of such a space is zero.
+
+\subsection{$A$ from variance $\Sigma$}
+Often, we want to specify a univariate normal from a variance $\Sigma$ instead of a transformation matrix $A$. As we saw above, we only need $\Sigma$ to write down the density (if it exists), but what if we want $A$?
+
+To do this, we note that $\Sigma$ is symmetric and positive semi-definite because it is a covariance matrix. So there is an orthogonal matrix $O$ such that $\Sigma=ODO^t$, where $D$ is a diagonal matrix with non-negative diagonal entries. Hence, we can construct another diagonal matrix $D^{\frac{1}{2}}$ where the entries are the square roots of the ones in $D$. Now we obviously have:
+\begin{equation}
+\Sigma=ODO^t=\underbrace{OD^{\frac{1}{2}}}_{A}\underbrace{D^{\frac{1}{2}}O^t}_{A^t}
+\end{equation}
+By setting $A=OD^{\frac{1}{2}}$ we have achieved a decomposition of $\Sigma$ that will bring about all the results above (though this is not necessarily the only one). A is sometimes written as the "square root of $\Sigma$": $A=\Sigma^{\frac{1}{2}}$.
+
+\subsubsection{Sphering}
+One use of the decomposition $A=OD^{\frac{1}{2}}$ is to gain geometrical insight into multivariate Gaussians by what is called \textit{sphering}.
+
 
 
 \section{Orthogonal complement}
