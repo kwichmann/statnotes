@@ -191,7 +191,7 @@ Here, we've introduced the notation $\Sigma$ for the variance matrix of $X$\foot
 $A$ plays the roles that $\sigma$ played for the univariate case, and hence we might expect that special care needs to be taken when it is "zero", which will turn out to mean "singular" in the multivariate case.
 
 \subsection{Invertible $A$}
-Trying to solve for $Z$ we get $AZ=X-\mu$. If $A$ is invertible we have:
+Trying to solve for $Z$ we get $AZ=X-\mu$. If $A$ is invertible we say that the distribution is \textit{regular} and have:
 \begin{equation}
 Z=A^{-1}(X-\mu)
 \end{equation}
@@ -201,7 +201,7 @@ We may now write
 \end{equation}
 According to equation \ref{lebesgue_transform} the density function for $X$ is:
 \begin{equation}
-f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(X-\mu)\left(A^{-1}\right)^t A^{-1}(X-\mu)\right]
+f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(x-\mu)\left(A^{-1}\right)^t A^{-1}(x-\mu)\right]
 \end{equation}
 But the inverse of a transpose is the transpose of the inverse:
 \begin{equation}
@@ -209,11 +209,17 @@ But the inverse of a transpose is the transpose of the inverse:
 \end{equation}
 So the density function is:
 \begin{equation}
-f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(X-\mu)\Sigma^{-1}(X-\mu)\right]
+f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(x-\mu)\Sigma^{-1}(x-\mu)\right]
 \end{equation}
+We may express this solely in terms of $\Sigma$, since $\det\Sigma=\det AA^t=(\det A)^2$. So $\det(A^{-1})=(\det\Sigma)^{-\frac{1}{2}}$. One handy way to express this is:
+\begin{equation}
+\label{mvn_density}
+f(x)=\frac{1}{\sqrt{\det(2\pi\Sigma)}}\exp\left[-\frac{1}{2}(x-\mu)\Sigma^{-1}(x-\mu)\right]
+\end{equation}
+This closely mirrors the univariate formula.
 
 \subsection{Non-invertible $A$}
-If $A$ is not invertible, $X$ does not have a density with respect to the Lebesgue measure in $\mathbb{R}^n$. This is because the rank of $A$ is less than $n$, and so $X$ only takes on values in an affine, proper subspace of $\mathbb{R}^n$. The $n$-dimensional Lebesgue measure of such a space is zero.
+If $A$ is not invertible, $X$ does not have a density with respect to the Lebesgue measure in $\mathbb{R}^n$. This is because the rank of $A$ is less than $n$, and so $X$ only takes on values in an affine, proper subspace of $\mathbb{R}^n$. The $n$-dimensional Lebesgue measure of such a space is zero. We refer to such distributions as \textit{singular}.
 
 \subsection{$A$ from variance $\Sigma$}
 Often, we want to specify a univariate normal from a variance $\Sigma$ instead of a transformation matrix $A$. As we saw above, we only need $\Sigma$ to write down the density (if it exists), but what if we want $A$?
@@ -227,9 +233,29 @@ By setting $A=OD^{\frac{1}{2}}$ we have achieved a decomposition of $\Sigma$ tha
 \subsubsection{Sphering}
 One use of the decomposition $A=OD^{\frac{1}{2}}$ is to gain geometrical insight into multivariate Gaussians by what is called \textit{sphering}.
 
+How can we describe the linear map $A$? It is a composite of the map $D^{\frac{1}{2}}$ followed by $O$. $D^{\frac{1}{2}}$ is a pure scaling of each axis. If none of the diagonal entries are zero - i.e. if $\Sigma$ is positive-definite - this turns an origin-centered sphere (which is a contour curve of a multivariate standard normal) into an ellipsoid. This is followed by an orthogonal operation, which means that distance is preserved. The ellipsoid is now rotated and/or reflected around the origin. These are the contour curves of a regular multidimensional Gaussian. If the distribution is singular, one or more dimensions are "squashed out" - we get an elliptic "pancake" instead of an ellipsoid.
 
+\section{Formulation in terms of precision}
+
+\subsection{Inner products on $\mathbb{R}^n$}
+An inner product can be seen as a map $\mathbb{R}^n\times\mathbb{R}^n\rightarrow\mathbb{R}$. By the inner product axioms, this map must be linear in both variables, and so it can be expressed as a quadratic form:
+\begin{equation}
+\langle x,y\rangle=x^t By
+\end{equation}
+Here $B$ is a $n\times n$ matrix. By symmetry of the inner product, $\langle e_i,e_j\rangle=\langle e_j,e_i\rangle$ implying $B_{ij}=B_{ji}$, so $B$ is symmetric. Since $\langle x,x\rangle=x^t Bx\ge 0$, $B$ is semi-positive definite. Since the equality sign only holds when $x=0$, $B$ is also positive definite.
+
+We will refer to such an inner product as a \textit{precision}.
+
+\subsection{Density function}
+Now, we may rewrite equation \ref{mvn_density} as follows:
+\begin{equation}
+f(x)=\frac{1}{\sqrt{\textrm{det}(2\pi\Sigma)}}\exp\left[-\frac{1}{2}||x-\mu||_\Sigma^2\right]
+\end{equation}
+Here, $||\cdot||_\Sigma$ is the norm induced by using the inner product as described above, using $\Sigma$ as $B$. So for regular multivariate normals, specifying a variance matrix or a precision are two different ways to express the same thing.
 
 \section{Orthogonal complement}
+We now wish to develop a theory of normal distributions on arbitrary inner product spaces, not just Euclidean ones. We will do this in a number of steps.
+
 Let $V$ be a finite-dimensional vector space with an inner product $\langle\cdot,\cdot\rangle$. Let $U$ be a subspace of $V$. Then we define the \textit{orthogonal complement} of $U$ as:
 \begin{equation}
 U^\perp=\{v\in V|\forall u\in U: \langle u, v\rangle = 0\}
@@ -398,5 +424,28 @@ Now $\phi^{-1}\circ\phi^*$ is an isomorphism $\mathbb{R}^n\rightarrow\mathbb{R}^
 
 So while there are many Lebesgue measures on $V$ they only differ from each other by a constant factor. This means that they all agree on what constitutes a null set, and on which functions are integrable. They disagree on the integral, but agree on whether it is finite or not. The also agree on whether a measure $\mu$ has a density with respect to $\lambda_V$ or not.
 
+\section{Regular normal distributions on $V$}
+
+\subsection{Gaussian integrals on $V$}
+Let $V$ be an inner product space of finite dimension $n$. Let $a_1, a_2,\ldots, a_n$ be an orthogonal basis or $V$, $\phi:\mathbb{R}^n\rightarrow V$ be the corresponding coordinate transformation, and $\lambda$ be the corresponding Lebesgue measure on $V$. We're now interested in evaluating the following integral:
+\begin{equation}
+\int_V\exp\left[-\frac{1}{2}||v||^2\right]d\lambda(v)
+\end{equation}
+Let's start by writing a general vector $v$ as $v=\sum_{i=1}^n x_i a_i$. Then:
+\begin{equation}
+||v||^2=\langle v,v\rangle=\langle\sum_{i=1}^n x_i a_i,\sum_{j=1}^n x_j a_j\rangle=\sum_{i=1}^n\sum_{j=1}^n x_i x_j\langle a_i,a_j\rangle
+\end{equation}
+Since all the $a_i$'s are mutually orthogonal this means:
+\begin{equation}
+||v||^2=\sum_{i=1}^n x_i^2||a_i||^2
+\end{equation}
+So we may write:
+\begin{equation}
+\int_V\exp\left[-\frac{1}{2}||v||^2\right]d\lambda(v)=\int_{\mathbb{R}^n}\exp\left[-\frac{1}{2}\sum_{i=1}^n x_i^2||a_i||^2\right]dm_n(x)
+\end{equation}
+Using Tonelli's theorem this is equal to:
+\begin{equation}
+\prod_{i=1}^n\int_\mathbb{R}\exp\left[-\frac{1}{2}x_i^2||a_i||^2\right]dm_1(x_i)=\prod_{i=1}^n\frac{\sqrt{2\pi}}{||a_i||}=\frac{(2\pi)^{n/2}}{\prod_{i=1}^n||a_i||}
+\end{equation}
 
 \end{document}
