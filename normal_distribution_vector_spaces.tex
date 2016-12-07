@@ -147,12 +147,25 @@ In the last step we've used that the contents of the parenthesis is a scalar. So
 E[X^tAX]=\textrm{tr}(A\ \textrm{Var}(X))+\mu_X^t A\mu_X
 \end{equation}
 
-\section{Multivariate standard normal distribution}
-The standard normal distribution in $n$ dimensions is the distribution of $n$ independent standard normals. Hence, the density function in $\mathbb{R}^n$ is simply a product of terms like equation \ref{uni_snd}:
+\section{Multivariate normal distributions}
+A \textit{multivariate normal distribution} in $n$ dimensions is a random vector $X$ that has the property, that any linear combination of its elements is a univariate normal distribution. In other words $q^t X$ should be a univariate normal for all $q\in\mathbb{R}^n$.
+
+Specifically note, that it is not enough to require each component of the random vector to be normally distributed. This leaves room for some pathologically distributed overall distributions. However, if each of the components are also independent, $X$ is a multivariate normal. To see this, assume that $X_i$ is normally distributed with parameters $\mu_i$ and $\sigma_i^2$. We can now use the usual properties of normals: First we see that $q_i X_i\sim N(q_i\mu_i,q_i^2\sigma_i^2)$. And because of independence we further have:
+\begin{equation}
+q^t X=q_1 X_1+q_2 X_2+\ldots +q_n X_n\sim N\left(q^t\mu,\sum_{i=1}^n q_i^2\sigma_i^2\right)
+\end{equation}
+
+We now consider a very important special case of this:
+
+\subsection{The multivariate standard normal}
+The \textit{multivariate standard normal distribution} is the random vector $Z$ that consists of $n$ independent components, all univariate standard normally distributed. According to the previous section, this is a multivariate standard normal. Because of independence, the density function in $\mathbb{R}^n$ is simply a product of terms like equation \ref{uni_snd}:
 \begin{equation}
 \phi(z)=\prod_{i=1}^n\frac{1}{\sqrt{2\pi}}e^{-z_i^2/2}=(2\pi)^{-n/2}e^{-||z||^2/2}
 \end{equation}
 Here $z\in\mathbb{R}^n$, and $||\cdot ||$ is the standard Euclidean norm. If a $n$-dimensional dimensional random vector $Z$ follows this distribution we write $Z\sim N(0,I_n)$, where $I_n$ is the identity matrix in $n$ dimensions. The reason for this is, that the variance matrix of $X$ is equal to $I_n$.
+
+\subsection{Regular and singular distributions}
+If a multivariate normal $X$ has a non-singular variance matrix, we call the distribution \textit{regular}. Is this is not the case, the distribution is called \textit{singular}.
 
 \section{Affine transformations of euclidean spaces}
 In order to get to the general, multidimensional normal distribution, we need yet another component:
@@ -181,32 +194,74 @@ s(m_n)=m_n|\det A^{-1}|
 \end{equation}
 Combining the two, the formula for affine transformation is the same as for linear ones.
 
-\section{General multivariate normal distribution}
-Given an $n$-dimension random vector $Z\sim N(0,I_n)$, we now define a general standard normal as the distribution of the random variable $X=\mu+AZ$, where $A$ is a matrix of dimensions $n\times n$. From our work with random vectors we immediately get that:
+\section{Affine transformations of multivariate normal distributions}
+
+Let's start by considering the following basic fact:
+\begin{theorem}
+Let $X$ be a multivariate normal distribution in $n$ dimensions. Consider an affine transformation $Y=AX+b$, where $A\in\mathbb{R}^{m\times n}$ and $b\in\mathbb{R}^m$. Then $Y$ is a multivariate normal distribution in $m$ dimensions.
+\end{theorem}
+\begin{proof}
+Consider a linear combination of components of $Y$:
+\begin{equation}
+q^t Y=q^t(AX+b)=\sum_{i,j=1}^m q_i\left(A_{ij}X_j+b_i\right)=\underbrace{\sum_{i,j=1}^m q_i A_{ij}X_j}+q^t b
+\end{equation}
+The underbraced part is a linear combination of components of $X$ and hence univariate normal. Adding the constant term $q^t b$ doesn't change this fact. Hence, $Y$ is a multivariate normal.
+\end{proof}
+
+Using our knowledge of random vectors we can see how such an affine transformation changes the mean and variance:
+
+\begin{theorem}
+If $X$ is a random vector with mean $\mu$ and variance $\Sigma$, then the mean and variance of $Y=Ax+b$ are $A\mu+b$ and $A\Sigma A^t$ respectively.
+\end{theorem}
+\begin{proof}
+We need to prove both:
+\begin{itemize}
+\item Mean: $E[Y]=E[AX+b]=E[AX]+b=A E[X]+b=A\mu+b$.
+\item Variance: $\textrm{Var}(Y)=\textrm{Var}(AX+b)=\textrm{Var}(AX)=A\textrm{Var}(X)A^t=A\Sigma A^t$.
+\end{itemize}
+\end{proof}
+
+How does such a transformation affect the regularity of the distribution?
+
+\begin{theorem}
+If $X$ is an $n$-dimensional regular standard normal and $A\in\mathbb{R}^{m\times n}$ has rank $m$, then $Y=AX+b$ is also regular.
+\end{theorem}
+\begin{proof}
+Since $b$ has no bearing on the variance, we need to show that the variance matrix of $AX$ is invertible. The variance of $AX$ is equal to $A\Sigma A^t$, where $\Sigma$ is the variance of $X$. Since both $A$ and $\Sigma$ have full rank, so does $A\Sigma$. So the total rank is the rank of $A^t$, which is $m$.
+\end{proof}
+
+\subsection{Affine transformation of standard univariate normal}
+Given an $n$-dimension random vector $Z\sim N(0,I_n)$, we consider the random variable $X=\mu+AZ$. From the previous section, we now know that $X$ is a multivariate normal with:
 \begin{equation}
 E(X)=\mu,\quad \textrm{Var}(X)=AA^t=\Sigma
 \end{equation}
 Here, we've introduced the notation $\Sigma$ for the variance matrix of $X$\footnote{Since $\Sigma$ corresponds to $\sigma^2$ in the univariate case, $\Sigma^2$ would in some sense have been a more logical naming choice, but such is tradition.}.
 
-$A$ plays the roles that $\sigma$ played for the univariate case, and hence we might expect that special care needs to be taken when it is "zero", which will turn out to mean "singular" in the multivariate case.
+$A$ plays the roles that $\sigma$ played for the univariate case, and hence we might expect that special care needs to be taken when it is "zero", which will turn out to mean "non-injective" in the multivariate case.
 
-\subsection{Invertible $A$}
-Trying to solve for $Z$ we get $AZ=X-\mu$. If $A$ is invertible we say that the distribution is \textit{regular} and have:
+\subsubsection{Left-invertible $A$}
+Trying to solve for $Z$ we get $AZ=X-\mu$. If $A$ is left-invertible with a left-inverse $A^{-1}_L$ we may write:
 \begin{equation}
-Z=A^{-1}(X-\mu)
+Z=A^{-1}_L(X-\mu)
 \end{equation}
 We may now write
 \begin{equation}
-||z||^2=z^t z=\left(A^{-1}(X-\mu)\right)^t\left(A^{-1}(X-\mu)\right)=(X-\mu)\left(A^{-1}\right)^t A^{-1}(X-\mu)
+||z||^2=z^t z=\left(A^{-1}_L(X-\mu)\right)^t\left(A^{-1}_L(X-\mu)\right)=(X-\mu)^t\left(A^{-1}_L\right)^t A^{-1}_L(X-\mu)
 \end{equation}
 According to equation \ref{lebesgue_transform} the density function for $X$ is:
 \begin{equation}
-f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(x-\mu)\left(A^{-1}\right)^t A^{-1}(x-\mu)\right]
+f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1}_L)\exp\left[-\frac{1}{2}(x-\mu)^t\left(A^{-1}_L\right)^t A^{-1}_L(x-\mu)\right]
 \end{equation}
-But the inverse of a transpose is the transpose of the inverse:
+But the left-inverse of a transpose is the transpose of a right-inverse:
 \begin{equation}
-\left(A^t\right)^{-1}A^{-1}=\left(AA^t\right)^{-1}=\Sigma^{-1}
+\left(A^{-1}_L\right)^t A^{-1}_L=(A^t)^{-1}_R A^{-1}_L
 \end{equation}
+This is in fact the inverse of $\Sigma$:
+\begin{equation}
+(A^t)^{-1}_R A^{-1}_L AA^t=(A^t)^{-1}_R A^t=I_m
+\end{equation}
+This shows that $X$ is regular, since its variance matrix is invertible.
+
 So the density function is:
 \begin{equation}
 f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(x-\mu)\Sigma^{-1}(x-\mu)\right]
@@ -218,8 +273,8 @@ f(x)=\frac{1}{\sqrt{\det(2\pi\Sigma)}}\exp\left[-\frac{1}{2}(x-\mu)\Sigma^{-1}(x
 \end{equation}
 This closely mirrors the univariate formula.
 
-\subsection{Non-invertible $A$}
-If $A$ is not invertible, $X$ does not have a density with respect to the Lebesgue measure in $\mathbb{R}^n$. This is because the rank of $A$ is less than $n$, and so $X$ only takes on values in an affine, proper subspace of $\mathbb{R}^n$. The $n$-dimensional Lebesgue measure of such a space is zero. We refer to such distributions as \textit{singular}.
+\subsubsection{Non-left-invertible $A$}
+If $A$ is not left-invertible, $X$ does not have a density with respect to the Lebesgue measure in $\mathbb{R}^n$. This is because the rank of $A$ is less than $n$, and so $X$ only takes on values in an affine, proper subspace of $\mathbb{R}^n$. The $n$-dimensional Lebesgue measure of such a space is zero. We refer to such distributions as \textit{singular}.
 
 \subsection{$A$ from variance $\Sigma$}
 Often, we want to specify a univariate normal from a variance $\Sigma$ instead of a transformation matrix $A$. As we saw above, we only need $\Sigma$ to write down the density (if it exists), but what if we want $A$?
@@ -427,7 +482,7 @@ So while there are many Lebesgue measures on $V$ they only differ from each othe
 \section{Regular normal distributions on $V$}
 
 \subsection{Gaussian integrals on $V$}
-Let $V$ be an inner product space of finite dimension $n$. Let $a_1, a_2,\ldots, a_n$ be an orthogonal basis or $V$, $\phi:\mathbb{R}^n\rightarrow V$ be the corresponding coordinate transformation, and $\lambda$ be the corresponding Lebesgue measure on $V$. We're now interested in evaluating the following integral:
+Let $V$ be an inner product space of finite dimension $n$. Let $a_1, a_2,\ldots, a_n$ be an orthogonal basis for $V$, $\phi:\mathbb{R}^n\rightarrow V$ be the corresponding coordinate transformation, and $\lambda$ be the corresponding Lebesgue measure on $V$. We're now interested in evaluating the following integral:
 \begin{equation}
 \int_V\exp\left[-\frac{1}{2}||v||^2\right]d\lambda(v)
 \end{equation}
