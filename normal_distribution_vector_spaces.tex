@@ -234,7 +234,7 @@ Conversely, assume $Y$ to be regular, i.e. $A\Sigma A^t$ has rank $m$. But, the 
 \end{proof}
 
 \subsection{Affine transformation of standard univariate normal}
-Given an $n$-dimension random vector $Z\sim N(0,I_n)$, we consider the random variable $X=\mu+AZ$. From the previous section, we now know that $X$ is a multivariate normal with:
+Given an $n$-dimension random vector $Z\sim N(0,I_n)$, we consider the random variable $X=\mu+AZ$, where $A\in\mathbb{R}^{m\times n}$. From the previous section, we now know that $X$ is a multivariate normal with:
 \begin{equation}
 E(X)=\mu,\quad \textrm{Var}(X)=AA^t=\Sigma
 \end{equation}
@@ -243,13 +243,13 @@ Here, as usual $\Sigma$ is the variance matrix of $X$\footnote{Since $\Sigma$ co
 $A$ plays the roles that $\sigma$ played for the univariate case, and hence we might expect that special care needs to be taken when it is "zero", which will turn out to mean "non-surjective" in the multivariate case in accordance with theorem \ref{surjective_A}.
 
 \subsubsection{Invertible $A$}
-So we need for $A$ to be surjective in order to get a density function with respect to the Lebesgue measure. For now, let's assume that $X$ and $Z$ have the same number of dimensions, and that $A$ is also injective and therefore invertible. Then we can solve for $Z$:
+So we need for $A$ to be surjective in order to get a density function with respect to the Lebesgue measure. For now, let's assume that $m=n$, and that $A$ is also injective and therefore invertible. Then we can solve for $Z$:
 \begin{equation}
 Z=A^{-1}(X-\mu)
 \end{equation}
 We may now write
 \begin{equation}
-||z||^2=z^t z=\left(A^{-1}(X-\mu)\right)^t\left(A^{-1}(X-\mu)\right)=(X-\mu)^t\left(A^{-1}\right)^t A^{-1}(X-\mu)
+||z||^2=z^t z=\left(A^{-1}(x-\mu)\right)^t\left(A^{-1}(x-\mu)\right)=(x-\mu)^t\left(A^{-1}\right)^t A^{-1}(x-\mu)
 \end{equation}
 According to equation \ref{lebesgue_transform} the density function for $X$ is:
 \begin{equation}
@@ -261,24 +261,24 @@ But the transpose of an inverse is the inverse of a transpose:
 \end{equation}
 So the density function is:
 \begin{equation}
-f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(x-\mu)\Sigma^{-1}(x-\mu)\right]
+f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(x-\mu)^t\Sigma^{-1}(x-\mu)\right]
 \end{equation}
 We may express this solely in terms of $\Sigma$, since $\det\Sigma=\det AA^t=(\det A)^2$. So $\det(A^{-1})=(\det\Sigma)^{-\frac{1}{2}}$. One handy way to express this is:
 \begin{equation}
 \label{mvn_density}
-f(x)=\frac{1}{\sqrt{\det(2\pi\Sigma)}}\exp\left[-\frac{1}{2}(x-\mu)\Sigma^{-1}(x-\mu)\right]
+f(x)=\frac{1}{\sqrt{\det(2\pi\Sigma)}}\exp\left[-\frac{1}{2}(x-\mu)^t\Sigma^{-1}(x-\mu)\right]
 \end{equation}
 This closely mirrors the univariate formula.
 
 \subsubsection{Non-invertible $A$}
-If $A$ is not surjective, $X$ does not have a density with respect to the Lebesgue measure in $\mathbb{R}^n$. This is because the rank of $A$ is less than $n$, and so $X$ only takes on values in an affine, proper subspace of $\mathbb{R}^n$. The $n$-dimensional Lebesgue measure of such a space is zero.
+If $A$ is not surjective, $X$ does not have a density with respect to the Lebesgue measure in $\mathbb{R}^m$. This is because the rank of $A$ is less than $m$, and so $X$ only takes on values in an affine, proper subspace of $\mathbb{R}^m$. The $m$-dimensional Lebesgue measure of such a space is zero.
 
 \subsubsection{Single value decomposition}
 However, $A$ may still be surjective but not invertible. How to calculate the density function in this case? To do so, it is useful to rewrite $A$ using \textit{single value decomposition}. I.e. if $A$ is a $m\times n$ matrix, then there exists orthogonal matrices $U\in\mathbb{R}^{m\times m}$ and $V\in\mathbb{R}^{n\times n}$ such that:
 \begin{equation}
 A=UDV^t
 \end{equation}
-Here $D$ is a diagonal matrix with non-negative diagonal entries, the eigenvalues of $AA^t$. These are known as the \textit{singular values} of $A$. The number of non-zero singular values is equal to the rank of $A$.
+Here $D$ is a diagonal (but generally not square) matrix with non-negative diagonal entries, the eigenvalues of $AA^t$. These are known as the \textit{singular values} of $A$. The number of non-zero singular values is equal to the rank of $A$.
 
 \subsection{$A$ from variance $\Sigma$}
 Often, we want to specify a univariate normal from a variance $\Sigma$ instead of a transformation matrix $A$. As we saw above, we only need $\Sigma$ to write down the density (if it exists), but what if we want $A$?
