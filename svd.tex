@@ -49,10 +49,15 @@ AA^{-1} A=A
 \end{equation}
 If $A$ is not invertible, we may still define a \textit{generalized inverse} $A^g$ as a matrix that satisfies the same equation:
 \begin{equation}
-\label{genralized_inverse}
+\label{generalized_inverse}
 AA^g A=A
 \end{equation}
-
+If $A^g$ further satisfies:
+\begin{equation}
+\label{reflexive_generalized_inverse}
+A^g AA^g=A^g,
+\end{equation}
+it is called a \textit{reflexive generalized inverse}.
 
 \subsection{Left and right inverses}
 If $A\in\mathbb{R}^{m\times n}$ has rank $n$, then the null space is trivial, and hence the corresponding linear transformation is injective. This means that the equation $Ax=b$ may or may not have a solution, but if it exists, it's unique. The matrix $A^tA$ has rank $n$ as well, and hence is invertible. This can be used to construct a left inverse:
@@ -60,11 +65,24 @@ If $A\in\mathbb{R}^{m\times n}$ has rank $n$, then the null space is trivial, an
 A^{-1}_L=(A^t A)^{-1}A^t,\qquad A^{-1}_L A=(A^t A)^{-1}A^t A=I_n
 \end{equation}
 
-Similarly, if $A\in\mathbb{R}^{m\times n}$ has rank $m$, then the image space is all of $\mathbb{R}^m$, and hence the corresponding linear transformation is surjective. This means that the equation $Ax=b$ always has a solution, and it may have infinitely many. The matrix $AA^t$ has rank $m$ as well, and hence is invertible. Analogously, we can use this to contruct a right inverse:
+Similarly, if $A\in\mathbb{R}^{m\times n}$ has rank $m$, then the image space is all of $\mathbb{R}^m$, and hence the corresponding linear transformation is surjective. This means that the equation $Ax=b$ always has a solution, and it may have infinitely many. The matrix $AA^t$ has rank $m$ as well, and hence is invertible. Analogously, we can use this to construct a right inverse:
 \begin{equation}
 A^{-1}_R=A^t(AA^t)^{-1},\qquad AA^{-1}_R=AA^t(AA^t)^{-1}=I_m
 \end{equation}
 
-Both of of these inverses (when they exist) satisfies equation \ref{genralized_inverse}.
+Both of of these inverses (when they exist) satisfies equation \ref{generalized_inverse}. They also satisfy \ref{reflexive_generalized_inverse}. For instance:
+\begin{equation}
+A^{-1}_L AA^{-1}_L=(A^t A)^{-1}A^t A(A^t A)^{-1}A^t=(A^t A)^{-1}A^t=A^{-1}_L
+\end{equation}
+
+\section{The Moore-Penrose pseudoinverse}
+The \textit{Moore-Penrose pseudoinverse} or simply the pseudoinverse of a real matrix $A$ is the reflexive, generalized inverse $A^+$ which also satisfies:
+\begin{equation}
+\label{moore-penrose}
+(AA^+)^t=AA^+,\qquad(A^+ A)^t=A^+ A
+\end{equation}
+In other words, for which $AA^+$ and $A^+ A$ are symmetrical.
+
+
 
 \end{document}
