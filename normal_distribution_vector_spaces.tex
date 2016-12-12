@@ -211,7 +211,7 @@ The underbraced part is a linear combination of components of $X$ and hence univ
 Using our knowledge of random vectors we can see how such an affine transformation changes the mean and variance:
 
 \begin{theorem}
-If $X$ is a random vector with mean $\mu$ and variance $\Sigma$, then the mean and variance of $Y=Ax+b$ are $A\mu+b$ and $A\Sigma A^t$ respectively.
+If $X$ is a random vector with mean $\mu$ and variance $\Sigma$, then the mean and variance of $Y=AX+b$ are $A\mu+b$ and $A\Sigma A^t$ respectively.
 \end{theorem}
 \begin{proof}
 We need to prove both:
@@ -224,10 +224,13 @@ We need to prove both:
 How does such a transformation affect the regularity of the distribution?
 
 \begin{theorem}
-If $X$ is an $n$-dimensional regular standard normal and $A\in\mathbb{R}^{m\times n}$ has rank $m$, then $Y=AX+b$ is also regular.
+\label{surjective_A}
+Assume $X$ is an $n$-dimensional regular normal distribution. If $A\in\mathbb{R}^{m\times n}$ has rank $m$, then $Y=AX+b$ is also regular. Conversely, if $Y$ is regular, then $A$ has rank $m$.
 \end{theorem}
 \begin{proof}
 Since $b$ has no bearing on the variance, we need to show that the variance matrix of $AX$ is invertible. The variance of $AX$ is equal to $A\Sigma A^t$, where $\Sigma$ is the variance of $X$. Since both $A$ and $\Sigma$ have full rank, so does $A\Sigma$. So the total rank is the rank of $A^t$, which is $m$.
+
+Conversely, assume $Y$ to be regular, i.e. $A\Sigma A^t$ has rank $m$. But, the rank of a product is greater than or equal to the minimum rank of the factors. So $\min\{\textrm{rank}A,\textrm{rank}\Sigma\}\ge m$. But then $\textrm{rank}A\ge m$, which is only possible when the equality holds. 
 \end{proof}
 
 \subsection{Affine transformation of standard univariate normal}
@@ -235,33 +238,27 @@ Given an $n$-dimension random vector $Z\sim N(0,I_n)$, we consider the random va
 \begin{equation}
 E(X)=\mu,\quad \textrm{Var}(X)=AA^t=\Sigma
 \end{equation}
-Here, we've introduced the notation $\Sigma$ for the variance matrix of $X$\footnote{Since $\Sigma$ corresponds to $\sigma^2$ in the univariate case, $\Sigma^2$ would in some sense have been a more logical naming choice, but such is tradition.}.
+Here, as usual $\Sigma$ is the variance matrix of $X$\footnote{Since $\Sigma$ corresponds to $\sigma^2$ in the univariate case, $\Sigma^2$ would in some sense have been a more logical naming choice, but such is tradition.}.
 
-$A$ plays the roles that $\sigma$ played for the univariate case, and hence we might expect that special care needs to be taken when it is "zero", which will turn out to mean "non-injective" in the multivariate case.
+$A$ plays the roles that $\sigma$ played for the univariate case, and hence we might expect that special care needs to be taken when it is "zero", which will turn out to mean "non-surjective" in the multivariate case in accordance with theorem \ref{surjective_A}.
 
-\subsubsection{Left-invertible $A$}
-Trying to solve for $Z$ we get $AZ=X-\mu$. If $A$ is left-invertible with a left-inverse $A^{-1}_L$ we may write:
+\subsubsection{Invertible $A$}
+So we need for $A$ to be surjective in order to get a density function with respect to the Lebesgue measure. For now, let's assume that $X$ and $Z$ have the same number of dimensions, and that $A$ is also injective and therefore invertible. Then we can solve for $Z$:
 \begin{equation}
-Z=A^{-1}_L(X-\mu)
+Z=A^{-1}(X-\mu)
 \end{equation}
 We may now write
 \begin{equation}
-||z||^2=z^t z=\left(A^{-1}_L(X-\mu)\right)^t\left(A^{-1}_L(X-\mu)\right)=(X-\mu)^t\left(A^{-1}_L\right)^t A^{-1}_L(X-\mu)
+||z||^2=z^t z=\left(A^{-1}(X-\mu)\right)^t\left(A^{-1}(X-\mu)\right)=(X-\mu)^t\left(A^{-1}\right)^t A^{-1}(X-\mu)
 \end{equation}
 According to equation \ref{lebesgue_transform} the density function for $X$ is:
 \begin{equation}
-f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1}_L)\exp\left[-\frac{1}{2}(x-\mu)^t\left(A^{-1}_L\right)^t A^{-1}_L(x-\mu)\right]
+f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(x-\mu)^t\left(A^{-1}\right)^t A^{-1}(x-\mu)\right]
 \end{equation}
-But the left-inverse of a transpose is the transpose of a right-inverse:
+But the transpose of an inverse is the inverse of a transpose:
 \begin{equation}
-\left(A^{-1}_L\right)^t A^{-1}_L=(A^t)^{-1}_R A^{-1}_L
+\left(A^{-1}\right)^t A^{-1}=(A^t)^{-1}A^{-1}=(AA^t)^{-1}=\Sigma^{-1}
 \end{equation}
-This is in fact the inverse of $\Sigma$:
-\begin{equation}
-(A^t)^{-1}_R A^{-1}_L AA^t=(A^t)^{-1}_R A^t=I_m
-\end{equation}
-This shows that $X$ is regular, since its variance matrix is invertible.
-
 So the density function is:
 \begin{equation}
 f(x)=(2\pi)^{-n/2}\textrm{det}(A^{-1})\exp\left[-\frac{1}{2}(x-\mu)\Sigma^{-1}(x-\mu)\right]
@@ -273,8 +270,15 @@ f(x)=\frac{1}{\sqrt{\det(2\pi\Sigma)}}\exp\left[-\frac{1}{2}(x-\mu)\Sigma^{-1}(x
 \end{equation}
 This closely mirrors the univariate formula.
 
-\subsubsection{Non-left-invertible $A$}
-If $A$ is not left-invertible, $X$ does not have a density with respect to the Lebesgue measure in $\mathbb{R}^n$. This is because the rank of $A$ is less than $n$, and so $X$ only takes on values in an affine, proper subspace of $\mathbb{R}^n$. The $n$-dimensional Lebesgue measure of such a space is zero. We refer to such distributions as \textit{singular}.
+\subsubsection{Non-invertible $A$}
+If $A$ is not surjective, $X$ does not have a density with respect to the Lebesgue measure in $\mathbb{R}^n$. This is because the rank of $A$ is less than $n$, and so $X$ only takes on values in an affine, proper subspace of $\mathbb{R}^n$. The $n$-dimensional Lebesgue measure of such a space is zero.
+
+\subsubsection{Single value decomposition}
+However, $A$ may still be surjective but not invertible. How to calculate the density function in this case? To do so, it is useful to rewrite $A$ using \textit{single value decomposition}. I.e. if $A$ is a $m\times n$ matrix, then there exists orthogonal matrices $U\in\mathbb{R}^{m\times m}$ and $V\in\mathbb{R}^{n\times n}$ such that:
+\begin{equation}
+A=UDV^t
+\end{equation}
+Here $D$ is a diagonal matrix with non-negative diagonal entries, the eigenvalues of $AA^t$. These are known as the \textit{singular values} of $A$. The number of non-zero singular values is equal to the rank of $A$.
 
 \subsection{$A$ from variance $\Sigma$}
 Often, we want to specify a univariate normal from a variance $\Sigma$ instead of a transformation matrix $A$. As we saw above, we only need $\Sigma$ to write down the density (if it exists), but what if we want $A$?
@@ -289,31 +293,6 @@ By setting $A=OD^{\frac{1}{2}}$ we have achieved a decomposition of $\Sigma$ tha
 One use of the decomposition $A=OD^{\frac{1}{2}}$ is to gain geometrical insight into multivariate Gaussians by what is called \textit{sphering}.
 
 How can we describe the linear map $A$? It is a composite of the map $D^{\frac{1}{2}}$ followed by $O$. $D^{\frac{1}{2}}$ is a pure scaling of each axis. If none of the diagonal entries are zero - i.e. if $\Sigma$ is positive-definite - this turns an origin-centered sphere (which is a contour curve of a multivariate standard normal) into an ellipsoid. This is followed by an orthogonal operation, which means that distance is preserved. The ellipsoid is now rotated and/or reflected around the origin. These are the contour curves of a regular multidimensional Gaussian. If the distribution is singular, one or more dimensions are "squashed out" - we get an elliptic "pancake" instead of an ellipsoid.
-
-\section{Conditional distributions}
-Let $X$ be a normally distributed random vector split into two subvectors $X_1$ and $X_2$. The mean and variance may then be written:
-\begin{equation}
-\mu=
-\begin{pmatrix}
-\mu_1 \\ \mu_2
-\end{pmatrix},\quad
-\Sigma=
-\begin{pmatrix}
-\Sigma_{11}	& \Sigma_{12}	\\
-\Sigma_{21}	& \Sigma_{22}
-\end{pmatrix}
-\end{equation}
-Here, of course, $\Sigma_{21}=\Sigma_{12}^t$.
-
-The question is, what the conditional probability distribution of $X_1$ given that $X_2=x_2$. It turns out, that if $\Sigma_{22}$ is invertible, the conditional mean and variance is:
-\begin{align}
-E[X_1|X_2=x_2]=&\mu_1+\Sigma_{12}\Sigma_{22}^{-1}(x_2-\mu_2)\\
-\textrm{Var}(X_1|X_2=x_2)=&\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{12}^t
-\end{align}
-To show this, we use a trick: Set $Z=X_1+AX_2$, where $A=-\Sigma_{12}\Sigma_{22}^{-1}$. It turns out that $Z$ is uncorrelated with $X_2$:
-\begin{equation}
-\textrm{Cov}(Z,X_2)=\textrm{Cov}(X_1,X_2)+A\textrm{Cov}(X_2,X_2)=\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{22}=0
-\end{equation}
 
 \section{Formulation in terms of precision}
 
