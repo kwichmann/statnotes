@@ -12,7 +12,7 @@
 \DeclareGraphicsExtensions{.png}
 \DeclareGraphicsExtensions{.jpg}
 
-\title{Single value decomposition and pseudo-inverses}
+\title{Singular value decomposition and pseudo-inverses}
 \author{Kristian Wichmann}
 
 \begin{document}
@@ -49,8 +49,35 @@ The image of $A$ is also called the \textit{column space} of $A$, denoted $C(A)$
 
 These relationships are visualized in figure \ref{fig:rank-nullity}.
 
-\section{Single value decomposition}
-Let $A\in\mathbb{R}^{m\times n}$. Since $A^t A$ is symmetric, it is diagonalizable. So there is an orthogonal $n\times n$ matrix $O$ such that $A^t A=ODO^t$, where $D$ is a diagonal matrix of eigenvalues. 
+\section{Singular value decomposition}
+
+\subsection{Construction and intuition}
+We know that the dimensions of the row and column spaces of a matrix $A\in\mathbb{R}^{m\times n}$ are the same, $r$. We now seek out orthonormal bases of each of these spaces - $u_1,u_2,\ldots,u_r$ for column space and $v_1,v_2,\ldots,v_r$ for row space, such that
+\begin{equation}
+Av_i=\sigma_i u_i
+\end{equation}
+The sigmas are known as \textit{singular values} for $A$. Now, expand the orthonormal bases to include the null spaces. This means that $Av_i=0$ for $r<i\le n$. In matrix form this means:
+\begin{equation}
+AV=U\Sigma
+\end{equation}
+Here, the columns of $U$ and $V$ are made from the respective bases, so $U\in\mathbb{R}^{m\times m}, V\in\mathbb{R}^{n\times n}$, and $\Sigma\in\mathbb{R}^{m\times n}$ is a diagonal $n\times n$ matrix with the $\sigma_i$'s in the first $r$ places of the diagonal and zeroes in the rest. Solving for $A$ we get:
+\begin{equation}
+A=U\Sigma V^t
+\end{equation}
+Here we have used that orthogonal matrices are invertible with their transpose as the inverse. This is the famous \textit{singular value decomposition} of $A$.
+
+\subsection{Finding $U$ and $V$}
+The question is how to find $U$ and $V$? To do so, consider the Gramian matrix of $A$:
+\begin{equation}
+A^t A=(U\Sigma V^t)^t U\Sigma V^t=V\Sigma^t U^t U\Sigma V^t=V(\Sigma^t\Sigma)V^t
+\end{equation}
+But since $\Sigma$ is diagonal, $(\Sigma^t\Sigma)$ is simply a square, diagonal matrix with $\sigma_1^2,\sigma_2^2,\ldots,\sigma_r^2$ in the first $r$ entries of the diagonal and zeroes for the rest. We know that $A^t A$ is symmetric and hence diagonalizable. It is also positive semidefinite and so has non-negative eigenvalues. So we can find use normalized eigenvectors as columns of $V$ and determine the singular values as the square roots of the non-zero eigenvalues.
+
+Similarly, consider $AA^t$:
+\begin{equation}
+AA^t=U\Sigma V^t(U\Sigma V^t)^t=U\Sigma V^t V\Sigma^t U^t=U(\Sigma\Sigma^t)U^t
+\end{equation}
+This is also symmetric and positive semi-definite. Again, $\Sigma\Sigma^t$ is square, this time $m\times m$. It still has the squares of singular values in the diagonal and zeroes for the rest. Now normalized eigenvectors can be used as columns of $U$.
 
 \section{Orthogonal projection}
 Let $U$ be a subspace of $\mathbb{R}^n$ spanned by the linearly independent set of vectors $a_1, a_2,\ldots, a_m$. Given a $x\in\mathbb{R}^n$, we wish to find a vector $u$ in $U$, such that $e=x-u$ is orthogonal to $U$. That means it should be orthogonal to all $a_i$'s:
