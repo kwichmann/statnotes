@@ -177,4 +177,7 @@ But then:
 B_1=B_1 AB_1=B_2 AB_1=B_2 AB_2=B_2
 \end{equation}
 
+\subsection{Intuition behind the pseudoinverse}
+The idea behind the pseudoinverse is similar to the one used in singular value decomposition: The dimension of the column and row spaces of a matrix $A\in\mathbb{R}^{m\times n}$ have the same dimension, $r$. So if $y\in\mathbb{R}^m$ is in the column space, there is exactly one vector $x\in\mathbb{R}^n$ so that $Ax=y$. However, for $y$ in the left null space, we're in trouble. But what if we just send these these vectors to the zero vector? This corresponds to projecting onto the column space.
+
 \end{document}
