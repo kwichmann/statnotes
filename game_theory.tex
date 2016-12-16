@@ -1,0 +1,46 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{MnSymbol}
+\newtheorem{theorem}{Theorem}
+
+\title{Game Theory}
+\author{Kristian Wichmann}
+
+\begin{document}
+
+\maketitle
+
+\section{What is a game?}
+A \textit{game} in game theory has a number of key components:
+\begin{itemize}
+\item Players.
+\item Actions
+\item Payoffs
+\end{itemize}
+The players can be individuals, companies, countries or other similar agents. The actions are what the players choose to do. And finally, the payoffs are how happy or unhappy the players end up depending on the actions chosen.
+
+\subsection{Mathematical formulation}
+The set of players is denoted $N=\{1, 2,\ldots,n\}$. An arbitrary player is usually denoted by the letter $i\in N$.
+
+The \textit{action set} for player $i$ is denoted $A_i$. This is a list of the possible actions player $i$ can take in the game. The collection of all player actions is $a=(a_1,a_2,\ldots,a_n)$. The set of all possible players actions is called $A=A_1\times A_2\times\cdots\times A_n$. If all players have the same action set $A=A^n$.
+
+Finally, the payoffs are described by the \textit{utility function} for player $i$:
+\begin{equation}
+u_i: A\rightarrow\mathbb{R}
+\end{equation}
+Each utility function describes how happy the player is with the overall outcome of the game - the higher, the better. All of these functions can be collected into a vector function $u: A\rightarrow\mathbb{R}^n$.
+
+\section{Representations of games}
+
+\subsection{Matrix form}
+Matrix form lists the utilities of a game in matrix form. It is assumed that be players decide on their actions simultaneously, or practically simultaneously. If there's two players this can be written as a matrix.
+
+
+
+\subsection{Extensive form}
+This tree representation is adequate where players alternate between taking action, such as in chess. It also keeps track of what knowledge the players have at a given time.
+
+\end{document}
