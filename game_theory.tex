@@ -33,14 +33,135 @@ u_i: A\rightarrow\mathbb{R}
 \end{equation}
 Each utility function describes how happy the player is with the overall outcome of the game - the higher, the better. All of these functions can be collected into a vector function $u: A\rightarrow\mathbb{R}^n$.
 
-\section{Representations of games}
+\section{Two-player games}
+We start by considering a game with two players. It is assumed that the players decide on their actions simultaneously, or practically simultaneously.
+
+\subsection{Types of two-player games}
+
+\subsubsection{Games of pure competition}
+In a game of \textit{pure competition}, the utilities of any given outcome adds to the same constant $c$.
+
+\subsubsection{Zero-sum games}
+A \textit{zero-sum} game is a game of pure competition with $c=0$.
+
+\subsubsection{Games of cooperation}
+In these games, all players want the same things. In other words, the utility function is the same for all players: $u_i=u_j$. In this case, only one numbers pr. cell is needed when writing down the matrix form. This term is also applicable when there's more that two players.
 
 \subsection{Matrix form}
-Matrix form lists the utilities of a game in matrix form. It is assumed that be players decide on their actions simultaneously, or practically simultaneously. If there's two players this can be written as a matrix.
+Matrix form lists the utilities of a two-player game. The players are called the \textit{row player} and \textit{column player} respectively.
 
+\subsection{Examples}
 
+\subsubsection{Matching pennies}
+Each player chooses heads or tails. The row player wins if there's a match. Otherwise the column player wins. This is a zero-sum game. The matrix representation is:
 
-\subsection{Extensive form}
-This tree representation is adequate where players alternate between taking action, such as in chess. It also keeps track of what knowledge the players have at a given time.
+\begin{table}[h]
+\centering
+\label{matrix:matching_pennies}
+\begin{tabular}{c|l|l|}
+\cline{2-3}
+\multicolumn{1}{l|}{}   & \multicolumn{1}{c|}{Heads} & \multicolumn{1}{c|}{Tails} \\ \hline
+\multicolumn{1}{|c|}{Heads} & 1,-1                   & -1, 1                  \\ \hline
+\multicolumn{1}{|c|}{Tails} & -1, 1                  & 1, -1                 \\ \hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Rock-paper-scissors}
+This well-known game is the generalization of matching pennies to three outcomes. It remains a zero sum game. The matrix form is:
+
+\begin{table}[htbp]
+\centering
+\label{matrix:rock_paper_scissors}
+\begin{tabular}{l|c|c|c|}
+\cline{2-4}
+                               & Rock  & Paper & \multicolumn{1}{l|}{Scissors} \\ \hline
+\multicolumn{1}{|c|}{Rock}     & 0, 0  & -1, 1 & 1, -1                         \\ \hline
+\multicolumn{1}{|c|}{Paper}    & 1, -1 & 0, 0  & -1, 1                         \\ \hline
+\multicolumn{1}{|l|}{Scissors} & -1, 1 & 1, -1 & 0, 0                          \\ \hline
+\end{tabular}
+\end{table}
+
+This game may be further elaborated on by adding lizard and Spock. It remains a zero-sum game.
+
+\subsubsection{The coordination game}
+Each players chooses which side of the road to drive on. It is preferable for both is they choose the same side. This is a cooperative game with the matrix form:
+
+\begin{table}[htbp]
+\centering
+\label{matrix:coordination_game}
+\begin{tabular}{c|l|l|}
+\cline{2-3}
+\multicolumn{1}{l|}{}   & \multicolumn{1}{c|}{Left} & \multicolumn{1}{c|}{Right} \\ \hline
+\multicolumn{1}{|c|}{Left} & 1                  & 0                  \\ \hline
+\multicolumn{1}{|c|}{Right} & 0                 & 1                 \\ \hline
+\end{tabular}
+\end{table}
+
+Note, that since the game is cooperative, $0$ instead of $0, 0$ and $1$ instead of $1, 1$ suffices.
+
+\subsubsection{Battle of the sexes}
+A husband and wife are going to the movies. The wife prefers horror while the husband likes comedies. However, they still prefer going together over going to separate movies. With the wife as the row player and husband as the column player, the matrix representation is:
+
+\begin{table}[htbp]
+\centering
+\label{matrix:battle_of_the_sexes}
+\begin{tabular}{c|l|l|}
+\cline{2-3}
+\multicolumn{1}{l|}{}   & \multicolumn{1}{c|}{Horror} & \multicolumn{1}{c|}{Comedy} \\ \hline
+\multicolumn{1}{|c|}{Horror} & 2, 1                  & 0, 0                  \\ \hline
+\multicolumn{1}{|c|}{Comedy} & 0, 0                 & 1, 2                 \\ \hline
+\end{tabular}
+\end{table}
+
+This game is interesting, since it's neither purely competitive nor cooperative, but contains elements of both.
+
+\subsubsection{Prisoner's dilemma}
+Two criminals are caught. Each can either choose to cooperate (C) or defect (D). If both cooperate (stay silent), each get a one year sentence. If both defect (snitch), each gets a three year sentence. But, if one defects and the other cooperates, the defector gets no sentence, while the cooperator gets a four year sentence. So the matrix representation is:
+
+\begin{table}[htbp]
+\centering
+\label{matrix:prisoners_dilemma}
+\begin{tabular}{c|l|l|}
+\cline{2-3}
+\multicolumn{1}{l|}{}   & \multicolumn{1}{c|}{C} & \multicolumn{1}{c|}{D} \\ \hline
+\multicolumn{1}{|c|}{C} & -1,-1                  & -4, 0                  \\ \hline
+\multicolumn{1}{|c|}{D} & 0, -4                  & -3, -3                 \\ \hline
+\end{tabular}
+\end{table}
+
+%\subsection{Extensive form}
+%This tree representation is adequate where players alternate between taking action, such as in chess. It also keeps track of what knowledge the players have at a given time.
+
+\section{Best responses and Nash equilibria}
+Now, consider a situation, where player $i$ somehow knows which actions all of the others players are going to take: $a_1,\ldots, a_{i-1},a_{i+1},\ldots, a_n$. A \textit{best response} for player $i$ - denoted $a^*_i$ - is one which satisfies:
+\begin{equation}
+\forall a_i\in A_i:\ u(a_1,\ldots, a_{i-1},a^*_i,a_{i+1},\ldots,a_n\}\ge u(a_1,\ldots,a_n)
+\end{equation}
+A best response is not necessarily unique.
+
+\subsection{Pure strategy Nash equilibria}
+A \textit{pure strategy Nash equilibrium} is a set of actions for all players, such that all the individual actions are best responses. The term \textit{pure strategy} means choosing one particular action. Later, we will look at other types of strategies.
+
+\subsection{Examples}
+
+\subsubsection{Matching pennies and similar games}
+In this game, if a player knows what the other is playing, the best response for the row (column) player is to play the same (opposite) as the opponent. But if the opponent knew of this action, he would change his own. Thus, there are no pure strategy Nash equilibria in this game.
+
+In rock-paper-scissors, the situation is much the same. Knowing the action of the opponent, there's always one best response. But if the opponent knew of this respond he/she would change accordingly. So no pure strategy Nash equilibrium.
+
+Adding lizard and Spock means there's now two best responses to any action. The opponent would still change action. Again, no pure strategy Nash equilibrium.
+
+\subsubsection{The cooperation game}
+If a player knows the action of the other, the best response is to choose the same side. Hence, there's two pure strategy Nash equilibria is this game - the cases where both players pick the same side.
+
+\subsubsection{Battle of the sexes}
+The situation is much the same like in the cooperation game: If one knows the action of the other, the best response is to pick the same movie. Again, there's two pure strategy Nash equilibria.
+
+\subsubsection{Prisoner's dilemma}
+In this case, no matter what the other player does, choosing to defect means a shorter sentence, and hence the best response is always to defect. Therefore, there's one pure strategy Nash equilibrium: the situation where both players defect.
+
+\section{Dominant strategies}
+
+\section{Pareto optimality}
 
 \end{document}
