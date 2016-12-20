@@ -22,7 +22,7 @@ A \textit{game} in game theory has a number of key components:
 \end{itemize}
 The players can be individuals, companies, countries or other similar agents. The actions are what the players choose to do. And finally, the payoffs are how happy or unhappy the players end up depending on the actions chosen.
 
-\subsection{Mathematical formulation}
+\subsection{Mathematical formulation: Normal form}
 The set of players is denoted $N=\{1, 2,\ldots,n\}$. An arbitrary player is usually denoted by the letter $i\in N$.
 
 The \textit{action set} for player $i$ is denoted $A_i$. This is a list of the possible actions player $i$ can take in the game. The collection of all player actions is $a=(a_1,a_2,\ldots,a_n)$. The set of all possible players actions is called $A=A_1\times A_2\times\cdots\times A_n$. If all players have the same action set $A=A^n$.
@@ -32,6 +32,8 @@ Finally, the payoffs are described by the \textit{utility function} for player $
 u_i: A\rightarrow\mathbb{R}
 \end{equation}
 Each utility function describes how happy the player is with the overall outcome of the game - the higher, the better. All of these functions can be collected into a vector function $u: A\rightarrow\mathbb{R}^n$.
+
+This description of a game is known as its \textit{normal form}.
 
 \section{Two-player games}
 We start by considering a game with two players. It is assumed that the players decide on their actions simultaneously, or practically simultaneously.
@@ -140,7 +142,7 @@ Now, consider a situation, where player $i$ somehow knows which actions all of t
 A best response is not necessarily unique.
 
 \subsection{Pure strategy Nash equilibria}
-A \textit{pure strategy Nash equilibrium} is a set of actions for all players, such that all the individual actions are best responses. The term \textit{pure strategy} means choosing one particular action. Later, we will look at other types of strategies.
+A \textit{pure strategy Nash equilibrium} is a set of actions for all players, such that all the individual actions are best responses. The term \textit{pure strategy} means choosing one particular action. Later, we will look at other types of strategies, where actions may be chosen randomly according to a probability schedule.
 
 \subsection{Examples}
 
@@ -161,7 +163,12 @@ The situation is much the same like in the cooperation game: If one knows the ac
 In this case, no matter what the other player does, choosing to defect means a shorter sentence, and hence the best response is always to defect. Therefore, there's one pure strategy Nash equilibrium: the situation where both players defect.
 
 \section{Dominant strategies}
+A \textit{dominant} strategy is a pure strategy, which is always the strictly superior choice, no matter what the opponent plays. So a dominant strategy for player $i$ satisfies:
+\begin{equation}
+\forall a_i\ne A_i^D: u(a_i^D)> u(a_i)
+\end{equation}
 
 \section{Pareto optimality}
+
 
 \end{document}
