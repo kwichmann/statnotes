@@ -17,17 +17,17 @@
 \begin{document}
 \maketitle
 
-\section{Overview of artificial neural networks}
+\section{Feed-forward artificial neural networks}
 An \textit{artificial neural network} (ANN) superficially mimics the workings of the brain by being made up of \textit{neurons} and \textit{dendrites/axons}\footnote{In real neural networks, dendrites carry inputs to the neuron, while axons carry outputs from the neuron.}.
 
-The neurons are organized into \textit{layers}. These come in three categories:
+Here we will focus on \textit{feed-forward neural networks}. Here, the neurons are organized into \textit{layers}. These come in three categories:
 \begin{itemize}
 \item The \textit{input layer}, into which the data to be processed enters.
 \item \textit{Hidden layers} - which are layers between the input and output layers.
 \item The \textit{output layer} in which the result of the ANN's data processing can be read.
 \end{itemize}
 
-An ANN has at least three layer: Input, output and at least one hidden layer. An ANN with two or more hidden layers is known as a \textit{deep network}. 
+Every neuron in each layer is connected to every neuron in the next layer. A feed-forward ANN has at least three layer: Input, output and at least one hidden layer. An ANN with two or more hidden layers is known as a \textit{deep network}. 
 
 Figure \ref{fig:ann_example} shows a neural network with three laters: 3 cells in the input layer, 4 cells in the hidden layer, and 2 cells in the output layer.
 
@@ -42,14 +42,14 @@ The cells in each layer are connected by dendrites/axons, which are represented 
 
 As the data put into the input layer is translated into \textit{activity} levels in the cells. These activities then propagate via the axons through the network, causing different activity levels in each layer. The is repeated, until reaching the conclusion: The activity levels in the output layer. These are then interpreted accordingly.
 
-\section{Mathematical formulation}
+\section{Neuron modelling}
 
-\subsection{Neuron activity}
-The activity of a neuron is affected by all dendrites pointing to the cell, i.e. all cells in the previous layer. To compute the activity, all the inputs are weighted corresponding to the strength of each dendrite. In addition a \textit{bias} term may be added - a constant term.
+The activity of a neuron is affected by all dendrites pointing to the cell - for a feed-forward neural network, this means all cells in the previous layer. In other words, the activity of the neuron depends on these inputs.
 
-The result is then put into an \textit{activation function} to yield the activity of the neuron.
+\subsection{Types of neurons: Deterministic}
+The actual activity depends on the type of neuron used. In this section we'll look at \textit{deterministic} neurons, i.e. neurons where the inputs uniquely determine the activity. In other words, the activity is a function of the input. We call this the \textit{activation function}.
 
-Mathematically, this may be formulated:
+Here, we will only consider functions that depends on a weighted sum of the inputs: All the inputs are weighted corresponding to the strength of each dendrite. In addition a \textit{bias} term may be added - a constant term. The actual activity is found by applying the activation function to this quantity. Mathematically, this may be formulated:
 \begin{equation}
 \label{neuron_activity}
 a_\textrm{neuron}=f\left(\sum_{i=1}^n \theta_i x_i + x_0\right)
@@ -80,13 +80,55 @@ Hence, equation \ref{neuron_activity} may be written:
 a_\textrm{neuron}=f\left(\theta^T x + x_0\right)
 \end{equation}
 
-\subsection{Activation function}
-For our activation function, we will choose the \textit{logistic function}. This is also known as the \textit{sigmoid function}\footnote{Though technically, any function with an s-shaped graph could be called a sigmoid function.}. It is defined as:
+\subsubsection{Linear neurons}
+Here, the activation function is simply $f(z)=z$.
+
+\subsubsection{Binary threshold neurons}
+For these types of neurons, the activation function is a \textit{step function}, i.e. a function of the form:
+\begin{equation}
+f(z)=
+\begin{cases}
+0 & \textrm{if } z < c \\
+1 & \textrm{if } z \ge c
+\end{cases}
+\end{equation}
+Here $c$ is the \textit{activation threshold}. By adjusting the bias term, $c$ can always be turned into zero.
+
+This type of neuron is the basis for the learning model known as the \textit{perceptron}.
+
+\subsubsection{Rectified linear neurons}
+This combines the two previous types of neurons by setting:
+\begin{equation}
+f(z)=
+\begin{cases}
+0 & \textrm{if } z < 0 \\
+z & \textrm{if } z \ge 0
+\end{cases}
+\end{equation}
+These are also sometimes known as \textit{linear threshold neurons}.
+
+\subsubsection{Sigmoid neurons}
+Here, the activation function is a \textit{sigmoid function}, which just means s-shaped. This may be any function that is convex for $z<0$ and concave for $z>0$, and which has finite limits for $z\rightarrow\pm\infty$.
+
+The most famous of these functions is the \textit{logistic function}, which is the one we will focus on in the following. In fact it's common to simply denote it as \textbf{the} sigmoid function. The next section is devoted to the details of this function.
+
+Another example are tanh-neurons, for which the activation function unsurprisingly is:
+\begin{equation}
+f(z)=\tanh(z)
+\end{equation} 
+
+\subsection{Stochastic binary neurons}
+The deterministic neurons always have the same activity given the same inputs. This is not true for stochastic binary neurons. Instead, the values of the activation function $f(z)$ are taken as \textit{probabilities}. More precisely, it is the probability of the activity being 1. Otherwise, the activation is 0 (hence the 'binary' in the name).
+
+This usually assumes that $f$ only takes on values between 0 and 1, so that it may be interpreted as a probability.
+
+\section{The logistic function}
+As noted above, we will consider sigmoid neurons for the rest of this text. For our activation function, we will choose the \textit{logistic function}. It is defined as:
 \begin{equation}
 \label{sigmoid}
 g(z)=\frac{1}{1+e^{-z}}
 \end{equation}
-The function is graphed in figure \ref{fig:sigmoid}. It can be though of as a "smoothed out step function"\footnote{A neuron with an actual step function as an activation function is known as a \textit{perceptron}.}.
+The function is graphed in figure \ref{fig:sigmoid}. It can be though of as a "smoothed out step function".
 
 \begin{figure}
 \centering
@@ -127,7 +169,7 @@ So we have:
 g'(z)=g(z)\left(1-g(z)\right)
 \end{equation}
 
-\subsection{Matrix form of layer activities}
+\section{Matrix form of layer activities}
 So, given cell number $i$ in layer $L$, its activation depends on the input activities from layer $L-1$, the activity is:
 \begin{equation}
 \label{layer_activity}
@@ -139,7 +181,7 @@ a^{(L)}=g\left(\theta^{(L)}a^{(L-1)}+b^{(L)}\right)
 \end{equation}
 Here, the matrix $\theta^{(L)}$ has rows consisting of weights for each cell. Also, $g$ is to be applied component-wise.
 
-\subsubsection{Dimensionalities}
+\subsection{Dimensionalities}
 If layer $L-1$ contains $m_{L-1}$ cells and layer $L$ contains $m_L$ cells, this means the dimensionality of the matrices and vectors above are:
 \begin{equation}
 a^{(L-1)}\in\mathbb{R}^{m_{L-1}\times 1},\quad a^{(L)}, b^{(L)}\in\mathbb{R}^{m_L\times 1},\quad\theta^{(L)}\in\mathbb{R}^{m_L\times m_{L-1}} 
