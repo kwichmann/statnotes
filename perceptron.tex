@@ -1,0 +1,55 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png,.jpg}
+
+\title{Perceptrons}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Definition}
+A \textit{perceptron} is the simplest possible linear feed-forward neural net. It is a binary classifier consisting of a list of input features feeding into one, linear threshold binary neuron.
+
+So, if there's $n$ features, a data point $x$ is a $n$-dimensional vector. The classifier is characterized by another $n$-dimensional weight vector $w$ and a constant $b$. The classification can be summed up as:
+\begin{equation}
+f(x)=\textrm{sign}(w^T x+b)
+\end{equation}
+Here, the two possible outcomes are +1 (positive) and -1 negative.
+
+\subsection{Bias as a weight}
+It is possible to treat $b$ as a weight term by making each sample vector into a $n+1$-dimensional one where the zero'th feature is simply a 1. Then $b$ is then simply the zero'th element of the weight vector. The classification algorithm can then be written:
+\begin{equation}
+f(x)=\textrm{sign}(w^T x)
+\end{equation}
+
+\section{Picking features vs. learning}
+So if we wanted to set up a perceptron classifier, the first step would be to decide on the features. This is a step that is done by us - human beings - and thus no machine learning is happening in this step. But based on common sense and domain knowledge, a set of features is extracted from the raw input.
+
+When that has been done, the training set is used for letting the perceptron learn appropriate values for $w$. This is the learning part of the perceptron.
+
+\section{Training algorithm (for a separable traning set)}
+It turns out that if the training set is indeed linearly separable, then the following algorithm will always produce an appropriate weight vector $w$:
+\begin{itemize}
+\item Initialize the weight vector $w$
+\item Pick a random $x_i$ from the training set and do the following:
+\begin{itemize}
+\item Is $x_i$ correctly classified according to the current weights?
+\item If yes, do nothing.
+\item If $x_i$ is misidentified as a negative, then add $x_i$ to $w$.
+\item If $x_i$ is misidentified as a positive, then subtract $x_i$ from $w$.
+\end{itemize}
+\item Repeat with a new training sample.
+\end{itemize}
+If indeed the training set is linearly separate (and this may not be the case!), then the weight vector $w$ will almost surely (i.e. with probability 1) eventually correspond to one such classifier.
+
+\end{document}
