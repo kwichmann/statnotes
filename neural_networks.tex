@@ -388,6 +388,14 @@ The general formulas for the derivatives is then:
 \end{align}
 Again, $N$ should be at least 2, reflecting the fact that there's no error, weights or biases for the input layer.
 
+These can be summed up in matrix form:
+\begin{align}
+\label{general_derivative}
+\frac{\partial L}{\partial\theta^{(N)}}=&\delta^{(N)}\left(a^{(N-1)}\right)^T\\
+\frac{\partial L}{\partial b^{(N)}}=&\delta^{(N)}
+\end{align}
+
+
 \subsection{Backpropagation algorithm}
 As we have seen above, calculation of derivatives is a recursive process, starting from the output layer and working backwards. Hence the name \textit{backpropagation algorithm}. Here are the steps in bullet form:
 \begin{itemize}
@@ -405,5 +413,73 @@ This is merely one step in the gradient descent process. The derivatives are use
 So far, we've been dealing with the situation for a training set consisting of only one item. In practice, we ideally want to train our ANN on a large dataset.
 
 However, since each item in the training set is independent of each other, the log-likelihood of multiple items is simply equal to the sum of all of them. By additivity of the derivative, the backpropagation process essentially remains the same, except we need to sum over the entire training set in each step of the gradient descent.
+
+\subsection{Vectorization}
+If there's $p$ data points in the training set, we may collect them all into a $(n+1)\times p$ matrix $X$:
+\begin{equation}
+\label{row_of_ones}
+X=
+\begin{pmatrix}
+1	&	\cdots	& 1	\\
+|	&	\cdots	& |	\\
+x_1	&	\cdots	& x_p \\
+|	&	\cdots	& |
+\end{pmatrix}
+\end{equation}
+Here, a constant coordinate of 1 have been added to each data point in order to unify treatment of weights and biases. This is done by setting:
+\begin{equation}
+\Theta^{(L)}=
+\begin{pmatrix}
+b^{(L)}_1		& \theta^{(L)}_{11}	& \theta^{(L)}_{12}	& \cdots	& \theta^{(L)}_{1m_{L-1}} \\
+b^{(L)}_2		& \theta^{(L)}_{21}	& \theta^{(L)}_{22}	& \cdots 	& \theta^{(L)}_{2m_{L-1}} \\
+\vdots			& \vdots		& \vdots		& \ddots 	& \vdots \\
+b^{(L)}_{m_L}	& \theta^{(L)}_{m_L1}	& \theta^{(L)}_{m_L2}	& \cdots	& \theta^{(L)}_{m_Lm_{L-1}}
+\end{pmatrix}
+\end{equation}
+Using this, we can get the collection of activities in the $L$'th layer by:
+\begin{equation}
+A^{(L)}=g(\Theta^{(K)}A^{(L-1)*})
+\end{equation}
+Here, the asterisk is a shorthand for adding a row of ones, similarly to equation \ref{row_of_ones}. Then we may rewrite \ref{hypothesis} simply as:
+\begin{equation}
+H=A^{(K)}=g\left(\Theta^{(K)}\left(\cdots g(\Theta^{(2)}X)\right)^*\cdots\right)
+\end{equation}
+Here, $H$ is a $m_K\times p$ matrix containing the hypotheses for each training set data point:
+\begin{equation}
+H=
+\begin{pmatrix}
+|	&	\cdots	& |	\\
+h_1	&	\cdots	& h_p \\
+|	&	\cdots	& |
+\end{pmatrix}
+\end{equation}
+The errors for the last layer is now:
+\begin{equation}
+\Delta^{(K)}=H-Y
+\end{equation}
+Here $Y$ is a matrix containing the expected outcomes according to the training set:
+\begin{equation}
+Y=
+\begin{pmatrix}
+|	&	\cdots	& |	\\
+y_1	&	\cdots	& y_p \\
+|	&	\cdots	& |
+\end{pmatrix}
+\end{equation}
+Following the pattern of equation \ref{general_derivative} we calculate:
+\begin{equation}
+\Delta^{(K)}\left(A^{(K-1)}\right)^T=\begin{pmatrix}
+|	&	\cdots	& |	\\
+\delta^{(K)}_1	&	\cdots	& \delta^{(K)}_p \\
+|	&	\cdots	& |
+\end{pmatrix}
+\begin{pmatrix}
+-	& a^{(K-1)}_1	&	- \\
+\vdots	& \vdots	& \vdots \\
+-	& a^{(K-1)}_p	&	-
+\end{pmatrix}
+\end{equation}
+This means that the $ij$-element of the product matrix is the sum over the $ij$-derivatives for each of the $p$ data point. It is customary to divide by $p$ to get an average, so that different training set sizes have comparable dynamics during gradual descent.
+
 
 \end{document}
