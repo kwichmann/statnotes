@@ -370,6 +370,7 @@ Reorder the summation and use that $A_{ij}=A^T_{ji}$:
 \end{equation}
 The underbraced part is equal to $\left[\left(\theta^{(K)}\right)^T\delta^{(K)}\right]_j$. So it makes sense to set the error of layer $K-1$ equal to:
 \begin{equation}
+\label{backpropagating_errors}
 \delta^{(K-1)}=\left(\theta^{(K)}\right)^T\delta^{(K)}\odot a^{(K-1)}\odot\left(1-a^{(K-1)}\right)
 \end{equation}
 The calculations are now essentially the same as in the last section, and we get:
@@ -430,17 +431,26 @@ Here, a constant coordinate of 1 have been added to each data point in order to 
 \begin{equation}
 \Theta^{(L)}=
 \begin{pmatrix}
-b^{(L)}_1		& \theta^{(L)}_{11}	& \theta^{(L)}_{12}	& \cdots	& \theta^{(L)}_{1m_{L-1}} \\
-b^{(L)}_2		& \theta^{(L)}_{21}	& \theta^{(L)}_{22}	& \cdots 	& \theta^{(L)}_{2m_{L-1}} \\
+b^{(L)}_1		& \theta^{(L)}_{11}	& \theta^{(L)}_{12}	& \cdots	& \theta^{(L)}_{1n_{L-1}} \\
+b^{(L)}_2		& \theta^{(L)}_{21}	& \theta^{(L)}_{22}	& \cdots 	& \theta^{(L)}_{2n_{L-1}} \\
 \vdots			& \vdots		& \vdots		& \ddots 	& \vdots \\
-b^{(L)}_{m_L}	& \theta^{(L)}_{m_L1}	& \theta^{(L)}_{m_L2}	& \cdots	& \theta^{(L)}_{m_Lm_{L-1}}
+b^{(L)}_{n_L}	& \theta^{(L)}_{n_L1}	& \theta^{(L)}_{n_L2}	& \cdots	& \theta^{(L)}_{n_Ln_{L-1}}
 \end{pmatrix}
 \end{equation}
-Using this, we can get the collection of activities in the $L$'th layer by:
+So $\Theta^{(L)}\in\mathbb{R}^{n_L\times(n_{L-1}+1)}$. So we can get the activities in the first hidden layer by:
 \begin{equation}
-A^{(L)}=g(\Theta^{(K)}A^{(L-1)*})
+A^{(2)}=\Theta^{(2)}X=
+\begin{pmatrix}
+| & \cdots & | \\
+a^{(2)}_1 & \cdots & a^{(2)}_p \\
+| & \cdots & | 
+\end{pmatrix}
 \end{equation}
-Here, the asterisk is a shorthand for adding a row of ones, similarly to equation \ref{row_of_ones}. Then we may rewrite \ref{hypothesis} simply as:
+So $A^{(2)}\in\mathbb{R}^{n_2\times p}$. To get the activities in the next layer, first we must add a row of ones in the same way we did with the input layer. Using this, we can get the collection of activities in the $L$'th layer by:
+\begin{equation}
+A^{(L)}=g(\Theta^{(L)}A^{(L-1)*})
+\end{equation}
+Here, the asterisk is a shorthand for adding a row of ones, similarly to equation \ref{row_of_ones}. In general $A^{(L)}\in\mathbb{R}^{n_L\times p}$. Then we may rewrite \ref{hypothesis} simply as:
 \begin{equation}
 H=A^{(K)}=g\left(\Theta^{(K)}\left(\cdots g(\Theta^{(2)}X)\right)^*\cdots\right)
 \end{equation}
@@ -468,18 +478,23 @@ y_1	&	\cdots	& y_p \\
 \end{equation}
 Following the pattern of equation \ref{general_derivative} we calculate:
 \begin{equation}
-\Delta^{(K)}\left(A^{(K-1)}\right)^T=\begin{pmatrix}
+\Delta^{(K)}\left(A^{(K-1)*}\right)^T=\begin{pmatrix}
 |	&	\cdots	& |	\\
 \delta^{(K)}_1	&	\cdots	& \delta^{(K)}_p \\
 |	&	\cdots	& |
 \end{pmatrix}
 \begin{pmatrix}
--	& a^{(K-1)}_1	&	- \\
-\vdots	& \vdots	& \vdots \\
--	& a^{(K-1)}_p	&	-
+1 & -	& a^{(K-1)}_1	&	- \\
+\vdots & \vdots	& \vdots	& \vdots \\
+1 & -	& a^{(K-1)}_p	&	-
 \end{pmatrix}
 \end{equation}
 This means that the $ij$-element of the product matrix is the sum over the $ij$-derivatives for each of the $p$ data point. It is customary to divide by $p$ to get an average, so that different training set sizes have comparable dynamics during gradual descent.
 
+To backpropagate, we need to calculate the errors in the previous layers. Following equation \ref{backpropagating_errors}, this is done through:
+\begin{equation}
+\Delta^{(L-1)}=\left(\theta^{(L)}\right)^T\Delta^{(K)}\odot A^{(L-1)}\odot(1-A^{(L-1)})
+\end{equation}
+Note that the lower case theta is used here, as there's no bias error to propagate back to.
 
 \end{document}
