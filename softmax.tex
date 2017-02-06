@@ -1,0 +1,57 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Softmax function}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Definition}
+Given an $n$-dimensional input vector $z$, the \textit{softmax function} (also known as the \textit{normalized exponential function}), has the output:
+\begin{equation}
+\sigma_i(z)=\frac{e^{z_i}}{\sum_{k=1}^n e^{z_k}}
+\end{equation}
+This means, that the outputs can be interpreted as an discrete probability distribution, since they will always sum to 1.
+
+It will be convenient to give a shorthand for the normalization "constant", so we set:
+\begin{equation}
+N(z)=\sum_{k=1}^n e^{z_k}
+\end{equation}
+
+\section{Derivative}
+We might now want to differentiate with respect to the component $z_j$, which is done by applying the quotient rule:
+\begin{equation}
+\label{quotient}
+\frac{\partial\sigma_i(z)}{\partial z_j}=\frac{\partial}{\partial z_j}\frac{e^{z_i}}{N(z)}=\frac{\left(\frac{\partial}{\partial z_j}e^{z_i}\right)N(z)-e^{z_i}\left(\frac{\partial}{\partial z_j}N(z)\right)}{(N(z))^2}
+\end{equation}
+The two derivatives are:
+\begin{equation}
+\frac{\partial}{\partial z_j}e^{z_i}=\delta_{ij}e^{z_i},\quad\frac{\partial}{\partial z_j}N(z)=\sum_{k=1}^n\delta_{jk}e^{z_k}=e^{z_j}
+\end{equation}
+Inserting into equation \ref{quotient} this yields:
+\begin{equation}
+\frac{\delta_{ij}e^{z_j}N(z)-e^{z_i+z_j}}{(N(z))^2}
+\end{equation}
+The numerator can be rewritten:
+\begin{equation}
+e^{z_i}\left(\delta_{ij}N(z)-e^{z_j}\right)
+\end{equation}
+Now divide by $N(z)$ twice, once "outside the parenthesis" and once "inside" to get:
+\begin{equation}
+\label{derivative}
+\frac{\partial\sigma_i(z)}{\partial z_j}=\frac{e^{z_i}}{N(z)}\left(\delta_{ij}-\frac{e^{z_j}}{N(z)}\right)=\sigma_i(z)\left(\delta_{ij}-\sigma_j(z)\right)
+\end{equation}
+The likeness to the derivative of the logistic function should be clear.
+
+\end{document}
