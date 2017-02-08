@@ -1,0 +1,67 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Text retrieval}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Push and pull modes}
+Text retrieval happens in two major categories: push and pull.
+
+\section{Terminology}
+Here we describe the various ingredients needed to make a \textit{retrieval model}:
+\begin{itemize}
+\item We work with a \textit{vocabulary} $V=\{w_1,\cdots,w_N\}$ of words.
+\item A \textit{query} $q$ may be written $q=(q_1,\cdots,q_m)$, where $q_i\in V$.
+\item A \textit{document} can be written $d_i=(d_{i1},\cdots,d_{im_i})$.
+\item A \textit{collection} of documents is $C=\{d_1,\cdots,d_M\}$.
+\end{itemize}
+
+\subsection{The text retrieval problem}
+Given a query $q$, we wish to extract the set of \textit{relevant documents} $R(q)\subseteq C$ for the query.
+
+In practice, all we can hope for is an approximation of the relevant documents: $R'(q)$.
+
+\section{Strategies}
+
+\subsection{Document selection strategies}
+One way to solve the text retrieval system is to build a binary classifier $f$, which given a document $d$ and a query $q$ returns either 0 or 1, depending on whether or not $d\in R'(q)$:
+\begin{equation}
+R'(q)=\{d\in C|f(d,q)=1\}
+\end{equation}
+Of course, any way to choose $R'(q)$ is technically a binary classifier, but the idea is that $f$ decides the \textit{absolute relevance} of the document - there is no further nuance beyond "yes" or "no".
+
+\subsection{Document ranking}
+Instead, the function $f$ might have a continuum of real values instead of just $\{0, 1\}$. Then we might choose $R'(q)$ based on a \textit{cutoff} $\theta$:
+\begin{equation}
+R'(q)=\{d\in C|f(d,q)>\theta\}
+\end{equation}
+Here $f$ is more nuanced, and decides what is called the \textit{relative relevance} of the document. A list of documents sorted by decreasing relevance could be constructed, and $\theta$ decides where to stop the list. Or rather, if the user browses such a list, $\theta$ is decided by the user. 
+
+Such a list is (under certain conditions) guaranteed by the \textit{probability ranking principle} (PRP) to be of optimal utility to the user.
+
+\section{Building a selection function $f$}
+
+\subsection{Similarity-based models}
+
+\subsubsection{Vector space model}
+
+\subsection{Probabilistic models}
+
+\subsection{Probabilistic inference models}
+
+\subsection{Axiomatic models}
+
+\end{document}
