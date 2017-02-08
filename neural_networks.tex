@@ -222,7 +222,9 @@ Often, it is more convenient to minimize the \textit{log-likelihood}, i.e. minus
 \begin{equation}
 L(p|x)=-\log\mathcal{L}(p|x)=-x\log p-(1-x)\log(1-p)
 \end{equation}
-This can also be seen as a \textit{cost function}, i.e. something we wish to minimize. Figure \ref{fig:bernoulli} graphs the function for the two values of $x$.
+This may also be viewed as the \textit{cross-entropy} between the distributions of $x$ and $p$.
+
+$L$ can also be seen as a \textit{cost function}, i.e. something we wish to minimize. Figure \ref{fig:bernoulli} graphs the function for the two values of $x$. Because of the connection to entropy it is sometimes knows as the \textit{cross-entropy loss function}.
 
 \begin{figure}
 \centering
