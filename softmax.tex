@@ -29,6 +29,16 @@ It will be convenient to give a shorthand for the normalization "constant", so w
 N(z)=\sum_{k=1}^n e^{z_k}
 \end{equation}
 
+\subsection{Example}
+Figure \ref{fig:softmax_example} shows the softmax function applied to the set $\{1, 2, 3,\cdots, 8\}$. As is evident, comparatively small values are given much less overall weight than higher ones.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{softmax_example}
+\caption{Softmax example}
+\label{fig:softmax_example}
+\end{figure}
+
 \section{Derivative}
 We might now want to differentiate with respect to the component $z_j$, which is done by applying the quotient rule:
 \begin{equation}
