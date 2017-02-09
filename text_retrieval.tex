@@ -49,19 +49,28 @@ Here we describe the various ingredients needed to make a \textit{retrieval mode
 A given vocabulary word $w\in V$ can be described in terms of its appearence in a document/collection. Two common measures are \textit{term frequency} (tf) and \textit{inverse document frequency} (idf).
 
 \subsubsection{Term frequency}
-Term frequency directly describes the occurrence of $w$ in $d$. There's many variations of this. Some of the simplest are:
+Term frequency directly describes the occurrence of $w$ in $d$. There's many variations of this. The simplest two are:
 \begin{itemize}
 \item 0 or 1 depending on whether w is present or not.
-\item Raw frequency $f_{wd}$. A count of the number of occurences.
-\item Log normalization: $1+\log f_{wd})$ when $f_{wd}\neq 0$, zero otherwise.
+\item Raw frequency $\textrm{tf}(f,d)$. A count of the number of occurences.
 \end{itemize}
+Later we will look at transformations of tf.
 
 \subsubsection{Inverse document frequency}
 The inverse document frequency describes how unusual a word $w$ is in a collection $C$. If $n_{wC}$ is the number of documents in $C$ which contains $w$, the idf is defined as:
 \begin{equation}
-\textrm{idf}=\log\frac{N}{n_{wC}}
+\textrm{idf}(w,C)=\log\frac{N+1}{n_{wC}}
 \end{equation}
-To avoid division by zero for non-occuring $w$, 1 is sometimes added to the denominator. A number of different weighting schemes for idf exists. 
+To avoid division by zero for non-occuring $w$, 1 is sometimes added to the denominator. A number of different weighting schemes for idf exists, but this is the one we will primarily use here.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\textwidth]{idf_plot}
+\caption{An example idf plot.}
+\label{fig:idf_plot}
+\end{figure}
+
+Figure \ref{fig:idf_plot} shows an example of how idf decreases with higher document occurrences.
 
 \section{The text retrieval problem}
 Given a query $q$, we wish to extract the set of \textit{relevant documents} $R(q)\subseteq C$ for the query.
@@ -97,7 +106,7 @@ One approach to building a selection function is to use a \textit{vector space m
 \subsection{The bag of words model}
 In the \textit{bag of words} model (BOW), we disregard the ordering of the words in a document, and simply see them as an unordered list. Clearly, some information is lost in this simplification, but sometimes it will still yield useful results. The vector space model uses BOW.
 
-\subsection{Types of vectors}
+\subsection{Types of vectors - simplest approach}
 I each of the following cases, the relevant vector space for the model has a dimension of the size of the vocabulary $V$. In other words is has $N$ dimensions.
 
 \subsubsection{Bit vectors}
@@ -112,5 +121,40 @@ No matter which model is used, the simplest similarity measure between a query a
 \textrm{similarity}=q\cdot d
 \end{equation}
 For bit vectors this is equal to the distinct number of query terms matched in the document. For frequency vectors, it is the total count of occurrences of any query term in the document.
+
+\subsection{Including idf: tf-idf weight vector}
+The vector types mentioned above doesn't take into account how commonly used a word is. For instance, occurences of the words "the", "a" or "is" have the same impact on the similarity score than more specific terms. Some kind of \textit{weighting} is needed.
+
+One approach, it to use the inverse document frequency, since it will be low for common words. In other words, the vector coordinate for the word $w$ should be the frequency of the words in $d$ times the idf for the word in the relevant collection $C$. In other words it is:
+\begin{equation}
+\textrm{tf}(w,d)\cdot\textrm{idf}(w,C)
+\end{equation}
+Because of this, it is known as the \textit{tf-idf weight vector}.
+
+\subsection{Tf transformation: BM25}
+To simply have the raw tf count in the formula above is also problematic. It rewards simple repetition of a given term too much; the first occurence of a search term is valued as highly as the fiftieth. In order to remedy this, we need to perform some transformation $t$ of tf.
+
+We've already seen one such transform when we considered the binary representation of whether a term is present or not. Here, the transformation is:
+\begin{equation}
+t(\textrm{tf})=
+\begin{cases}
+0 & \textrm{when }\textrm{tf}=0 \\
+1 & \textrm{otherwise}
+\end{cases}
+\end{equation}
+For this purpose however, it is too drastic. A better looking option is a logarithmic transformation:
+\begin{equation}
+t(\textrm{tf})=\log(1+\textrm{tf})
+\end{equation}
+Or even a nested logarithm:
+\begin{equation}
+t(\textrm{tf})=\log(1+\log(1+\textrm{tf}))
+\end{equation}
+However, it turns out that in many cases what works best is a transformation of the following type:
+\begin{equation}
+t(\textrm{tf})=\frac{(k+1)\textrm{tf}}{\textrm{tf}+k}
+\end{equation}
+This is known as a \textit{BM25 transformation}
+
 
 \end{document}
