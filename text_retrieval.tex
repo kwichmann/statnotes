@@ -17,8 +17,24 @@
 \begin{document}
 \maketitle
 
-\section{Push and pull modes}
-Text retrieval happens in two major categories: push and pull.
+\section{Information retrieval vs. text retrieval}
+\textit{Information retrieval} (IR) is the process of obtaining information from a source of relevant data. Very often, we will think of digital systems, and hence the amounts of data involved are very large. In general, we could be looking for any kind of information, like pictures, audio, or video.
+
+\textit{Text retrieval} (TR) is the subset of IR which deals with text. The most iconic example is web search based on a text query, like the services provided by search engines such as Google and Bing.
+
+\section{Push and pull modes of text access}
+Text retrieval happens in two major modes: push and pull.
+
+\subsection{Push mode}
+In push mode, the text is suggested (pushed) to the user based on previous interactions. This is what typically happens in a recommender system. For instance, Netflix will suggest movies and series based on your view history.
+
+\subsection{Pull mode}
+In pull mode, the user takes the initiative to get (pull) the text. This may be further subdivided:
+\begin{itemize}
+\item\textit{Querying} - Here, the user knows what to look for, at enters a keyword text: a query. This works well when the user knows what he/she is looking for.
+\item\textit{Browsing} - Here, the user navigates through the data, following a path enabled by its structure. This works well when the user wants to explore the data.
+\end{itemize}
+We will focus on querying in this document.
 
 \section{Terminology}
 Here we describe the various ingredients needed to make a \textit{retrieval model}:
@@ -29,7 +45,25 @@ Here we describe the various ingredients needed to make a \textit{retrieval mode
 \item A \textit{collection} of documents is $C=\{d_1,\cdots,d_M\}$.
 \end{itemize}
 
-\subsection{The text retrieval problem}
+\subsection{Term frequency-inverse document frequency}
+A given vocabulary word $w\in V$ can be described in terms of its appearence in a document/collection. Two common measures are \textit{term frequency} (tf) and \textit{inverse document frequency} (idf).
+
+\subsubsection{Term frequency}
+Term frequency directly describes the occurrence of $w$ in $d$. There's many variations of this. Some of the simplest are:
+\begin{itemize}
+\item 0 or 1 depending on whether w is present or not.
+\item Raw frequency $f_{wd}$. A count of the number of occurences.
+\item Log normalization: $1+\log f_{wd})$ when $f_{wd}\neq 0$, zero otherwise.
+\end{itemize}
+
+\subsubsection{Inverse document frequency}
+The inverse document frequency describes how unusual a word $w$ is in a collection $C$. If $n_{wC}$ is the number of documents in $C$ which contains $w$, the idf is defined as:
+\begin{equation}
+\textrm{idf}=\log\frac{N}{n_{wC}}
+\end{equation}
+To avoid division by zero for non-occuring $w$, 1 is sometimes added to the denominator. A number of different weighting schemes for idf exists. 
+
+\section{The text retrieval problem}
 Given a query $q$, we wish to extract the set of \textit{relevant documents} $R(q)\subseteq C$ for the query.
 
 In practice, all we can hope for is an approximation of the relevant documents: $R'(q)$.
@@ -43,25 +77,40 @@ R'(q)=\{d\in C|f(d,q)=1\}
 \end{equation}
 Of course, any way to choose $R'(q)$ is technically a binary classifier, but the idea is that $f$ decides the \textit{absolute relevance} of the document - there is no further nuance beyond "yes" or "no".
 
+With this strategy, there's $2^N$ possible different outcomes, since each document is either relevant or not.
+
 \subsection{Document ranking}
 Instead, the function $f$ might have a continuum of real values instead of just $\{0, 1\}$. Then we might choose $R'(q)$ based on a \textit{cutoff} $\theta$:
 \begin{equation}
 R'(q)=\{d\in C|f(d,q)>\theta\}
 \end{equation}
-Here $f$ is more nuanced, and decides what is called the \textit{relative relevance} of the document. A list of documents sorted by decreasing relevance could be constructed, and $\theta$ decides where to stop the list. Or rather, if the user browses such a list, $\theta$ is decided by the user. 
+Here $f$ is more nuanced, and decides what is called the \textit{relative relevance} of the document. A list of documents sorted by decreasing relevance could be constructed, and $\theta$ decides where to stop the list. Or rather, if the user browses such a list, $\theta$ is decided by the user.
 
-Such a list is (under certain conditions) guaranteed by the \textit{probability ranking principle} (PRP) to be of optimal utility to the user.
+There's $N!$ different possible outcomes with this strategy, since each ordering of documents is distinct.
 
-\section{Building a selection function $f$}
+\subsubsection{The probability ranking principle}
+The document ranking strategy is (under certain conditions) guaranteed by the \textit{probability ranking principle} (PRP) to be of optimal utility to the user.
 
-\subsection{Similarity-based models}
+\section{Vector space model}
+One approach to building a selection function is to use a \textit{vector space model}. This is a \textit{similarity-based} model, as it tries to give a measure of how similar the query and a document is.
 
-\subsubsection{Vector space model}
+\subsection{The bag of words model}
+In the \textit{bag of words} model (BOW), we disregard the ordering of the words in a document, and simply see them as an unordered list. Clearly, some information is lost in this simplification, but sometimes it will still yield useful results. The vector space model uses BOW.
 
-\subsection{Probabilistic models}
+\subsection{Types of vectors}
+I each of the following cases, the relevant vector space for the model has a dimension of the size of the vocabulary $V$. In other words is has $N$ dimensions.
 
-\subsection{Probabilistic inference models}
+\subsubsection{Bit vectors}
+Here, each coordinate can only take on the values 0 or 1, indicating whether or not the word $w_i$ is present in the query/document or not.
 
-\subsection{Axiomatic models}
+\subsubsection{Frequency vector}
+Going a bit further than bit vectors, here coordinate $i$ represents the number of times $w_i$ appears in the document.
+
+\subsection{Similarity measure}
+No matter which model is used, the simplest similarity measure between a query and a document (or between two documents) is the dot product between the two:
+\begin{equation}
+\textrm{similarity}=q\cdot d
+\end{equation}
+For bit vectors this is equal to the distinct number of query terms matched in the document. For frequency vectors, it is the total count of occurrences of any query term in the document.
 
 \end{document}
