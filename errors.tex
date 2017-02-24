@@ -1,0 +1,72 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Error functions - classification}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Continous-valued predictors}
+Most predictors for classification will be based on a continuous-valued score for each of the two outcomes. The prediction is then made based on these values (usually, the one with the highest score is chosen).
+
+Given the values from such a predictor, we would like to have some quantitative measure of how good the prediction is.
+
+\subsection{Terminology}
+Consider classification between $n$ cases. If the true classification for a sample $x$ is $k$, then we define the $n$-dimensional vector $t$ by $t_i=\delta_{ik}$. Let the values made by the predictor be the vector $h$, also a $n$-dimensional vector.
+
+\section{Error functions}
+
+\subsection{Squared error}
+In this scheme we use the same error as used for regression - the squared error:
+\begin{equation}
+\frac{1}{2}||t-h||^2=\frac{1}{2}(t-h)^T(t-h)=\frac{1}{2}\sum_{i=1}^n(t_i-h_i)^2
+\end{equation}
+
+\subsection{Cross-entropy error}
+This error is based on the log-likelihood of a Bernoulli experiment:
+\begin{equation}
+\sum_{i=1}^n\left[-t_i\log(h_i)-(1-t_i)\log(1-h_i)\right]
+\end{equation}
+
+\section{Forms of the hypothesis $h$}
+The hypothesis $h$ is in general the function of some input feature vector $x$, so $h=h(x)$. Here we will consider only hypotheses which depends on the vector $x$ weighted by a vector of weights $w_i$ depending on the outcome $i$. In other words, we only look at $h_i(x)=h_i(w_i^T x)$.
+
+\subsection{Linear hypothesis}
+Here, the hypothesis is simply equal to $w_i^T x$, so that:
+\begin{equation}
+h_i(x)=w_i^Tx
+\end{equation}
+
+\subsection{Logistic hypothesis}
+Here, the hypothesis is the logistic function of $w_i^T x$. The logistic function is:
+\begin{equation}
+\sigma(z)=\frac{1}{1+e^{-z}}
+\end{equation}
+And so, the hypothesis is:
+\begin{equation}
+h_i(x)=\sigma(w_i^T x)
+\end{equation}
+
+\subsection{Softmax hypothesis}
+Here, the softmax function is used to normalize the hypothesis, so that they sum to 1. The softmax is defined by:
+\begin{equation}
+s_i(z)=\frac{e^{z_i}}{\sum_{j=1}^n e^{z_j}}
+\end{equation}
+And the hypothesis:
+\begin{equation}
+h_i(x)=s_i(w^T x)
+\end{equation}
+Here, $w$ is a matrix in which the columns are the weights $w_i$.
+
+\end{document}
