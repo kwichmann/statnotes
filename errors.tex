@@ -30,12 +30,14 @@ Consider classification between $n$ cases. If the true classification for a samp
 \subsection{Squared error}
 In this scheme we use the same error as used for regression - the squared error:
 \begin{equation}
+\label{error_squared}
 \frac{1}{2}||t-h||^2=\frac{1}{2}(t-h)^T(t-h)=\frac{1}{2}\sum_{i=1}^n(t_i-h_i)^2
 \end{equation}
 
 \subsection{Cross-entropy error}
 This error is based on the log-likelihood of a Bernoulli experiment:
 \begin{equation}
+\label{error_crossentropy}
 \sum_{i=1}^n\left[-t_i\log(h_i)-(1-t_i)\log(1-h_i)\right]
 \end{equation}
 
@@ -45,6 +47,7 @@ The hypothesis $h$ is in general the function of some input feature vector $x$, 
 \subsection{Linear hypothesis}
 Here, the hypothesis is simply equal to $w_i^T x$, so that:
 \begin{equation}
+\label{hyp_linear}
 h_i(x)=w_i^Tx
 \end{equation}
 
@@ -55,6 +58,7 @@ Here, the hypothesis is the logistic function of $w_i^T x$. The logistic functio
 \end{equation}
 And so, the hypothesis is:
 \begin{equation}
+\label{hyp_logistic}
 h_i(x)=\sigma(w_i^T x)
 \end{equation}
 
@@ -65,8 +69,29 @@ s_i(z)=\frac{e^{z_i}}{\sum_{j=1}^n e^{z_j}}
 \end{equation}
 And the hypothesis:
 \begin{equation}
-h_i(x)=s_i(w^T x)
+\label{hyp_softmax}
+h_i(x)=s_i(w^T x)=\frac{e^{w_i^T x}}{N(w,x)}
 \end{equation}
-Here, $w$ is a matrix in which the columns are the weights $w_i$.
+Here, $w$ is a matrix in which the columns are the weights $w_i$, and $N(w,x)$ is the normalization constant $\sum_{j=1}^n e^{z_j}$.
+
+\section{Combining error and hypothesis types}
+
+\subsection{Squared error with logistic hypothesis}
+Combining equations \ref{error_squared} and \ref{hyp_logistic} we get the error function:
+\begin{equation}
+\frac{1}{2}\sum_{i=1}^n(t_i-\sigma(w_i^T x))^2
+\end{equation}
+
+\subsection{Cross-entropy error with logistic hypothesis}
+Combining equations \ref{error_crossentropy} and \ref{hyp_logistic} we arrive at the error function:
+\begin{equation}
+\sum_{i=1}^n\left[-t_i\log(\sigma(w_i^T x))-(1-t_i)\log(1-\sigma(w_i^T x))\right]
+\end{equation}
+
+\subsection{Cross-entropy error with softmax hypothesis}
+Combining equations \ref{error_crossentropy} and \ref{hyp_softmax} we arrive at the error function:
+\begin{equation}
+\sum_{i=1}^n\left[-t_i\log\left(\frac{e^{w_i^T x}}{N(w,x)}\right)-(1-t_i)\log\left(1-\frac{e^{w_i^T x}}{N(w,x)}\right)\right]
+\end{equation}
 
 \end{document}
