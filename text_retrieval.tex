@@ -172,6 +172,54 @@ n(l)=1-b+b\frac{l}{\textrm{avdl}}
 \end{equation}
 For $b>0$ this function grows larger for large document sizes, which is what we're looking for, since we want to divide by $n(d)$.
 
+\section{Term-Frequency Matrix}
+The chosen weights can be collected in what is known as the \textit{term-frequency matrix} (TFM). The name refers to frequency vectors, but it can be used for any weighting scheme. 
+
+In the TFM, words from the vocabulary are in the $x$-direction, while documents from the corpus are in the $y$-direction. An example will make this clearer.
+
+\subsection{Example of TFM}
+Consider a corpus consisting of the following three text files:
+\begin{enumerate}
+\item "this is good"
+\item "this is bad"
+\item "this is very very bad"
+\end{enumerate}
+Here, the vocabulary consists of the following five words: this, is, good, bad and very. The corresponding TFM (using the frequency vector weight scheme) is shown in table \ref{table:TFM}.
+
+\begin{table}[t]
+\centering
+\label{table:TFM}
+\begin{tabular}{c|c|c|c|c|c|}
+\cline{2-6}
+\multicolumn{1}{l|}{Docoment/Word} & \multicolumn{1}{l|}{\textbf{this}} & \multicolumn{1}{l|}{\textbf{is}} & \multicolumn{1}{l|}{\textbf{good}} & \multicolumn{1}{l|}{\textbf{bad}} & \multicolumn{1}{l|}{\textbf{very}} \\ \hline
+\multicolumn{1}{|c|}{\textbf{1}}   & 1                                  & 1                                & 1                                  & 0                                 & 0                                  \\ \hline
+\multicolumn{1}{|c|}{\textbf{2}}   & 1                                  & 1                                & 0                                  & 1                                 & 0                                  \\ \hline
+\multicolumn{1}{|c|}{\textbf{3}}   & 1                                  & 1                                & 0                                  & 1                                 & 2                                  \\ \hline
+\end{tabular}
+\caption{TFM example}
+\end{table}
+
+\subsection{Abstract form}
+Note how in the example each row is a document vector. In other words, the TFM could abstractly be written as:
+\begin{equation}
+\begin{pmatrix}
+\textrm{---} & d_1^T & \textrm{---} \\
+\vdots & \vdots & \vdots \\
+\textrm{---} & d_M^T & \textrm{---}
+\end{pmatrix}
+=
+\begin{pmatrix}
+| & \cdots & | \\
+d_1 & \cdots & d_M \\
+| & \cdots & |
+\end{pmatrix}^T
+\end{equation}
+Here $d_i$ is the column vector for document $i$.
+
+\subsection{Inverted index}
+The \textit{inverted index} form of the TDM, is basically the same data, but viewed columnwise: For instance, from the fourth column in the example above, we can immediately infer that the word "bad" appears once in documents 2 and 3. This is much quicker than scanning through the entire corpus for the word.
+
+Since in general, the TFM matrix will be rather sparse, different compression schemes for the inverted index are often used in practice.
 
 \section{Document classification: Naive Bayes}
 Assume the corpus $C$ is divided into $k$ of disjoint categories $C_1, C_2,\ldots, C_k$. We now want to develop a way to evaluate in which category a new document $d$ should be classified.
