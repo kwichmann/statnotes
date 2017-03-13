@@ -341,11 +341,77 @@ All other values are zero. Hence, $X_i$ and $Y_i$ are jointly stationary with cr
 \rho_{XY}(0)=0,\quad\rho_{XY}(\pm 1)=\frac{\pm\sigma^2}{\sqrt{2\sigma^2\cdot 2\sigma^2}}=\pm\frac{1}{2}
 \end{equation}
 
+
+\section{MA(1) time series}
+We've seen moving averages before above. The general MA($q$)-model is:
+\begin{equation}
+X_t=\varepsilon_t+\theta_1\varepsilon_{t-1}+\theta_2\varepsilon_{t-2}+\ldots +\theta_q\varepsilon_{t-q}
+\end{equation}
+Here $\varepsilon_t$ is white noise with variance $\sigma^2$. We will focus on the case $q=1$:
+\begin{equation}
+X_t=\varepsilon_t+\theta\varepsilon_{t-1}
+\end{equation}
+
+\subsection{Autocovariance and autocorrelation}
+We've seen before, that moving averages are stationary, so autocovariance depends only on the time difference $h$. It is clear, that it is zero for $h>q$. For $q=1$, this means there's only two non-zero cases:
+\begin{equation}
+\gamma_X(0)=\textrm{var}(\varepsilon_t+\theta\varepsilon_{t-1})=\textrm{var}(\varepsilon_t)+\theta^2\textrm{var}(\varepsilon_{t-1})=(1+\theta^2)\sigma^2
+\end{equation}
+And:
+\begin{equation}
+\gamma_X(\pm 1)=\textrm{cov}(\varepsilon_t+\theta\varepsilon_{t-1},\varepsilon_{t+1}+\theta\varepsilon_t)=\theta\sigma^2
+\end{equation}
+The corresponding autocorrelation function is then:
+\begin{equation}
+\rho_X(h)=
+\begin{cases}
+1 & \textrm{for }h=0 \\
+\frac{\theta}{1+\theta^2} & \textrm{for }h=\pm 1
+\end{cases}
+\end{equation}
+
+
+\section{AR(1) time series}
+As noted above, an autoregressive model is one, where the values depend linearly on the ones immediately before it, plus some noise. A series depending on the last $n$ values is denoted as AR($n$) for short. Here we will look closer at the case where $n=1$. In other words, the model is:
+\begin{equation}
+X_t=\rho X_{t-1}+\varepsilon_t
+\end{equation}
+Again, $\varepsilon_t$ is white noise with variance $\sigma^2$.
+
+\subsection{Autocovariance and autocorrelation for stationary AR(1)}
+Let's start by considering the variance of $X_t$:
+\begin{equation}
+\textrm{var}(X_t)=\textrm{var}(\rho X_{t-1}+\varepsilon_t)=\rho^2\textrm{var}(\rho X_{t-1})+\sigma^2
+\end{equation}
+Now, let us assume the series to be stationary. The specifically, the variance has to be constant, and therefore $\textrm{var}(X_t)=\textrm{var}(X_{t-1})$. This means:
+\begin{equation}
+\label{AR1_variance}
+\textrm{var}(X_t)=\rho^2\textrm{var}(\rho X_t)+\sigma^2\Leftrightarrow\textrm{var}(X_t)=\frac{\sigma^2}{1-\rho^2}
+\end{equation}
+This shows some restrictions on $\rho$ if stationarity is required. First of all $\rho=\pm 1$ gives an infinite variance. And for $|\rho|>1$, the variance is negative according to the equation, which is also problematic. So we will assume $|\rho|<1$ in the following.
+
+Now, we turn to the autocovariance function for $h\neq 0$. Let's start with $h=1$. Here we see that:
+\begin{equation}
+X_t=\rho X_{t-1}+\varepsilon_t=\rho(\rho X_{t-2}+\varepsilon_{t-1})+\varepsilon_t=\rho^2 X_{t-2}+\rho\varepsilon_{t-1}+\varepsilon_t
+\end{equation}
+In fact, for any $h>0$, we could iterate this substitution process to get:
+\begin{equation}
+X_t=\rho^h X_{t-h}+\rho^{h-1}\varepsilon_{t-h+1}+\rho^{h-2}\varepsilon_{t-h+2}+\cdots+\varepsilon_t
+\end{equation}
+Now, it is easy to compute the autocovariance, since only the $X$-term contribute:
+\begin{equation}
+\gamma_X(h)=\textrm{cov}(X_{t-h},X_t)=\textrm{cov}(X_{t-h},\rho^h X_{t-h})=\rho^h\textrm{var}(X_{t-h})=\rho^h\frac{\sigma^2}{1-\rho^2}
+\end{equation}
+Here equation \ref{AR1_variance} has been used. This means that the autocorrelation takes on the simple, exponenetial form:
+\begin{equation}
+\rho_X(h)=\rho^h
+\end{equation}
 \section{Markov chains}
 A \textit{Markov chain} is a time series, in which the conditional distribution of $X_{n+1}$ given the realizations of $X_0, X_1,\ldots, X_n$ only depends on the realization of $X_n$. Formally:
 \begin{equation}
 P(X_{n+1}=s|X_0=x_0, X_1=x_1,\ldots, X_n=x_n)=P(X_{n+1}=s|X_n=x_n)
 \end{equation}
+
 
 \subsection{Markov chains with a finite number of states}
 In the case where each $X$ only has a finite number of realizations $n$, the Markov chain can be conveniently specified in matrix form. Assume the realization of $X_n$ is state $i$, then we might ask what to probability of $X_{n+1}$ being realized as state $j$. This probability is called $p_{ij}$. These probabilities can be neatly organized in matrix form:
