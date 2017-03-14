@@ -388,7 +388,28 @@ Now, let us assume the series to be stationary. The specifically, the variance h
 \label{AR1_variance}
 \textrm{var}(X_t)=\rho^2\textrm{var}(\rho X_t)+\sigma^2\Leftrightarrow\textrm{var}(X_t)=\frac{\sigma^2}{1-\rho^2}
 \end{equation}
-This shows some restrictions on $\rho$ if stationarity is required. First of all $\rho=\pm 1$ gives an infinite variance. And for $|\rho|>1$, the variance is negative according to the equation, which is also problematic. So we will assume $|\rho|<1$ in the following.
+This shows some restrictions on $\rho$ if stationarity is required. First of all $\rho=\pm 1$ gives an infinite variance. And for $|\rho|>1$, the variance is negative according to the equation, which is also problematic. So we will assume $|\rho|<1$ in the following. Figures \ref{fig:ar1_95}, \ref{fig:ar1_70} and \ref{fig:ar1_20} show examples of time series with different values of $\rho$ and the same $\sigma^2$. Note that the closer $\rho$ is to 1, the longer it generally takes for the series to cross the time axis.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{ar1_95}
+\caption{An example of an AR(1) process with $\rho=0.95$.}
+\label{fig:ar1_95}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{ar1_70}
+\caption{An example of an AR(1) process with $\rho=0.7$.}
+\label{fig:ar1_70}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{ar1_20}
+\caption{An example of an AR(1) process with $\rho=0.2$.}
+\label{fig:ar1_20}
+\end{figure}
 
 Now, we turn to the autocovariance function for $h\neq 0$. Let's start with $h=1$. Here we see that:
 \begin{equation}
@@ -402,10 +423,12 @@ Now, it is easy to compute the autocovariance, since only the $X$-term contribut
 \begin{equation}
 \gamma_X(h)=\textrm{cov}(X_{t-h},X_t)=\textrm{cov}(X_{t-h},\rho^h X_{t-h})=\rho^h\textrm{var}(X_{t-h})=\rho^h\frac{\sigma^2}{1-\rho^2}
 \end{equation}
-Here equation \ref{AR1_variance} has been used. This means that the autocorrelation takes on the simple, exponenetial form:
+Here equation \ref{AR1_variance} has been used. This means that the autocorrelation takes on the simple, exponential form:
 \begin{equation}
 \rho_X(h)=\rho^h
 \end{equation}
+
+
 \section{Markov chains}
 A \textit{Markov chain} is a time series, in which the conditional distribution of $X_{n+1}$ given the realizations of $X_0, X_1,\ldots, X_n$ only depends on the realization of $X_n$. Formally:
 \begin{equation}
