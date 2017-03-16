@@ -428,6 +428,36 @@ Here equation \ref{AR1_variance} has been used. This means that the autocorrelat
 \rho_X(h)=\rho^h
 \end{equation}
 
+\section{Lag, backshift and differencing}
+
+\subsection{The lag and backshift operators}
+The \textit{lag operator} $L$ for a time series is defined as:
+\begin{equation}
+LX_t=X_{t-1}
+\end{equation}
+The lag operator is invertible (at least when the index set is $\mathbb{Z}$):
+\begin{equation}
+L^{-1}X_t=X_{t+1}
+\end{equation}
+In general $L$ raised to an arbitrary integer power $n$ is:
+\begin{equation}
+L^n X_t=X_{t-n}
+\end{equation}
+The \textit{backshift operator} $B$ is identical to $L$, except for when conditional expectation values are calculated. Let $E_t$ denote the expectation operator based on a realization of the time series up to time $t-1$. The lag operator shifts this realization time, while the backshift operator does not. In other words:
+\begin{equation}
+L^n E_t[X_{t+j}]=E_{t-n}[X_{t+j-n}],\quad B^n E_t[X_{t+j}]=E_t[X_{t+j-n}]
+\end{equation}
+
+\subsection{Differencing}
+When examining a time series, it is often useful to \textit{difference} it. This means calculating (and usually plotting) the series $\Delta X_t=X_t-X_{t-1}$. Using the lag operator, this can be written as:
+\begin{equation}
+\Delta X_t=(1-L)X_t
+\end{equation}
+Similarly, higher order differings can be defined through:
+\begin{equation}
+\Delta^n X_t=(1-L)^n X_t
+\end{equation}
+For $n\ge 1$ all of these are examples of \textit{lag polynomial} operators, since they're expressed as a polynomial form of $L$.
 
 \section{Markov chains}
 A \textit{Markov chain} is a time series, in which the conditional distribution of $X_{n+1}$ given the realizations of $X_0, X_1,\ldots, X_n$ only depends on the realization of $X_n$. Formally:
