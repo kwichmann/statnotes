@@ -375,7 +375,7 @@ The corresponding autocorrelation function is then:
 
 
 \section{AR(1) time series}
-As noted above, an autoregressive model is one, where the values depend linearly on the ones immediately before it, plus some noise. A series depending on the last $n$ values is denoted as AR($n$) for short. Here we will look closer at the case where $n=1$. In other words, the model is:
+As noted above, an autoregressive model is one, where the values depend linearly on the ones immediately before it, plus some noise. A series depending on the last $p$ values is denoted as AR($p$) for short. Here we will look closer at the case where $p=1$. In other words, the model is:
 \begin{equation}
 X_t=\rho X_{t-1}+\varepsilon_t
 \end{equation}
@@ -451,25 +451,55 @@ The \textit{backshift operator} $B$ is identical to $L$, except for when conditi
 L^n E_t[X_{t+j}]=E_{t-n}[X_{t+j-n}],\quad B^n E_t[X_{t+j}]=E_t[X_{t+j-n}]
 \end{equation}
 
-\subsection{AR($n$)-models with lag operator}
+\subsection{MA($q$)-model with lag operator}
+The MA($q$) model is:
+\begin{equation}
+X_t=\varepsilon_t+\sum_{i=1}^q\theta_i\varepsilon_{t-i}
+\end{equation}
+We might rewrite this using the lag operator:
+\begin{equation}
+X_t=\varepsilon_t+\sum_{i=1}^q\theta_i L^i\varepsilon_{t}=\left(1+\sum_{i=1}^q\theta_i L^i\right)\varepsilon_t
+\end{equation}
+
+\subsection{AR($p$)-model with lag operator}
 The general autoregressive model of order $n$ is:
 \begin{equation}
-X_t=\rho_1 X_{t-1}+\rho_2 X_{t-2}+\ldots+\rho_n X_{t-n}+\varepsilon_t
+X_t=\rho_1 X_{t-1}+\rho_2 X_{t-2}+\ldots+\rho_p X_{t-p}+\varepsilon_t
 \end{equation}
 This may be rewritten using the lag operator:
 \begin{equation}
-X_t=\rho_1 L X_t+\rho_2 L^2 X_t+\ldots+\rho_n L^n X_t+\varepsilon_t
+X_t=\rho_1 L X_t+\rho_2 L^2 X_t+\ldots+\rho_p L^p X_t+\varepsilon_t
 \end{equation}
 The $X$-dependent part may be written as a \textit{lag polynomial}:
 \begin{equation}
-X_t=(\rho_1 L+\rho_2 L^2+\ldots+\rho_n L^n)X_t+\varepsilon_t
+X_t=(\rho_1 L+\rho_2 L^2+\ldots+\rho_p L^p)X_t+\varepsilon_t
 \end{equation}
 Or rearranging:
 \begin{equation}
 \label{AR_polynomial}
-\underbrace{\left(1-\sum_{i=1}^n\theta_i L^i\right)}_{\phi(L)}X_t=\varepsilon_t
+\underbrace{\left(1-\sum_{i=1}^p\theta_i L^i\right)}_{\phi(L)}X_t=\varepsilon_t
 \end{equation}
 Here, we have introduced $\phi(z)$, the \textit{characteristic polynomial} of the process.
+
+\subsection{Rewriting the characteristic polynomial}
+According to equation \ref{AR_polynomial}, the characteristic polynomial can be written:
+\begin{equation}
+\phi(z)=-\theta_p z^p-\theta_{p-1}z^{p-1}-\ldots -\theta_1 z+1
+\end{equation}
+According to the fundamental theorem of algebra, $\phi$ has $p$ roots and can be factorized as follows:
+\begin{equation}
+\label{characteristic_factor}
+\phi(z)=-\theta_p(z-z_1)(z-z_2)\cdots(z-z_p)
+\end{equation}
+According to Vieta's equations, we have:
+\begin{equation}
+z_1 z_2\cdots z_p=(-1)^p\frac{1}{-\theta_p}\Leftrightarrow -\theta_p=\frac{(-1)^p}{z_1 z_2\cdots z_p}=(-\phi_1)(-\phi_2)\cdots(-\phi_p)
+\end{equation}
+Here, the \textit{reciprocal roots} $\phi_i=1/z_i$ have been introduced. Equation \ref{characteristic_factor} can now be written as:
+\begin{equation}
+\label{rewritten_characteristic}
+\phi(z)=\prod_{i=1}^p(-\phi_i)(z-z_1)=\prod_{i=1}^p(1-\phi_i z)
+\end{equation}
 
 \subsection{Differencing}
 When examining a time series, it is often useful to \textit{difference} it. This means calculating (and usually plotting) the series $\Delta X_t=X_t-X_{t-1}$. It is essentially a discrete differentiation. Using the lag operator, this can be written as:
@@ -480,18 +510,23 @@ Similarly, higher order differings can be defined through:
 \begin{equation}
 \Delta^d X_t=(1-L)^d X_t
 \end{equation}
-For $d\ge 1$ all of these are examples of \textit{lag polynomial} operators, since they're expressed as a polynomial form of $L$.
+Again, these are examples of lag polynomial operators, since they're expressed as a polynomial form of $L$.
 
 \subsection{I($d$) time series}
 A time series of \textit{order of integration} $d$, I($d$), is a series which reduces to white noise after being differenced $d$ times (usually, the lowest of such $n$'s is used). So:
 \begin{equation}
 \Delta^d X_t=(1-L)^d X_t=\varepsilon_t
 \end{equation}
-Note the similarity to equation \ref{AR_polynomial}. As an example, an I(1) process is simply a random walk, since:
+Note the similarity to equations \ref{AR_polynomial} and \ref{rewritten_characteristic} - the left side corresponds to a characterstic polynomial with $d$-fold degenrate unit root.
+
+As an example, an I(1) process is simply a random walk, since:
 \begin{equation}
 (1-L)X_t=X_t-X_{t-1}=\varepsilon_t\Leftrightarrow X_t=X_{t-1}+\varepsilon_t
 \end{equation}
 In general, such series are non-stationary.
+
+\section{ARIMA models}
+We now wish to combine the AR, I, and MA models into one. The result is the \textit{autoregressive integrated moving average model} or \textit{ARIMA} for short.
 
 \section{Markov chains}
 A \textit{Markov chain} is a time series, in which the conditional distribution of $X_{n+1}$ given the realizations of $X_0, X_1,\ldots, X_n$ only depends on the realization of $X_n$. Formally:
