@@ -477,23 +477,23 @@ X_t=(\rho_1 L+\rho_2 L^2+\ldots+\rho_p L^p)X_t+\varepsilon_t
 Or rearranging:
 \begin{equation}
 \label{AR_polynomial}
-\underbrace{\left(1-\sum_{i=1}^p\theta_i L^i\right)}_{\phi(L)}X_t=\varepsilon_t
+\underbrace{\left(1-\sum_{i=1}^p\rho_i L^i\right)}_{\phi(L)}X_t=\varepsilon_t
 \end{equation}
 Here, we have introduced $\phi(z)$, the \textit{characteristic polynomial} of the process.
 
 \subsection{Rewriting the characteristic polynomial}
 According to equation \ref{AR_polynomial}, the characteristic polynomial can be written:
 \begin{equation}
-\phi(z)=-\theta_p z^p-\theta_{p-1}z^{p-1}-\ldots -\theta_1 z+1
+\phi(z)=-\rho_p z^p-\rho_{p-1}z^{p-1}-\ldots -\rho_1 z+1
 \end{equation}
 According to the fundamental theorem of algebra, $\phi$ has $p$ roots and can be factorized as follows:
 \begin{equation}
 \label{characteristic_factor}
-\phi(z)=-\theta_p(z-z_1)(z-z_2)\cdots(z-z_p)
+\phi(z)=-\rho_p(z-z_1)(z-z_2)\cdots(z-z_p)
 \end{equation}
 According to Vieta's equations, we have:
 \begin{equation}
-z_1 z_2\cdots z_p=(-1)^p\frac{1}{-\theta_p}\Leftrightarrow -\theta_p=\frac{(-1)^p}{z_1 z_2\cdots z_p}=(-\phi_1)(-\phi_2)\cdots(-\phi_p)
+z_1 z_2\cdots z_p=(-1)^p\frac{1}{-\rho_p}\Leftrightarrow -\rho_p=\frac{(-1)^p}{z_1 z_2\cdots z_p}=(-\phi_1)(-\phi_2)\cdots(-\phi_p)
 \end{equation}
 Here, the \textit{reciprocal roots} $\phi_i=1/z_i$ have been introduced. Equation \ref{characteristic_factor} can now be written as:
 \begin{equation}
@@ -524,6 +524,15 @@ As an example, an I(1) process is simply a random walk, since:
 (1-L)X_t=X_t-X_{t-1}=\varepsilon_t\Leftrightarrow X_t=X_{t-1}+\varepsilon_t
 \end{equation}
 In general, such series are non-stationary.
+
+\section{AR($p$) models}
+With the theory from the last section, we can now take a closer look at the general autoregressive model of order $p$. Using the decomposition of the characteristisc polynomial for equation \ref{rewritten_characteristic}, the model is:
+\begin{equation}
+(1-\phi_i L)(1-\phi_2 L)\cdots(1-\phi_p)X_t=\varepsilon_t
+\end{equation}
+
+\section{ARMA models}
+Seeing the similarities in the lag operator formulation of the autoregressive and moving average models, we wish to unify them in the \textit{autoregressive moving average} or simply ARMA model.
 
 \section{ARIMA models}
 We now wish to combine the AR, I, and MA models into one. The result is the \textit{autoregressive integrated moving average model} or \textit{ARIMA} for short.
