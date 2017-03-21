@@ -185,4 +185,49 @@ y=X\beta + \epsilon
 \end{equation}
 Here $\epsilon$ is a stochastic vector of dimension $n$. The basic assumption of the linear model is that the elements of $\epsilon$ are i.i.d. and normally distributed with mean zero: $\epsilon_i\sim N(0,\sigma^2)$. Or equivalently, that the error term vector follows a multivariate normal distribution: $\epsilon\sim N(0,\sigma^2 I)$. 
 
+\section{The Gauss-Markov theorem}
+So far, we have considered only the ordinary least squares (OLS) estimator of the vector $\beta$. But clearly it is not the only possibility. What is the justification for picking this particular estimator? The answer lies in the \textit{Gauss-Markov theorem}. According to this theorem, under certain conditions, the OLS is the best linear unbiased estimator. This is often abbreviated to \textit{BLUE}. In this context, "best" means having the smallest possible variance.
+
+\begin{theorem}
+(Gauss-Markov) Given a linear model with design matrix $X$, responses $y$, and true parameters $\beta$. Assume the following three conditions for the error terms $\epsilon_i$ are met:
+\begin{itemize}
+\item The expected value is zero: $E[\epsilon_i]=0$.
+\item The variance of the error terms are finite and constant: $\textrm{var}(\epsilon_i)=\sigma^2<\infty$. This is known as homoscedasticity.
+\item The error terms are pairwise uncorrelated: $\textrm{cov}(\epsilon_i,\epsilon_j)=0, i\neq j$.
+\end{itemize}
+Then, the OLS estimator $\hat{\beta}=(X^t X)^{-1}X^t y$ is BLUE.
+\end{theorem}
+
+\begin{proof}
+Let $\tilde{\beta}=Cy$ be another unbiased linear estimator of $\beta$. We may  then write the matrix $C$ as $(X^t X)^{-1}X^t+D$, where $D$ is the deviation from the OLS estimator. Then we may calculate the expected value:
+\begin{equation}
+E[\tilde{\beta}]=E[Cy]=E[(X^t X)^{-1}X^t+D)(X\beta+\epsilon)]=(X^t X)^{-1}X^t+D)(X\beta+E[\epsilon])
+\end{equation}
+By the first assumption this is:
+\begin{equation}
+((X^t X)^{-1}X^t+D)X\beta=(X^t X)^{-1}X^t X\beta+DX\beta=\beta+DX\beta
+\end{equation}
+Since $\tilde{\beta}$ is an unbiased estimator, we must have $DX=0$. Now, let's compute the variance:
+\begin{equation}
+\textrm{var}(\tilde{\beta})=\textrm{var}(Cy)=C\textrm{var}(y)C^t
+\end{equation}
+Here, we've used a property of variances. By the homoscedasticity assumptions, this is simply:
+\begin{equation}
+\sigma^2 CC^t=\sigma^2((X^t X)^{-1}X^t+D)((X^t X)^{-1}X^t+D)^t
+\end{equation}
+Since $X^t X$ is symmetric, so is the inverse, so $((X^t X)^{-1}X^t+D)^t=X(X^t X)^{-1}+D^t$. So we get:
+\begin{equation}
+\sigma^2((X^t X)^{-1}X^t+D)(X(X^t X)^{-1}+D^t)
+\end{equation}
+Ignoring the $\sigma^2$ factor for a while, this is:
+\begin{equation}
+(X^t X)^{-1}X^tX(X^t X)^{-1}+(X^t X)^{-1}X^tD^t+DX(X^t X)^{-1}+DD^t
+\end{equation}
+But since we just concluded $DX=0$ the two middle terms vanish (since $X^tD^t=(DX)^t=0$). So, reinstating the $\sigma^2$, the variance is
+\begin{equation}
+\textrm{var}(\tilde{\beta})=\sigma^2(X^t X)^{-1}+\sigma^2 DD^t
+\end{equation}
+The first term is what we would get without the $D$ term, and is therefore the variance of the OLS estimator. $DD^t$ is a positive definite matrix, and hence the variances of each element $\tilde{\beta}$ must be at least as large as those of $\hat{\beta}$.
+\end{proof}
+
 \end{document}
