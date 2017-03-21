@@ -15,22 +15,6 @@
 
 The \textit{linear model} is a theoretical framework that unifies a number of statistical concepts, like ANOVA and regression.
 
-\section{Definition of a linear model}
-This section will deal with the \textit{linear model} in its most abstract form.
-
-Let $V$ be a vector space of finite dimension $N$. To specify a linear model we need two ingredients:
-\begin{itemize}
-\item A subspace $L\subset V$. Do note that we require $L$ to be a proper subset of $V$, i.e. $\textrm{dim}L<N$. This subspace is known as the \textit{mean value subspace}.
-\item An inner product $\langle\cdot,\cdot\rangle$ on $V$.
-\end{itemize}
-The inner product induces a family of inner products $\llangle\cdot,\cdot\rrangle_{\sigma^2}$ parametrized by $\sigma^2>0$:
-\begin{equation}
-\llangle\cdot,\cdot\rrangle_{\sigma^2}=\frac{\langle\cdot,\cdot\rangle}{\sigma^2}
-\end{equation}
-These inner products are known as \textit{precisions}. While they do not agree on distances, the precisions do agree on orthogonality.
-
-The linear model
-
 \section{Derivatives and linear algebra}
 We will need a few results concerning derivatives of linear algebra expressions. Consider a linear function:
 \begin{equation}
@@ -46,7 +30,7 @@ Here, $A\in\mathbb{R}^{1\times n}$ and $\beta\in\mathbb{R}^{n\times 1}$, so in o
 \begin{equation}
 f(\beta)=a_1\beta_1+a_2\beta_2+\cdots a_n\beta_n
 \end{equation}
-The (multidimensional) derivate is therefore:
+The (multidimensional) derivative is therefore:
 \begin{equation}
 \label{scalarproductdif}
 \frac{\partial f}{\partial \beta}=\nabla_\beta f=
@@ -85,18 +69,18 @@ Or more compactly:
 \frac{\partial g}{\partial \beta}=\nabla_\beta g=2A\beta
 \end{equation}
 
-\section{Least squares estimation}
+\section{Ordinary least squares estimation (OLS)}
 
 \subsection{Statement of the problem}
 The general problem is this: We wish to model a linear relationship between a response variables $Y$ and $p$ predictor variables $X_1, X_2,\cdots X_p$. In other words:
 \begin{equation}
 \label{linear1}
-Y=\beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_p X_p
+Y=\beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_p X_p+\epsilon
 \end{equation}
-Here, the $\beta$'s are the coefficients corresponding to the $X$'s. Now, assume that we have $n$ 'data points', so that $y_i$ corresponds to $x_{i1}, x_{i2},\cdots x_{ip}$. In matrix form equation $(\ref{linear1})$ now becomes: 
+Here, the $\beta$'s are the coefficients corresponding to the $X$'s. The random term $\epsilon$ is known as the \textit{error term} and represents the deviations from the exact model. Since it is a random variable, so is $Y$. Now, assume that we have $n$ realizations (data points), so that $y_i$ corresponds to $x_{i1}, x_{i2},\cdots x_{ip}$. In matrix form equation $(\ref{linear1})$ now becomes: 
 \begin{equation}
 \label{linear2}
-y=X\beta
+y=X\beta+\epsilon
 \end{equation}
 Here, $y\in\mathbb{R}^{n\times 1}, X\in\mathbb{R}^{n\times p}$ and $\beta\in\mathbb{R}^{p\times 1}$:
 \begin{equation}
@@ -114,6 +98,10 @@ X =
 \beta =
 \begin{pmatrix}
 	\beta_1	\\ \beta_2	\\ \vdots\\	\beta_p 
+\end{pmatrix},\quad
+\epsilon = 
+\begin{pmatrix}
+	\epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n
 \end{pmatrix}
 \end{equation}
 $X$ is known as the \textit{design matrix}. Given $y$ and $X$, we seek the best fit for $\beta$.
@@ -178,15 +166,31 @@ M^2=(I-H)^2=I^2+H^2-2H=I+H-2H=I-H=M
 \end{equation}
 \end{proof}
 
-\section{The error term}
-Obviously, the model described by equation $(\ref{linear2})$ allows for no random variation as written. We need an \textit{error term} to describe the random variation:
-\begin{equation}
-y=X\beta + \epsilon
-\end{equation}
-Here $\epsilon$ is a stochastic vector of dimension $n$. The basic assumption of the linear model is that the elements of $\epsilon$ are i.i.d. and normally distributed with mean zero: $\epsilon_i\sim N(0,\sigma^2)$. Or equivalently, that the error term vector follows a multivariate normal distribution: $\epsilon\sim N(0,\sigma^2 I)$. 
-
 \section{The Gauss-Markov theorem}
-So far, we have considered only the ordinary least squares (OLS) estimator of the vector $\beta$. But clearly it is not the only possibility. What is the justification for picking this particular estimator? The answer lies in the \textit{Gauss-Markov theorem}. According to this theorem, under certain conditions, the OLS is the best linear unbiased estimator. This is often abbreviated to \textit{BLUE}. In this context, "best" means having the smallest possible variance.
+So far, we have considered only the ordinary least squares (OLS) estimator of the vector $\beta$. But clearly it is not the only possibility. What is the justification for picking this particular estimator? The answer lies in the \textit{Gauss-Markov theorem}. According to this theorem, under certain conditions, the OLS is the best linear unbiased estimator. This is often abbreviated to \textit{BLUE}. Let's examine the meaning of this.
+
+\subsection{'Unbiased'}
+Recall, that an estimator is \textit{unbiased} if its expectation value is the true value. Here it means:
+\begin{equation}
+E[\hat{\beta}]=\beta
+\end{equation}
+
+\subsection{'Best'}
+In this context, "best" means having the smallest possible variance. We could express this by requiring every estimator element of the $\hat{\beta}$ vector to have a minimal variance. But we will go further than this: Let $\hat{\gamma}=\sum_{i=1}^p c_i\hat{\beta}_i=C\hat{\beta}$ be an arbitrary linear combination of the predictors. Then the variance of every such expression should be minimal. According to the usual rules of calculating variance:
+\begin{equation}
+\textrm{var}(\hat{\gamma})=\textrm{var}(C\hat{\beta})=C\textrm{var}(\hat{\beta})C^t
+\end{equation}
+Consider another estimator $\tilde{\beta}$ which has a covariance matrix of:
+\begin{equation}
+\textrm{var}(\tilde{\beta})=\textrm{var}(\hat{\beta})+\Delta
+\end{equation}
+Here $\Delta$ is the deviation from our proposed best estimator. The variance of a linear combination of the tilde estimator is:
+\begin{equation}
+\textrm{var}(\tilde{\gamma})=C\textrm{var}(\tilde{\beta})C^t=C(\textrm{var}(\hat{\beta})+\Delta)C^t=\textrm{var}(\tilde{\beta})+\underbrace{C\Delta C^t}
+\end{equation}
+Hence $\hat{\beta}$ is the best estimator if and only if the underbraced quantity is always positive, except when $C=0$. In other words, exactly when $\Delta$ is positive definite.
+
+\subsection{The theorem}
 
 \begin{theorem}
 (Gauss-Markov) Given a linear model with design matrix $X$, responses $y$, and true parameters $\beta$. Assume the following three conditions for the error terms $\epsilon_i$ are met:
@@ -227,7 +231,24 @@ But since we just concluded $DX=0$ the two middle terms vanish (since $X^tD^t=(D
 \begin{equation}
 \textrm{var}(\tilde{\beta})=\sigma^2(X^t X)^{-1}+\sigma^2 DD^t
 \end{equation}
-The first term is what we would get without the $D$ term, and is therefore the variance of the OLS estimator. $DD^t$ is a positive definite matrix, and hence the variances of each element $\tilde{\beta}$ must be at least as large as those of $\hat{\beta}$.
+The first term is what we would get without the $D$ term, and is therefore the variance of the OLS estimator. $DD^t$ is a positive definite matrix, and hence according to the section above, $\hat{\beta}$ is the least variance estimator.
 \end{proof}
+
+\section{Abstract definition of a linear model}
+This section will deal with the linear model in its most abstract form.
+
+Let $V$ be a vector space of finite dimension $N$. To specify a linear model we need two ingredients:
+\begin{itemize}
+\item A subspace $L\subset V$. Do note that we require $L$ to be a proper subset of $V$, i.e. $\textrm{dim}L<N$. This subspace is known as the \textit{mean value subspace}.
+\item An inner product $\langle\cdot,\cdot\rangle$ on $V$.
+\end{itemize}
+The inner product induces a family of inner products $\llangle\cdot,\cdot\rrangle_{\sigma^2}$ parametrized by $\sigma^2>0$:
+\begin{equation}
+\llangle\cdot,\cdot\rrangle_{\sigma^2}=\frac{\langle\cdot,\cdot\rangle}{\sigma^2}
+\end{equation}
+These inner products are known as \textit{precisions}. While they do not agree on distances, the precisions do agree on orthogonality.
+
+The linear model
+
 
 \end{document}
