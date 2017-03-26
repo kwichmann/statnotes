@@ -107,7 +107,11 @@ X =
 $X$ is known as the \textit{design matrix}. Given $y$ and $X$, we seek the best fit for $\beta$.
 
 \subsection{Least squares}
-There's a number of criteria one could use to pick the best fitting $\beta$. Here, we will search for the one that minimizes the square of the differences in predicted and actual $y$ values. We'll denote this set of parameters as $\hat{\beta}$. The squared difference is:
+There's a number of criteria one could use to pick the best fitting $\beta$. Here, we will search for the one that minimizes the square of the differences in predicted and actual $y$ values. When predicting, we can't include the error term, and so the predicted values for a set of parameters $\hat{\beta}$ are simply:
+\begin{equation}
+y=X\hat{\beta}
+\end{equation}
+The squared difference is:
 \begin{align*}
 ||y-X\hat{\beta}||^2 &=(y-X\hat{\beta})^t(y-X\hat{\beta})=(y^t-\hat{\beta}^t X^t)(y-X\hat{\beta})\\
 &=y^t y - 2y^t X\hat{\beta} + \hat{\beta}^t X^t X\hat{\beta}
@@ -119,9 +123,9 @@ Taking the derivative with respect to $\beta$ we can now use equations $(\ref{sc
 Since we're looking for a minimum, this vector should be equal to zero:
 \begin{equation}
 \label{normaleq}
-2X^t y - 2X^t X\hat{\beta}=0\Leftrightarrow\hat{\beta}=(X^t X)^{-1}X^t y
+2X^t y - 2X^t X\hat{\beta}=0\Leftrightarrow\hat{\beta}=(X^t X)^{-1}X^t y=\beta+(X^t X)^{-1}X^t\epsilon
 \end{equation}
-Here it has been assumed that $X^t X$ is invertible. These are known as the \textit{normal equations} for the model. Inserting into equation $(\ref{linear2})$ we get the corresponding predicted $y$-values, also denoted by a hat:
+Here it has been assumed that $X^t X$ is invertible. If $X^t X$ is not invertible, we have a case of \textit{perfect (multi)collinearity}. The equations in \ref{normaleq} are known as the \textit{normal equations} for the model. Inserting into equation $(\ref{linear2})$ we get the corresponding predicted $y$-values, also denoted by a hat:
 \begin{equation}
 \hat{y}=X\hat{\beta}=\underbrace{X(X^t X)^{-1}X^t}_{H}y
 \end{equation}
@@ -129,6 +133,21 @@ The matrix $H=X(X^t X)^{-1}X^t$ is often called the \textit{hat matrix}, since i
 \begin{equation}
 e=y-\hat{y}=y-Hy=\underbrace{(I-H)}_{M} y
 \end{equation}
+
+\subsection{Properties of the OLS estimator}
+First of all we note, that the estimation is a linear function of the $y$ values.
+
+The estimated value of $\beta$ according to OLS is:
+\begin{equation}
+\hat{\beta}=(X^t X)^{-1}X^t y=(X^t X)^{-1}X^t(X\beta+\epsilon)
+\end{equation}
+Here, we have re-inserted equation \ref{linear2}. We may now consider the expected value:
+\begin{equation}
+\label{ols_var}
+E[\hat{\beta}]=\beta+(X^t X)X^t E[\epsilon]
+\end{equation}
+
+
 
 \section{Geometric picture}
 It is useful to adapt the picture of the columns of $X$ spanning a $p$-dimensional hyperplane in $n$-dimensional space. $y$ is then a vector, and $X\hat{\beta}$ is found by projecting $y$ onto the hyperplane; The corresponding point is exactly the one that minimizes the distance between $y$ (as a point) and the hyperplane.
@@ -169,11 +188,14 @@ M^2=(I-H)^2=I^2+H^2-2H=I+H-2H=I-H=M
 \section{The Gauss-Markov theorem}
 So far, we have considered only the ordinary least squares (OLS) estimator of the vector $\beta$. But clearly it is not the only possibility. What is the justification for picking this particular estimator? The answer lies in the \textit{Gauss-Markov theorem}. According to this theorem, under certain conditions, the OLS is the best linear unbiased estimator. This is often abbreviated to \textit{BLUE}. Let's examine the meaning of this.
 
-\subsection{'Unbiased'}
+\subsection{Linear and unbiased}
+We already know that the OLS estimator is linear in terms of the $y$'s.
+
 Recall, that an estimator is \textit{unbiased} if its expectation value is the true value. Here it means:
 \begin{equation}
 E[\hat{\beta}]=\beta
 \end{equation}
+From equation \ref{ols_var} we know, that this is true exactly when the expectation value of $\epsilon$ is zero.
 
 \subsection{'Best'}
 In this context, "best" means having the smallest possible variance. We could express this by requiring every estimator element of the $\hat{\beta}$ vector to have a minimal variance. But we will go further than this: Let $\hat{\gamma}=\sum_{i=1}^p c_i\hat{\beta}_i=C\hat{\beta}$ be an arbitrary linear combination of the predictors. Then the variance of every such expression should be minimal. According to the usual rules of calculating variance:
@@ -235,6 +257,13 @@ The first term is what we would get without the $D$ term, and is therefore the v
 \end{proof}
 
 Note that no assumptions of independence, identical distribution or normality is assumed of the error terms.
+
+\subsection{Omitted variable bias}
+Assume we have forgotten, missed or simply not had access to a (set of) important predictor variables $z_1, z_2,\ldots, z_n$. The parameters corresponding to these are called $\gamma$, and we may now rewrite the model:
+\begin{equation}
+y=X\beta+\underbrace{Z\gamma+\delta}_{\epsilon}
+\end{equation}
+Here, $\delta$ is the error terms associated with the new variables. We will assume that since the missing variables are important/good, the expectation value of this error is zero: $E[\delta]=0$. The error term of the original model is now the underbraced part of the equation.
 
 \section{Abstract definition of a linear model}
 This section will deal with the linear model in its most abstract form.
