@@ -377,6 +377,7 @@ The corresponding autocorrelation function is then:
 \section{AR(1) time series}
 As noted above, an autoregressive model is one, where the values depend linearly on the ones immediately before it, plus some noise. A series depending on the last $p$ values is denoted as AR($p$) for short. Here we will look closer at the case where $p=1$. In other words, the model is:
 \begin{equation}
+\label{AR1}
 X_t=\rho X_{t-1}+\varepsilon_t
 \end{equation}
 Again, $\varepsilon_t$ is white noise with variance $\sigma^2$.
@@ -526,11 +527,57 @@ As an example, an I(1) process is simply a random walk, since:
 \end{equation}
 In general, such series are non-stationary.
 
-\section{AR($p$) models}
-With the theory from the last section, we can now take a closer look at the general autoregressive model of order $p$. Using the decomposition of the characteristisc polynomial for equation \ref{rewritten_characteristic}, the model is:
+\section{MA($q$) and AR($p$) models}
+With the theory from the last section, we can now take a closer look at the general moving average and autoregressive models.
+
+\subsection{AR($p$)}
+Using the decomposition of the characteristisc polynomial for equation \ref{rewritten_characteristic}, the model is:
 \begin{equation}
 (1-\phi_i L)(1-\phi_2 L)\cdots(1-\phi_p)X_t=\varepsilon_t
 \end{equation}
+
+\subsection{The Koyck transformation}
+Reconsider an AR(1) model:
+\begin{equation}
+\label{koyck_ar}
+(1-\phi L)X_t=\varepsilon_t
+\end{equation}
+If we want to solve for $X_t$, we can think of this as inverting the operator $1-\phi L$ and applying the inverse to each side of the operator. Now if $L$ was simply a number, the inverse would be:
+\begin{equation}
+(1-\phi L)^{-1}=\frac{1}{1-\phi L}
+\end{equation}
+If we further knew that $|\phi L|<1$ we could write this as a geometric series:
+\begin{equation}
+(1-\phi L)^{-1}=\sum_{i=0}^\infty\phi^i L^i
+\end{equation}
+This is a good candidate for an inverse, so let's check that it actually is the inverse:
+\begin{equation}
+\left[\sum_{i=0}^\infty\phi^i L^i\right](1-\phi L)\varepsilon_t=\left[\sum_{i=0}^\infty\phi^i L^i\right](\varepsilon_t-\phi\varepsilon_{t-1})
+\end{equation}
+Let the sum work on each term in the parenthesis:
+\begin{equation}
+\sum_{i=0}^\infty\phi^i L^i\varepsilon_t-\sum_{i=0}^\infty\phi^{i} L^i\phi\varepsilon_{t-1}=\sum_{i=0}^\infty\phi^i\varepsilon_{t-i}-\sum_{i=0}^\infty\phi^{i+1}\varepsilon_{t-i-1}=\varepsilon_t
+\end{equation}
+In the last step, ee see that all terms in the left sum is exactly the ones in the right one, except for $\varepsilon_t$. Of course we have assumed convergence of all series, which means that we must have $|\phi|<1$. Now, use this inverse on both sides of equation \ref{koyck_ar}:
+\begin{equation}
+X_t=\left[\sum_{i=0}^\infty\phi^i L^i\right]\varepsilon_t=\sum_{i=0}^\infty\phi^i\varepsilon_{t-1}
+\end{equation}
+This is known as the \textit{Koyck transformation} - we have turned an AR(1) model into a MA($\infty$) model! Of course, we could have gotten the same result by repeatedly applying equation \ref{AR1}
+
+\subsection{Invertibility - the "opposite Koyck transformation"}
+It turns out that for an MA(1) process we can essentially use the same trick we did for the Koyck transformation. Write the model as:
+\begin{equation}
+X_t=\varepsilon_t-\theta\varepsilon_{t-1}=(1-\theta L)\varepsilon_t
+\end{equation}
+Here, the sign of $\theta$ is opposite of the original formulation. Now, we can try to isolate the noise $\varepsilon_t$ by applying the inverse $(1-\theta L)^{-1}$ to both sides of the equation. Now, this only makes sense if $|\theta|<1$. This criterion determines whether the model in invertible or not. Assuming this to be true, we have:
+\begin{equation}
+\varepsilon_t=\left[\sum_{i=0}^\infty\theta^i L^i\right]X_t=\sum_{i=0}^\infty \theta^i X_{t-i}=X_t+\theta X_{t-1}+\theta^2 X_{t-2}+\ldots
+\end{equation}
+This can be rewritten as:
+\begin{equation}
+X_t=\varepsilon_t-\theta X_{t-1}-\theta^2 X_{t_2}-\ldots
+\end{equation}
+In other words we have turned the MA(1) model into an AR($\infty$) model.
 
 \section{ARMA models}
 Seeing the similarities in the lag operator formulation of the autoregressive and moving average models, we wish to unify them in the \textit{autoregressive moving average} or simply ARMA model.
