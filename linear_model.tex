@@ -114,7 +114,8 @@ y=X\hat{\beta}
 The squared difference is:
 \begin{align*}
 ||y-X\hat{\beta}||^2 &=(y-X\hat{\beta})^t(y-X\hat{\beta})=(y^t-\hat{\beta}^t X^t)(y-X\hat{\beta})\\
-&=y^t y - 2y^t X\hat{\beta} + \hat{\beta}^t X^t X\hat{\beta}
+&=y^t y - y^t X\hat{\beta} - \hat{\beta}^t X^t y + \hat{\beta}^t X^t X\hat{\beta}\\
+&=y^t y - y^t X\hat{\beta} - (y^t X\hat{\beta})^t + \hat{\beta}^t X^t X\hat{\beta}
 \end{align*}
 Taking the derivative with respect to $\beta$ we can now use equations $(\ref{scalarproductdif})$ and $(\ref{quadformdif})$ to yield:
 \begin{equation}
