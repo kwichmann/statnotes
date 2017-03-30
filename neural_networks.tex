@@ -49,12 +49,12 @@ The activity of a neuron is affected by all dendrites pointing to the cell - for
 \subsection{Types of neurons: Deterministic}
 The actual activity depends on the type of neuron used. In this section we'll look at \textit{deterministic} neurons, i.e. neurons where the inputs uniquely determine the activity. In other words, the activity is a function of the input. We call this the \textit{activation function}.
 
-Here, we will only consider functions that depends on a weighted sum of the inputs: All the inputs are weighted corresponding to the strength of each dendrite. In addition a \textit{bias} term may be added - a constant term. The actual activity is found by applying the activation function to this quantity. Mathematically, this may be formulated:
+Here, we will only consider functions that depends on a weighted sum of the inputs: All the inputs are weighted corresponding to the strength of each dendrite. In addition a \textit{bias} term may be added - a constant term. The result, which can thus be written as $z=\sum_{i=1}^n \theta_i x_i + b$, is sometimes called the \textit{pre-activation}. Here, the $x_i$ are the inputs ($n$ total), the $\theta_i$ the corresponding weights (strength of the dendrites) and $b$ is the bias. The actual activity is found by applying the \textit{activation function} to this quantity. Mathematically, this may be formulated:
 \begin{equation}
 \label{neuron_activity}
-a_\textrm{neuron}=f\left(\sum_{i=1}^n \theta_i x_i + x_0\right)
+a_\textrm{neuron}=f(z)=f\left(\sum_{i=1}^n \theta_i x_i + x_0\right)
 \end{equation}
-Here, $a$ is the activation, the $x_i$ are the inputs ($n$ total), the $\theta_i$ the corresponding weights (strength of the dendrites), $x_0$ is the bias term and finally $f$ is the activation function.
+Here, $a$ is the activation, $x_0$ is the (renamed) bias term and finally $f$ is the activation function.
 
 \begin{figure}
 \centering
