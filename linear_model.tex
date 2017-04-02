@@ -18,7 +18,7 @@ The \textit{linear model} is a theoretical framework that unifies a number of st
 \section{Derivatives and linear algebra}
 We will need a few results concerning derivatives of linear algebra expressions. Consider a linear function:
 \begin{equation}
-f: \mathbb{R}^n\rightarrow\mathbb{R}, f(\beta)=A\beta=
+f: \mathbb{R}^n\rightarrow\mathbb{R}, f(\beta)=a^t\beta=
 \begin{pmatrix}
 a_1 & a_2 & \cdots & a_n
 \end{pmatrix}
@@ -26,7 +26,7 @@ a_1 & a_2 & \cdots & a_n
 \beta_1 \\ \beta_2 \\ \vdots \\ \beta_n
 \end{pmatrix}
 \end{equation}
-Here, $A\in\mathbb{R}^{1\times n}$ and $\beta\in\mathbb{R}^{n\times 1}$, so in other words:
+Here, $a\in\mathbb{R}^{n\times 1}$ and $\beta\in\mathbb{R}^{n\times 1}$, so in other words:
 \begin{equation}
 f(\beta)=a_1\beta_1+a_2\beta_2+\cdots a_n\beta_n
 \end{equation}
@@ -37,7 +37,17 @@ The (multidimensional) derivative is therefore:
 \begin{pmatrix}
 a_1 \\ a_2 \\ \vdots \\ a_n
 \end{pmatrix}
-=A^t
+=a
+\end{equation}
+If $A\in\mathbb{R}^{n\times m}$ instead, each column in $a$ will map according to equation \ref{scalarproductdif} under differentiation, and so generalizes to:
+\begin{equation}
+\label{matrixdif}
+\frac{\partial}{\partial\beta}A^t\beta = A
+\end{equation}
+Since $a^t\beta=\beta^t a$, by analogy this means that we also have:
+\begin{equation}
+\label{matrixdif2}
+\frac{\partial}{\partial\beta}\beta^t A = A
 \end{equation}
 Similarly, consider a quadratic form in $\beta$:
 \begin{equation}
@@ -114,17 +124,16 @@ y=X\hat{\beta}
 The squared difference is:
 \begin{align*}
 ||y-X\hat{\beta}||^2 &=(y-X\hat{\beta})^t(y-X\hat{\beta})=(y^t-\hat{\beta}^t X^t)(y-X\hat{\beta})\\
-&=y^t y - y^t X\hat{\beta} - \hat{\beta}^t X^t y + \hat{\beta}^t X^t X\hat{\beta}\\
-&=y^t y - y^t X\hat{\beta} - (y^t X\hat{\beta})^t + \hat{\beta}^t X^t X\hat{\beta}
+&=y^t y - y^t X\hat{\beta} - \hat{\beta}^t X^t y + \hat{\beta}^t X^t X\hat{\beta}
 \end{align*}
-Taking the derivative with respect to $\beta$ we can now use equations $(\ref{scalarproductdif})$ and $(\ref{quadformdif})$ to yield:
+Taking the derivative with respect to $\beta$ we can now use equations \ref{matrixdif}, \ref{matrixdif2}, and \ref{quadformdif} to yield:
 \begin{equation}
-2X^t y - 2X^t X\hat{\beta}
+-2X^t y + 2X^t X\hat{\beta}
 \end{equation}
 Since we're looking for a minimum, this vector should be equal to zero:
 \begin{equation}
 \label{normaleq}
-2X^t y - 2X^t X\hat{\beta}=0\Leftrightarrow\hat{\beta}=(X^t X)^{-1}X^t y=\beta+(X^t X)^{-1}X^t\epsilon
+-2X^t y + 2X^t X\hat{\beta}=0\Leftrightarrow\hat{\beta}=(X^t X)^{-1}X^t y
 \end{equation}
 Here it has been assumed that $X^t X$ is invertible. If $X^t X$ is not invertible, we have a case of \textit{perfect (multi)collinearity}. The equations in \ref{normaleq} are known as the \textit{normal equations} for the model. Inserting into equation $(\ref{linear2})$ we get the corresponding predicted $y$-values, also denoted by a hat:
 \begin{equation}
