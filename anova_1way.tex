@@ -140,11 +140,11 @@ A=\begin{pmatrix}
 0 & 0 & 0 & \cdots & 1
 \end{pmatrix}
 \end{equation}
-This should be read as $n$ rows of the first unit vector, $n$ rows of the second, and so on till the $a$'th unit vector. $A$ is known as the \textit{design matrix} for one-way ANOVA\footnote{It's also common to denote this matrix as $X$, but with $X_{ij}$ representing stochastic variables, $A$ is hopefully less confusing}. This is tied to the general linear model. $A$ can be used to express the means of each group as a column vector:
+This should be read as $n$ rows of the first unit vector, $n$ rows of the second, and so on till the $a$'th unit vector. Such an encoding is known as \textit{one-hot} encoding, since a one indicates the group. It is also sometimes known as a \textit{dummy variable}. $A$ is called the \textit{design matrix} for one-way ANOVA\footnote{It's also common to denote this matrix as $X$, but with $X_{ij}$ representing stochastic variables, $A$ is hopefully less confusing}. This is tied to the general linear model. Here, to solve the normal equations, we want to invert the matrix $A^t A$. But this is simply a diagonal matrix with $n$ in all the diagonal entries. Hence the inverse is $\frac{1}{n}I_a$. This means that the OLS estimator is:
 \begin{equation}
-\bar{X}=\frac{1}{n}AU
+(A^t A)^{-1}A^t X=\frac{1}{n}A^t X
 \end{equation}
-
+The entries of the $a\times 1$ matrix are simply the sums of each $X$ corresponding to the relevant group. Hence - unsurprisingly - the BLUE estimators of the true group means are the sample group averages.
 
 \section{Distribution of sum of square terms, and mean squares}
 Now, let's look at the distribution of the different terms. We will assume $X_{ij}\sim N(\mu,\sigma^2)$ pr. the null hypothesis. For $SS_T$ this means:
