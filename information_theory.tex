@@ -274,4 +274,36 @@ Finally, we may ask what Monty's percentual information gain by the player choos
 \textrm{PIG}=\frac{I(X;Y)}{H(Y)}=\frac{2/3}{1}=\frac{2}{3}\approx 66.7\%
 \end{equation}
 
+\section{Cross-entropy and the Kullback-Leibler divergence}
+
+\subsection{Comparing probability distributions}
+Let's say we have two probability distributions $p$ and $q$ for the discrete random variables $X$. The entropy of $X$ will differ according to which distribution we use:
+\begin{align}
+\label{p_entropy}
+H_p(X)=E_p[-\log_2 p(x)]&=-\sum_x p(x)\log_2 p(x)\\
+H_q(X)=E_q[-\log_2 q(x)]&=-\sum_x q(x)\log_2 q(x)
+\end{align}
+Here, we've introduced subscripts on the expectation operator, depending on which distributaion is used. Now, we might use the distribution of $p$ to evalute the $q$-surprise expectation: 
+\begin{equation}
+\label{crossentropy}
+H_{pq}(X)=E_x[-\log_2 p(y)]=-\sum_x p(x)\log_2 q(x)
+\end{equation}
+This is known as the \textit{cross-entropy}. This is often written as $H(p,q)$, but this alternative notation is used here to to avoid confusion with the joint entropy. Note that in general this is not a symmetric function: $H_{pq}(X)\neq H_{qp}(X)$. Therefore, even is the cross-entropy in some sense measures a difference between the two distributions, it cannot be a metric.
+
+\subsection{Kullback-Leibler divergence}
+The \textit{Kullback-Leibler divergence} of $p$ with respect to $q$ is defined as:
+\begin{equation}
+H_{KL}(p||q)=H_{pq}(X)-H_p(X)
+\end{equation} 
+Here, the $X$ is understood on the left hand side. Using equations \ref{p_entropy} and \ref{crossentropy} this is:
+\begin{equation}
+-\sum_x p(x)\log_2 p(x)+\sum_x p(x)\log_2 q(x)=\sum_x p(x)\log_2\frac{p(x)}{q(x)}
+\end{equation}
+In summary:
+\begin{equation}
+\label{kl_divergence}
+H_{KL}(p||q)=\sum_x p(x)\log_2\frac{p(x)}{q(x)}
+\end{equation}
+Like cross-entropy, this is asymmetric, so while it still can be used to compare distributions, it is not a metric on distribution space.
+
 \end{document}
