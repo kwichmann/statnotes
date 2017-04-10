@@ -111,16 +111,11 @@ Since $468=312+156$ everything seems to be in order.
 
 \section{Terms as quadratic forms}
 We'd like to express the sum of squares terms as quadratic forms. This will allow us to apply Cochran's theorem to the problem.\par
-The relevant matrices should be $N\times N$. We need to normalize the $X_{ij}$ variables to get standard normals, and we need to decide on an ordering. Here we'll use the following:
-\begin{center}
-\begin{tabular}{*4{c}}
-$U_1=\frac{X_{11}-\mu}{\sigma},$ & $U_2=\frac{X_{12}-\mu}{\sigma},$	& $\cdots$ & $U_n=\frac{X_{1n}-\mu}{\sigma}$ \\
-$U_{n+1}=\frac{X_{21}-\mu}{\sigma},$ &	$U_{n+2}=\frac{X_{22}-\mu}{\sigma},$		& $\cdots$	& $U_{2n}=\frac{X_{2n}-\mu}{\sigma}$ \\
-$\vdots$ & $\vdots$ & $\ddots$ & $\vdots$ \\
-$U_{(a-1)n+1}=\frac{X_{a1}-\mu}{\sigma},$ &	$U_{(a-1)n+2}=\frac{X_{a2}-\mu}{\sigma},$		& $\cdots$	& $U_{N}=\frac{X_{an}-\mu}{\sigma}$ \\
-\end{tabular}
-\end{center}
-For $SS_T$ this is pretty straightforward; it's the same as always for a basic mean estimator:
+The relevant matrices should be $N\times N$. We need to normalize the $X_{ij}$ variables to get standard normals:
+\begin{equation}
+U_{ij}=\frac{X_{ij}-\mu_i}{\sigma}
+\end{equation}
+We then consider all the $U$'s to be one vector of dimension $N$. For $SS_T$ this is pretty straightforward; it's the same as always for a basic mean estimator:
 \begin{equation}
 \frac{SS_T}{\sigma^2}=U^T\underbrace{\left(I_N-\frac{1}{N}J_N\right)}_{B^{(T)}}U
 \end{equation}
@@ -140,11 +135,30 @@ A=\begin{pmatrix}
 0 & 0 & 0 & \cdots & 1
 \end{pmatrix}
 \end{equation}
-This should be read as $n$ rows of the first unit vector, $n$ rows of the second, and so on till the $a$'th unit vector. Such an encoding is known as \textit{one-hot} encoding, since a one indicates the group. It is also sometimes known as a \textit{dummy variable}. $A$ is called the \textit{design matrix} for one-way ANOVA\footnote{It's also common to denote this matrix as $X$, but with $X_{ij}$ representing stochastic variables, $A$ is hopefully less confusing}. This is tied to the general linear model. Here, to solve the normal equations, we want to invert the matrix $A^t A$. But this is simply a diagonal matrix with $n$ in all the diagonal entries. Hence the inverse is $\frac{1}{n}I_a$. This means that the OLS estimator is:
+This should be read as $n$ rows of the first unit vector, $n$ rows of the second, and so on till the $a$'th unit vector. Such an encoding is known as \textit{one-hot} encoding, since a one indicates the group. It is also sometimes known as a \textit{dummy variable}. $A$ is called the \textit{design matrix} for one-way ANOVA\footnote{It's also common to denote this matrix as $X$, but with $X_{ij}$ representing stochastic variables, $A$ is hopefully less confusing}. This is tied to the general linear model. Here, to solve the normal equations, we want to invert the matrix $A^t A$. But this is simply a diagonal matrix with $n$ in all the diagonal entries. Hence the inverse is $\frac{1}{n}I_a$. This means that the OLS estimator for the population group means is:
 \begin{equation}
 (A^t A)^{-1}A^t X=\frac{1}{n}A^t X
 \end{equation}
 The entries of the $a\times 1$ matrix are simply the sums of each $X$ corresponding to the relevant group. Hence - unsurprisingly - the BLUE estimators of the true group means are the sample group averages.
+
+Consider instead $AA^t$. In block matrix form, this becomes:
+\begin{equation}
+AA^t=
+\begin{pmatrix}
+J_n & 0		& \cdots	& 0\\
+0	& J_n	& \cdots	& 0\\
+\vdots & \vdots & \ddots & \vdots \\
+0	& 0		& \cdots	& J_n 
+\end{pmatrix}
+\end{equation}
+Let's form the corresponding quadratic form with the $U$'s and see what we get:
+\begin{equation}
+U^tAA^t U=\sum_{i=1}^a\sum_{j=1}^n\sum_{k=1}^n U_{ij}U_{ik}
+\end{equation}
+Here we've used, that $(AA^t)_{ij;i'j'}=\delta_{ii'}$. This is equal to:
+\begin{equation}
+\frac{1}{\sigma^2}\sum_{i=1}^a(X_{ij}-\mu_i)(X_{ik}-\mu_i)
+\end{equation}
 
 \section{Distribution of sum of square terms, and mean squares}
 Now, let's look at the distribution of the different terms. We will assume $X_{ij}\sim N(\mu,\sigma^2)$ pr. the null hypothesis. For $SS_T$ this means:
