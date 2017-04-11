@@ -53,7 +53,19 @@ f(p)=-\log_b(p)
 \end{equation}
 
 \subsection{Continous distributions?}
-The section above deals with discrete random variables? However, we run into problems if we try to mindlessly generalize to continous variables: The "obvious" analogue of the self-information for the outcome $X=x$ the would be $-\log_b f(x)$, where $f(x)$ is the probablity density function of $X$. But since this function need not be below 1, the associated surprisal may actually be negative! Clearly, something is fishy. But for now, we will only consider discrete random variables.
+The section above deals with discrete random variables? However, we run into problems if we try to mindlessly generalize to continuous variables: The "obvious" analogue of the self-information for the outcome $X=x$ the would be $-\log_b f(x)$, where $f(x)$ is the probability density function of $X$. But since this function need not be below 1, the associated "surprisal" may actually be negative! Clearly, something is fishy.
+
+\subsubsection{Surprisal for an interval}
+The problem is in essence, that a probability density is not a probability. Instead, the probability of finding $X$ realized in an interval of size $\Delta x$ close to $x$ is approximately:
+\begin{equation}
+P(x\le X<x+\Delta x)\approx f(x)\Delta x
+\end{equation}
+The surprisal for this event is thus approximately:
+\begin{equation}
+-\log_b(f(x)\Delta x)=\log_b f(x)-\log_b\Delta x
+\end{equation}
+In the limit $\Delta x\rightarrow 0$ this should become exact. But here the logarithm tends to minus infinity, and so surprisal is infinite! Which makes sense: Since there's a continuum of outcomes, any specific outcome has probability zero, and hence is infinitely surprising.
+
 
 \section{Entropy}
 The \textit{entropy} of a discrete random variable $X$ is the expectation value of the self-information:
@@ -62,6 +74,7 @@ H(X)=E[I(X)]=E[-\log_b(X)]
 \end{equation}
 Here, $I(X)$ is itself a stochastic variable. Thus, entropy can be interpreted as the expected surprisal. Since $X$ is discrete, we may write:
 \begin{equation}
+\label{entropy_definition}
 H(X)=-\sum_x p(x)\log_b p(x)
 \end{equation}
 
@@ -141,6 +154,28 @@ This function is plotted in figure $\ref{fig:coin_entropy}$.
 \caption{Entropy for an unfair coin toss.}
 \label{fig:coin_entropy}
 \end{figure}
+
+\subsection{Entropy of a continuous distribution}
+As we saw above, the surprisal of any outcome from a continous probabilty distribution is infinite, so the entropy should diverge as well. This is indeed true. But it turns out that writing out the steps in the derivation will actually be useful later. So, let's pick an interval size $\Delta x$ and write an approximate entropy as a sum:
+\begin{equation}
+H(X)\approx -\sum_{n\in\mathbb{Z}}P(x_n\le X<x_{n+1})\log_2 P(x_n\le X<x_{n+1})
+\end{equation}
+Here $x_n=n\Delta x$. The probability is approximately $f(x_n)\Delta x$:
+\begin{equation}
+H(X)\approx -\sum_{n\in\mathbb{Z}}f(x_n)\Delta x\log_2(f(x_n)\Delta x)
+\end{equation}
+Use the usual formula for the product of a log to split it into two sums:
+\begin{equation}
+-\underbrace{\sum_{n\in\mathbb{Z}}f(x_n)\log_2(f(x_n))\Delta x}_{\rightarrow\int f(x)\log_2 f(x)\ dx}-\log_2(\Delta x)\underbrace{\sum_{n\in\mathbb{Z}}f(x_n)\Delta x}_{\rightarrow 1}
+\end{equation}
+The underbraces show what happens when $\Delta x\rightarrow 0$. So, abusing the notation somewhat, the entropy of $X$ is:
+\begin{equation}
+H(X)=-\int f(x)\log_2 f(x)\ dx-\lim_{\Delta x\rightarrow 0}\log_2\Delta x
+\end{equation}
+The first term is the \textit{differential entropy}, which is the immediate generalization of equation \ref{entropy_definition}. But we also know that this is not necessarily positive, since probability distributions are not bounded between 0 and 1. This is not absurd, because we need to take the second, infinite term - a \textit{logarithmic divergence} - into account. The differential entropy, as absurd as it may seem, measures the deviation from this infinity is some sense. But the total entropy is infinite.
+
+\subsubsection{Maximum differential entropy}
+We might now ask the question: Is there a probability distribution which maximizes differential entropy? It turns out, that for finite mean and variance there is, and it is none other than the normal distribution! This is one of the many ways to characterize the Gaussian.
 
 \section{Conditional entropy and mutual information}
 
