@@ -156,6 +156,7 @@ This function is plotted in figure $\ref{fig:coin_entropy}$.
 \end{figure}
 
 \subsection{Entropy of a continuous distribution}
+\label{continous_entropy}
 As we saw above, the surprisal of any outcome from a continous probabilty distribution is infinite, so the entropy should diverge as well. This is indeed true. But it turns out that writing out the steps in the derivation will actually be useful later. So, let's pick an interval size $\Delta x$ and write an approximate entropy as a sum:
 \begin{equation}
 H(X)\approx -\sum_{n\in\mathbb{Z}}P(x_n\le X<x_{n+1})\log_2 P(x_n\le X<x_{n+1})
@@ -175,7 +176,7 @@ H(X)=-\int f(x)\log_2 f(x)\ dx-\lim_{\Delta x\rightarrow 0}\log_2\Delta x
 The first term is the \textit{differential entropy}, which is the immediate generalization of equation \ref{entropy_definition}. But we also know that this is not necessarily positive, since probability distributions are not bounded between 0 and 1. This is not absurd, because we need to take the second, infinite term - a \textit{logarithmic divergence} - into account. The differential entropy, as absurd as it may seem, measures the deviation from this infinity is some sense. But the total entropy is infinite.
 
 \subsubsection{Maximum differential entropy}
-We might now ask the question: Is there a probability distribution which maximizes differential entropy? It turns out, that for finite mean and variance there is, and it is none other than the normal distribution! This is one of the many ways to characterize the Gaussian.
+We might now ask the question: Is there a probability distribution which maximizes differential entropy? Naturally, that the answer to this question depends on our constraints, including the domain/dominating measure of the distribution function. For distributions with all real numbers/Lebesgue measure as dominating measure, with finite mean and variance, the maximum differential entropy distribution is none other than the normal distribution! This is one of the many ways to characterize the Gaussian.
 
 \section{Conditional entropy and mutual information}
 
@@ -309,6 +310,20 @@ Finally, we may ask what Monty's percentual information gain by the player choos
 \textrm{PIG}=\frac{I(X;Y)}{H(Y)}=\frac{2/3}{1}=\frac{2}{3}\approx 66.7\%
 \end{equation}
 
+\subsection{Continuous distributions}
+
+\subsubsection{Joint entropy}
+Following the same logic as in section \ref{continous_entropy}, we may write the joint entropy is two continuous variables as:
+\begin{equation}
+H(X,Y)\approx-\sum_{n,m\in\mathbb{Z}}p_{mn}\log_2 p_{mn}
+\end{equation}
+Here, $p_{nm}=P(x_n\le X<x_{n+1}, y_m\le Y<y_{m+1})$, which is in turn approximately $f(x,y)\Delta x\Delta y$, where $f$ is the joint probability density. Splitting the logarithm, we end up with:
+\begin{equation}
+H(X,Y)=-\int f(x,y)\log_2 f(x,y)\ dx\ dy-\lim_{\Delta x\rightarrow 0}\log_2\Delta x-\lim_{\Delta y\rightarrow 0}\log_2\Delta y
+\end{equation}
+Again, this is to be taken with the same grain of salt as before.
+
+
 \section{Cross-entropy and the Kullback-Leibler divergence}
 
 \subsection{Comparing probability distributions}
@@ -339,6 +354,6 @@ In summary:
 \label{kl_divergence}
 H_{KL}(p||q)=\sum_x p(x)\log_2\frac{p(x)}{q(x)}
 \end{equation}
-Like cross-entropy, this is asymmetric, so while it still can be used to compare distributions, it is not a metric on distribution space.
+Like cross-entropy, this is asymmetric, so while it still can be used to compare distributions, it is not a metric on distribution space. Hence the name divergence.
 
 \end{document}
