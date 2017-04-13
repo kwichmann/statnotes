@@ -249,6 +249,7 @@ Now use $p(x)=\sum_y p(x,y)$ to rewrite the first term:
 \end{equation}
 Combine terms to get:
 \begin{equation}
+\label{mutual_information}
 I(X;Y)=\sum_{x,y}p(x,y)\log_2\frac{p(x,y)}{p(x)p(y)}
 \end{equation}
 This is clearly symmetrical: $I(X;Y)=I(Y;X)$. Also, if $X$ and $Y$ are independent, then $p(x,y)=p(x)p(y)$ which makes the fraction $1$ and logarithm zero, so the mutual information vanishes in this case.
@@ -347,7 +348,7 @@ H_{KL}(p||q)=H_{pq}(X)-H_p(X)
 \end{equation} 
 Here, the $X$ is understood on the left hand side. Using equations \ref{p_entropy} and \ref{crossentropy} this is:
 \begin{equation}
--\sum_x p(x)\log_2 p(x)+\sum_x p(x)\log_2 q(x)=\sum_x p(x)\log_2\frac{p(x)}{q(x)}
+-\sum_x p(x)\log_2 q(x)+\sum_x p(x)\log_2 p(x)=\sum_x p(x)\log_2\frac{p(x)}{q(x)}
 \end{equation}
 In summary:
 \begin{equation}
@@ -355,5 +356,15 @@ In summary:
 H_{KL}(p||q)=\sum_x p(x)\log_2\frac{p(x)}{q(x)}
 \end{equation}
 Like cross-entropy, this is asymmetric, so while it still can be used to compare distributions, it is not a metric on distribution space. Hence the name divergence.
+
+\subsection{Connection to mutual information}
+Remember that the mutual information (or information gain) between the random variables $X$ and $Y$ is:
+\begin{equation}
+I(X;Y)=H(X)-H(X|Y)=\sum_{x,y}p(x,y)\log_2\frac{p(x,y)}{p(x)p(y)}
+\end{equation}
+Here, we've used the formula from equation \ref{mutual_information}. But this is the same as the KL divergence between the distribtion functions $p(x,y)$ and $p(x)p(y)$:
+\begin{equation}
+I(X;Y)=H_{KL}(p(x,y)||p(x)p(y))
+\end{equation}
 
 \end{document}
