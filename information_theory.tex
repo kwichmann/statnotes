@@ -157,7 +157,7 @@ This function is plotted in figure $\ref{fig:coin_entropy}$.
 
 \subsection{Entropy of a continuous distribution}
 \label{continous_entropy}
-As we saw above, the surprisal of any outcome from a continous probabilty distribution is infinite, so the entropy should diverge as well. This is indeed true. But it turns out that writing out the steps in the derivation will actually be useful later. So, let's pick an interval size $\Delta x$ and write an approximate entropy as a sum:
+As we saw above, the surprisal of any outcome from a continous probability distribution is infinite, but it's not inherently clear whether the entropy should diverge as well. This turns out to actually be true. Writing out the steps in the derivation will actually be useful later. So, let's pick an interval size $\Delta x$ and write an approximate entropy as a sum:
 \begin{equation}
 H(X)\approx -\sum_{n\in\mathbb{Z}}P(x_n\le X<x_{n+1})\log_2 P(x_n\le X<x_{n+1})
 \end{equation}
@@ -342,9 +342,9 @@ H_{pq}(X)=E_x[-\log_2 p(y)]=-\sum_x p(x)\log_2 q(x)
 This is known as the \textit{cross-entropy}. This is often written as $H(p,q)$, but this alternative notation is used here to to avoid confusion with the joint entropy. Note that in general this is not a symmetric function: $H_{pq}(X)\neq H_{qp}(X)$. Therefore, even is the cross-entropy in some sense measures a difference between the two distributions, it cannot be a metric.
 
 \subsection{Kullback-Leibler divergence}
-The \textit{Kullback-Leibler divergence} of $p$ with respect to $q$ is defined as:
+The \textit{Kullback-Leibler divergence} from $q$ to $p$ (note the appearantly reversed order) is defined as:
 \begin{equation}
-H_{KL}(p||q)=H_{pq}(X)-H_p(X)
+D_{KL}(p||q)=H_{pq}(X)-H_p(X)
 \end{equation} 
 Here, the $X$ is understood on the left hand side. Using equations \ref{p_entropy} and \ref{crossentropy} this is:
 \begin{equation}
@@ -353,7 +353,7 @@ Here, the $X$ is understood on the left hand side. Using equations \ref{p_entrop
 In summary:
 \begin{equation}
 \label{kl_divergence}
-H_{KL}(p||q)=\sum_x p(x)\log_2\frac{p(x)}{q(x)}
+D_{KL}(p||q)=\sum_x p(x)\log_2\frac{p(x)}{q(x)}
 \end{equation}
 Like cross-entropy, this is asymmetric, so while it still can be used to compare distributions, it is not a metric on distribution space. Hence the name divergence.
 
@@ -362,9 +362,28 @@ Remember that the mutual information (or information gain) between the random va
 \begin{equation}
 I(X;Y)=H(X)-H(X|Y)=\sum_{x,y}p(x,y)\log_2\frac{p(x,y)}{p(x)p(y)}
 \end{equation}
-Here, we've used the formula from equation \ref{mutual_information}. But this is the same as the KL divergence between the distribtion functions $p(x,y)$ and $p(x)p(y)$:
+Here, we've used the formula from equation \ref{mutual_information}. But this is the same as the KL divergence between the distribution functions $p(x,y)$ and $p(x)p(y)$:
 \begin{equation}
 I(X;Y)=H_{KL}(p(x,y)||p(x)p(y))
 \end{equation}
+Again we see that mutual information in some sense measures distance to independence.
+
+\section{Model selection}
+If we're in a situation where we have a model which outputs a probability distribution $p$ based of the inputs, and we have a target distribution of $y$, then we can use the KL-divergence and cross-entropy as a criterion for selecting a model that is good in some sense.
+
+\subsection{Example: Classification}
+A supervised classification problem is a primary example of the situation described above. We have a target distribution given by the one-hot encoding of the label for a given sample: $y_i=\delta_{ij}$, where $j$ is the label. The model will have a number of parameters which we wish to to tune, and the output distribution $p$ depends on these. Based on the last section, a reasonable way to choose parameters, is to require that $y$ deviates as little from $p$ as possible. In other words, we seek to minimize the KL-divergence $D_{KL}(y||p)$. Let's write this out:
+\begin{equation}
+D_{KL}(y||p)=H_{yp}-H_y
+\end{equation}
+The entropy of $y$ is simply zero. And more importantly, it's a constant, so it will not matter when minimizing, even if the target distribution was more complex. So model selection has been reduced to choosing the parameters which minimizes the cross-entropy $H_{yp}$. For one sample, this is:
+\begin{equation}
+-\sum_x y(x)\log_2 p(x)
+\end{equation}
+Here $x$ runs over the possible cases the classification distinguishes between. When we have $n$ samples, it is customary to use the average cross-entropy:
+\begin{equation}
+-\frac{1}{n}\sum_{i=1}^n\sum_x y_i(x)\log_2 p_i(x)
+\end{equation}
+In machine learning, this is known as a \textit{cost function}. This quantity is then minimized, often using some variation of gradient descent.
 
 \end{document}
