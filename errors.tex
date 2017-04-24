@@ -28,27 +28,74 @@ Consider classification between $n$ cases. If the true classification for a samp
 \section{Error functions}
 
 \subsection{Squared error}
-In this scheme we use the same error as used for regression - the squared error:
+In this scheme we use the same error as used for OLS regression - the squared error:
 \begin{equation}
 \label{error_squared}
-\frac{1}{2}||t-h||^2=\frac{1}{2}(t-h)^T(t-h)=\frac{1}{2}\sum_{i=1}^n(t_i-h_i)^2
+J(h)=\frac{1}{2}||h-t||^2=\frac{1}{2}(h-t)^T(h-t)=\frac{1}{2}\sum_{i=1}^n(h_i-t_i)^2
+\end{equation}
+
+\subsubsection{Derivative}
+The derivative with respect to the $h_j$ is:
+\begin{equation}
+\frac{\partial}{\partial h_j}J(h)=\frac{1}{2}\sum_{i=1}^n\delta_{ij}2(h_i-t_i)=h_j-t_j
+\end{equation}
+
+\subsection{Cross-entropy error: Bernoulli}
+This error is based on the sum of log-likelihoods of $n$ Bernoulli experiments:
+\begin{equation}
+\label{error_crossentropy_bernoulli}
+J(h)=\sum_{i=1}^n\left[-t_i\log(h_i)-(1-t_i)\log(1-h_i)\right]
+\end{equation}
+
+\subsubsection{Derivative}
+The derivative can be shown to be:
+\begin{equation}
+\frac{\partial}{\partial h_j}J(h)=\frac{h_j-t_j}{h_j(1-h_j)}
 \end{equation}
 
 \subsection{Cross-entropy error}
-This error is based on the log-likelihood of a Bernoulli experiment:
+This error is similar to the one above, but here we consider $h$ to be a vector of probabilities. These must sum to one. The cross-entropy between $t$ and $h$ is then:
 \begin{equation}
 \label{error_crossentropy}
-\sum_{i=1}^n\left[-t_i\log(h_i)-(1-t_i)\log(1-h_i)\right]
+J(h)=-\sum_{i=1}^n t_i\log(h_i)=-\log(h_k)
+\end{equation}
+In the last step it's been used that $t_i=\delta_{ik}$.
+
+\subsubsection{Derivative}
+Once again, we're interested in the derivative:
+\begin{equation}
+\frac{\partial}{\partial h_j}J(h)=-\delta_{jk}\frac{1}{h_k}
 \end{equation}
 
 \section{Forms of the hypothesis $h$}
-The hypothesis $h$ is in general the function of some input feature vector $x$, so $h=h(x)$. Here we will consider only hypotheses which depends on the vector $x$ weighted by a vector of weights $w_i$ depending on the outcome $i$. In other words, we only look at $h_i(x)=h_i(w_i^T x)$.
+The hypothesis $h$ is in general the function of some $m$-dimensional input feature vector $x$, so $h=h(x)$. Here we will consider only hypotheses in which $h_i$ depends on linearly weighted combinations of the vector $x$. The resulting vector $z$ can therefore be written $z=w^T x$ in matrix form. Or element-wise $z_i=w_i x$. In other words, we only look at $h_i(x)=f_i(z)=f_i(w^T x)$. The functions $f$ are known as the \textit{activation functions}.
+
+In general the derivative with respect to a weight $w_{jk}$ will then be:
+\begin{equation}
+\frac{\partial}{\partial w_{jk}}h_i=\sum_l\frac{\partial f_i}{\partial z_l}\frac{\partial z_l}{\partial w_{jk}}
+\end{equation}
+Since the last partial derivative is $\delta_{jl}x_k$ this means:
+\begin{equation}
+\label{hypothesis_derivative}
+\frac{\partial}{\partial w_{jk}}h_i=\frac{\partial f_i}{\partial z_j}x_k
+\end{equation}
+Often, the activation function $f_i$ depends only on $z_i$, and so only derivatives with respect to $w_{ij}$ are non-zero:
+\begin{equation}
+\label{hypothesis_derivative2}
+\frac{\partial}{\partial w_{ij}}h_i=\frac{\partial f_i}{\partial z_i}x_j
+\end{equation}
 
 \subsection{Linear hypothesis}
 Here, the hypothesis is simply equal to $w_i^T x$, so that:
 \begin{equation}
 \label{hyp_linear}
 h_i(x)=w_i^Tx
+\end{equation}
+
+\subsection{Derivative}
+Since we're using the identity function as $f$, equation \ref{hypothesis_derivative2} is simply:
+\begin{equation}
+\frac{\partial}{\partial w_{ij}}h_i=x_j
 \end{equation}
 
 \subsection{Logistic hypothesis}
@@ -60,6 +107,16 @@ And so, the hypothesis is:
 \begin{equation}
 \label{hyp_logistic}
 h_i(x)=\sigma(w_i^T x)
+\end{equation}
+
+\subsubsection{Derivative}
+We seek the derivative with respect to the weight $w_{ij}$. According to equation \ref{hypothesis_derivative2}:
+\begin{equation}
+\frac{\partial}{\partial w_{ij}}h_i=\frac{\partial\sigma}{\partial z_i}x_j
+\end{equation}
+The derivative of the logistic function can be shown to be $\sigma'(z)=\sigma(z)(1-\sigma(z))$. So:
+\begin{equation}
+\frac{\partial}{\partial w_{ij}}h_i=\sigma(z_i)(1-\sigma(z_i))x_j
 \end{equation}
 
 \subsection{Softmax hypothesis}
@@ -74,16 +131,26 @@ h_i(x)=s_i(w^T x)=\frac{e^{w_i^T x}}{N(w,x)}
 \end{equation}
 Here, $w$ is a matrix in which the columns are the weights $w_i$, and $N(w,x)$ is the normalization constant $\sum_{j=1}^n e^{z_j}$.
 
+\subsubsection{Derivative}
+It can be shown that the derivatives of the softmax is:
+\begin{equation}
+\frac{\partial s_i(z)}{\partial z_j}=s_i(z)(\delta_{ij}-s_j(z))
+\end{equation}
+So according to equation \ref{hypothesis_derivative}:
+\begin{equation}
+\frac{\partial}{\partial w_{jk}}h_i=s_i(z)(\delta_{ij}-s_j(z))x_k
+\end{equation}
+
 \section{Combining error and hypothesis types}
 
 \subsection{Squared error with logistic hypothesis}
 Combining equations \ref{error_squared} and \ref{hyp_logistic} we get the error function:
 \begin{equation}
-\frac{1}{2}\sum_{i=1}^n(t_i-\sigma(w_i^T x))^2
+\frac{1}{2}\sum_{i=1}^n(\sigma(w_i^T x)-t_i)^2
 \end{equation}
 
-\subsection{Cross-entropy error with logistic hypothesis}
-Combining equations \ref{error_crossentropy} and \ref{hyp_logistic} we arrive at the error function:
+\subsection{Cross-entropy Bernoulli error with logistic hypo\-thesis}
+Combining equations \ref{error_crossentropy_bernoulli} and \ref{hyp_logistic} we arrive at the error function:
 \begin{equation}
 \sum_{i=1}^n\left[-t_i\log(\sigma(w_i^T x))-(1-t_i)\log(1-\sigma(w_i^T x))\right]
 \end{equation}
