@@ -146,19 +146,19 @@ So according to equation \ref{hypothesis_derivative}:
 \subsection{Squared error with logistic hypothesis}
 Combining equations \ref{error_squared} and \ref{hyp_logistic} we get the error function:
 \begin{equation}
-\frac{1}{2}\sum_{i=1}^n(\sigma(w_i^T x)-t_i)^2
+J(w,x)=\frac{1}{2}\sum_{i=1}^n(\sigma(w_i^T x)-t_i)^2
 \end{equation}
 
 \subsection{Cross-entropy Bernoulli error with logistic hypo\-thesis}
 Combining equations \ref{error_crossentropy_bernoulli} and \ref{hyp_logistic} we arrive at the error function:
 \begin{equation}
-\sum_{i=1}^n\left[-t_i\log(\sigma(w_i^T x))-(1-t_i)\log(1-\sigma(w_i^T x))\right]
+J(w,x)=\sum_{i=1}^n\left[-t_i\log(\sigma(w_i^T x))-(1-t_i)\log(1-\sigma(w_i^T x))\right]
 \end{equation}
 
 \subsection{Cross-entropy error with softmax hypothesis}
 Combining equations \ref{error_crossentropy} and \ref{hyp_softmax} we arrive at the error function:
 \begin{equation}
-\sum_{i=1}^n\left[-t_i\log\left(\frac{e^{w_i^T x}}{N(w,x)}\right)-(1-t_i)\log\left(1-\frac{e^{w_i^T x}}{N(w,x)}\right)\right]
+J(w,x)=-\log\frac{e^{w_k^T x}}{N(w,x)}=\log N(w,x)-w_k^T x
 \end{equation}
 
 \end{document}
