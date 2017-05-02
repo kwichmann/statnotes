@@ -79,5 +79,24 @@ Inserting, letting the delta functions cancel, and renaming indices, this become
 \begin{equation}
 \frac{\partial J}{\partial x_i}=-\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}(\delta_{kc}-\hat{y}_k)
 \end{equation}
+But since $t_i=\delta_{ic}$ this is the same as:
+\begin{equation}
+\label{error_derivative}
+\frac{\partial J}{\partial x_i}=\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}(\hat{y}_k-t_k)
+\end{equation}
+We may rephrase this is terms of \textit{errors} for the different layers. The error in the output layer is:
+\begin{equation}
+\delta^{(2)}_k=\hat{y}_k-t_k
+\end{equation}
+And the backpropagated error in the hidden layer is:
+\begin{equation}
+\delta^{(1)}_j=\sum_{k=1}^{D_y}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k
+\end{equation}
+Now equation \ref{error_derivative} can be rewritten as:
+\begin{equation}
+\frac{\partial J}{\partial x_i}=\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k=\sum_{j=1}^H W^{(1)}\delta^{(1)}_j
+\end{equation}
+
+\section{The word2vec algorithm}
 
 \end{document}
