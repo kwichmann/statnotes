@@ -62,6 +62,24 @@ Now divide by $N(z)$ twice, once "outside the parenthesis" and once "inside" to 
 \label{derivative}
 \frac{\partial\sigma_i(z)}{\partial z_j}=\frac{e^{z_i}}{N(z)}\left(\delta_{ij}-\frac{e^{z_j}}{N(z)}\right)=\sigma_i(z)\left(\delta_{ij}-\sigma_j(z)\right)
 \end{equation}
-The likeness to the derivative of the logistic function should be clear.
+The likeness to the derivative of the logistic function should be evident.
+
+\section{Cross-entropy error function}
+The softmax is often combined with a cross-entropy error function for classification:
+\begin{equation}
+J(z)=\sum_{i=1}^n t_i\log\sigma_i(z)=\sum_{i=1}^n t_i\log y_i
+\end{equation}
+Here $t_i$ represents the label for the data and $y_i=\sigma_i(z)$ is the softmax output. For classification, this is simply $t_i=\delta_{ic}$, where $c$ is the correct label. In this case, the error function is simply:
+\begin{equation}
+J(z)=\sum_{i=1}^n\delta_{ic}\log\sigma_i(z)=\log\sigma_c(z)=y_c
+\end{equation}
+The derivative with respect to $z_i$ is found through the chain rule:
+\begin{equation}
+\frac{\partial J}{\partial z_i}=\frac{\partial J}{\partial y_c}\frac{\partial y_c}{\partial z_i}=\frac{\partial}{\partial z_i}\log\sigma_c(z)\frac{\partial\sigma_c}{\partial z_i}=\frac{1}{\sigma_c(z)}\sigma_c(z)\left(\delta_{ci}-\sigma_i(z)\right)=\delta_{ic}-y_i
+\end{equation}
+But this is exactly the difference between the real value $t_i$ and the output $y_i$, also known as the \textit{error} $\delta_i=t_i-y_i$:
+\begin{equation}
+\frac{\partial J}{\partial z_i}=\delta_i
+\end{equation}
 
 \end{document}
