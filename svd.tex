@@ -12,7 +12,7 @@
 \DeclareGraphicsExtensions{.png}
 \DeclareGraphicsExtensions{.jpg}
 
-\title{Singular value decomposition and pseudo-inverses}
+\title{Singular value decomposition, pseudo-inverses, and principal component analysis}
 \author{Kristian Wichmann}
 
 \begin{document}
@@ -179,5 +179,34 @@ B_1=B_1 AB_1=B_2 AB_1=B_2 AB_2=B_2
 
 \subsection{Intuition behind the pseudoinverse}
 The idea behind the pseudoinverse is similar to the one used in singular value decomposition: The dimension of the column and row spaces of a matrix $A\in\mathbb{R}^{m\times n}$ have the same dimension, $r$. So if $y\in\mathbb{R}^m$ is in the column space, there is exactly one vector $x\in\mathbb{R}^n$ so that $Ax=y$. However, for $y$ in the left null space, we're in trouble. But what if we just send these these vectors to the zero vector? This corresponds to projecting onto the column space.
+
+
+\section{Principal component analysis}
+\textit{Principal component analysis} (or simply PCA) is an algorithm that achieves lossy compression of the information in a data set using SVD.
+
+\subsection{Autoencoders}
+An \textit{autoencoder} of a set of data points $x_1,\cdots, x_m\in X=\mathbb{R}^n$ consists of two parts:
+\begin{itemize}
+\item A \textit{coder} function $f: X\rightarrow C$, which turns an input vector $x\in X$ into an encoded vector $c=f(x)\in C=\mathbb{R}^l$.
+\item A \textit{decoder} function $g: C\rightarrow X$ which transforms encoded vectors back into vectors from the original space $X$.
+\end{itemize}
+The coder and decoder should ideally be chosen such that for an input $x$, we get the exact input back when we decode the coded input. In this case the autoencoder is \textit{lossless}:
+\begin{equation}
+\forall i:\ g(f(x_i))=x_i
+\end{equation}
+Here, we will consider \textit{lossy} compression, where this is only approximately true:
+\begin{equation}
+\forall i:\ g(f(x_i))\approx x_i
+\end{equation} 
+What this means exactly will vary according to the approach taken.
+
+\subsection{Linear, "orthogonal" decoder}
+Here, we will require the decoder to be linear. Hence it can be expressed in matrix form:
+\begin{equation}
+g(c)=Dc,
+\end{equation}
+where $D\in\mathbb{R}^{n\times l}$. Furthermore, we will require the columns of $D$ to be orthonormal to each other. This is of course only possible if $l\le n$, but otherwise there would be no compression, so this is entirely reasonable.
+
+
 
 \end{document}
