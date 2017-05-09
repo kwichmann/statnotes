@@ -118,6 +118,31 @@ Both follow directly from the formula $P_U=A(A^t A)^{-1}A^t$:
 \end{itemize}
 \end{proof}
 
+\subsection{Projection onto an affine subspace}
+Sometimes, we may wish to project onto a subspace that does not pass through the origin, but rather is simply parallel to a proper subspace $U$. Such a space is known as an \textit{affine subspace}, and can be written as:
+\begin{equation}
+W=w+U=\{w+u|u\in U\}
+\end{equation}
+Here $w$ is any vector in the affine space (and thus the choice of $w$ is not unique, so $v+S=w+S$ does not imply that $v=w$). We can find a formula for projection unto $W$ by translating to a coordinate system where $W$ passes through the origin. This is done by subtracting $w$. The formula above can then be applied to project onto $U$, and finally we need to translate back into the origin coordinate system by adding $w$. To sum it up:
+\begin{equation}
+\label{projection_basis_change}
+P_W x=w+P_U(x-w)
+\end{equation} 
+Above $P_W$ and $P_U$ denotes projection onto $W$ and $U$ respectively. If $U$ is spanned by linearly independent columns of the matrix $A$, then we know from above that\footnote{This assumes that we're dealing with coordinate space.}
+\begin{equation}
+P_U=(A^t A)^{-1}A^t
+\end{equation}
+Now equation \ref{projection_basis_change} turns into:
+\begin{equation}
+\label{affine_projection}
+P_W x=w+(A^t A)^{-1}A^t(x-w)
+\end{equation}
+If $x=0$ is the point being projected we get:
+\begin{equation}
+\label{affine_projection_0}
+P_W 0=w-(A^t A)^{-1}A^t w)=(I-(A^t A)^{-1}A^t)w
+\end{equation}
+
 \section{Generalized inverses}
 For an invertible matrix $A$, it's obviously true that:
 \begin{equation}
@@ -140,7 +165,7 @@ If $A\in\mathbb{R}^{m\times n}$ has rank $n$, then the null space is trivial, an
 \begin{equation}
 A^{-1}_L=(A^t A)^{-1}A^t,\qquad A^{-1}_L A=(A^t A)^{-1}A^t A=I_n
 \end{equation}
-But we already know from the last section that $A^{-1}_L$ is the projection operator unto the image space of $A$. This means that $A^{-1}b$ is the vector in the image space that is closest to $b$. 
+But we already know from the last section that $A^{-1}_L$ is more or less the projection operator unto the image space of $A$: In fact it's the coordinate vector with respect to the basis of column vectors of $A$. This means that $AA^{-1}_Lb$ is the vector in the image space that is closest to $b$. 
 
 \subsubsection{Example}
 Consider the equation:
@@ -171,13 +196,57 @@ The best approximation to a solution is then:
 \begin{equation}
 x=A^{-1}_L b=\frac{1}{25}\begin{pmatrix}3 & 4\end{pmatrix}\begin{pmatrix}7 \\ 1\end{pmatrix}=\frac{21+4}{25}=1
 \end{equation}
+So, the actual point in the image space is:
+\begin{equation}
+Ax=\begin{pmatrix}3 \\ 4\end{pmatrix}1=\begin{pmatrix}3 \\ 4\end{pmatrix}
+\end{equation}
 
 \subsection{Right inverses}
-Similarly, if $A\in\mathbb{R}^{m\times n}$ has rank $m$, then the image space is all of $\mathbb{R}^m$, and hence the corresponding linear transformation is surjective. This means that the equation $Ax=b$ always has a solution, and it may have infinitely many. The matrix $AA^t$ has rank $m$ as well, and hence is invertible. Analogously, we can use this to construct a right inverse:
+Similarly, if $A\in\mathbb{R}^{m\times n}$ has rank $m$, then the image space is all of $\mathbb{R}^m$, and hence the corresponding linear transformation is surjective. This means that the equation $Ax=b$ always has a solution, and it will have infinitely many if $n>m$ (as we will see below). The matrix $AA^t$ has rank $m$ as well, and hence is invertible. Analogously, we can use this to construct a right inverse:
 \begin{equation}
 A^{-1}_R=A^t(AA^t)^{-1},\qquad AA^{-1}_R=AA^t(AA^t)^{-1}=I_m
 \end{equation}
+This means that $x_s=A^{-1}_R b$ is a solution.
 
+To get an intuition for which $x$ is picked out, consider instead the equation $Ax=0$. The solution space $S$ is the null space of $A$. According to the rank-nullity theorem $S$ has dimension $s=m-n$. Let $l_1,l_2,\cdots,l_s$ be a basis for $S$. These are collected into the $s\times n$ matrix $L$:
+\begin{equation}
+L=\begin{pmatrix}
+| & | & \cdots & | \\
+l_1 & l_2 & \cdots & l_s \\
+| & | & \cdots & |
+\end{pmatrix}
+\end{equation}
+Now, since we have one solution to the equation $Ax=b$, namely $x_s$, it follows that any vector of the form $s_x+s$, where $s\in S$ is a solution. But this is exactly the affine space $W=x_s+S$ as described in the section on projection above. We now ask: What is the projection of the zero vector onto $W$? According to equation \ref{affine_projection_0} it is:
+\begin{equation}
+P_W 0=(I-(L^t L)^{-1}L^t)w
+\end{equation}
+Here $w$ is a vector in $W$. We choose $w=x_sA^{-1}_R b=A^t(AA^t)^{-1}b$:
+\begin{equation}
+P_W 0=(I-(L^t L)^{-1}L^t)A^t(AA^t)^{-1}b
+\end{equation}
+But since $L^t A^t=(AL)^t=0$ because of $L$'s construction, the giant cross-term between $A$'s and $L$'s vanishes, and we're left with:
+\begin{equation}
+P_W 0=A^t(AA^t)^{-1}b=x_s
+\end{equation}
+In other words, the solution obtained by using $A^{-1}_R$ is the projection of the zero vector onto the solution space. This can be characterized as the solution vector with the smallest possible norm.
+
+\subsubsection{Example}
+Consider the equation:
+\begin{equation}
+\begin{pmatrix}1 & 1\end{pmatrix}\begin{pmatrix}x \\ y\end{pmatrix}=4
+\end{equation}
+This clearly has infinitely many solutions, as it is equivalent to $x+y=4$ or $y=-x+4$. Let's consider the right inverse of $A=\begin{pmatrix}1 & 1\end{pmatrix}$:
+\begin{equation}
+A^{-1}_R=A^t(AA^t)^{-1}=\begin{pmatrix}1 \\ 1\end{pmatrix}\left(\begin{pmatrix}1 & 1\end{pmatrix}\begin{pmatrix}1 \\ 1\end{pmatrix}\right)^{-1}=\frac{1}{2}\begin{pmatrix}1 \\ 1\end{pmatrix}
+\end{equation}
+Hence, the solution picked out by $A^{-1}_R$ is:
+\begin{equation}
+\begin{pmatrix}x \\ y\end{pmatrix}=A^{-1}_R b=\frac{1}{2}\begin{pmatrix}1 \\ 1\end{pmatrix}4=\begin{pmatrix}2 \\ 2\end{pmatrix}
+\end{equation}
+
+
+
+\subsection{Reflexive, generalized inverses}
 Both of of these inverses (when they exist) satisfies equation \ref{generalized_inverse}. They also satisfy \ref{reflexive_generalized_inverse}. For instance:
 \begin{equation}
 A^{-1}_L AA^{-1}_L=(A^t A)^{-1}A^t A(A^t A)^{-1}A^t=(A^t A)^{-1}A^t=A^{-1}_L
