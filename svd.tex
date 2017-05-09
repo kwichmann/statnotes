@@ -9,8 +9,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{width=10cm,compat=1.9}
 \graphicspath{ {img/} }
-\DeclareGraphicsExtensions{.png}
-\DeclareGraphicsExtensions{.jpg}
+\DeclareGraphicsExtensions{.png, .jpg}
 
 \title{Singular value decomposition, pseudo-inverses, and principal component analysis}
 \author{Kristian Wichmann}
@@ -136,12 +135,44 @@ A^g AA^g=A^g,
 \end{equation}
 it is called a \textit{reflexive generalized inverse}.
 
-\subsection{Left and right inverses}
+\subsection{Left inverses}
 If $A\in\mathbb{R}^{m\times n}$ has rank $n$, then the null space is trivial, and hence the corresponding linear transformation is injective. This means that the equation $Ax=b$ may or may not have a solution, but if it exists, it's unique. The matrix $A^tA$ has rank $n$ as well, and hence is invertible. This can be used to construct a left inverse:
 \begin{equation}
 A^{-1}_L=(A^t A)^{-1}A^t,\qquad A^{-1}_L A=(A^t A)^{-1}A^t A=I_n
 \end{equation}
+But we already know from the last section that $A^{-1}_L$ is the projection operator unto the image space of $A$. This means that $A^{-1}b$ is the vector in the image space that is closest to $b$. 
 
+\subsubsection{Example}
+Consider the equation:
+\begin{equation}
+\label{impossible_equation}
+\begin{pmatrix}
+3 \\ 4
+\end{pmatrix}
+x=
+\begin{pmatrix}
+7 \\ 1
+\end{pmatrix}
+\end{equation}
+Here $x$ is a 1 by 1 matrix (or simply a real number). It is immediately clear, that this equation has no solutions. The situation is visualized in figure \ref{fig:left_inverse}: The point $\begin{pmatrix}7 \\ 1\end{pmatrix}$ clearly does not lie on the line traced by $\begin{pmatrix}3 \\ 4\end{pmatrix}$
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{left_inverse}
+\caption{The geometry of equation \ref{impossible_equation}}
+\label{fig:left_inverse}
+\end{figure}
+
+Using the general notation, here $A=\begin{pmatrix}3 \\ 4\end{pmatrix}\in\mathbb{R}^{2\times 1}$ has rank 1, and so a left inverse can be found:
+\begin{equation}
+A^{-1}_L=(A^t A)^{-1}A^t=\left(\begin{pmatrix}3 & 4\end{pmatrix}\begin{pmatrix}3 \\ 4\end{pmatrix}\right)^{-1}\begin{pmatrix}3 & 4\end{pmatrix}=\frac{1}{25}\begin{pmatrix}3 & 4\end{pmatrix}
+\end{equation}
+The best approximation to a solution is then:
+\begin{equation}
+x=A^{-1}_L b=\frac{1}{25}\begin{pmatrix}3 & 4\end{pmatrix}\begin{pmatrix}7 \\ 1\end{pmatrix}=\frac{21+4}{25}=1
+\end{equation}
+
+\subsection{Right inverses}
 Similarly, if $A\in\mathbb{R}^{m\times n}$ has rank $m$, then the image space is all of $\mathbb{R}^m$, and hence the corresponding linear transformation is surjective. This means that the equation $Ax=b$ always has a solution, and it may have infinitely many. The matrix $AA^t$ has rank $m$ as well, and hence is invertible. Analogously, we can use this to construct a right inverse:
 \begin{equation}
 A^{-1}_R=A^t(AA^t)^{-1},\qquad AA^{-1}_R=AA^t(AA^t)^{-1}=I_m
