@@ -98,5 +98,9 @@ Now equation \ref{error_derivative} can be rewritten as:
 \end{equation}
 
 \section{The word2vec algorithm}
+Imagine a large corpus of consecutive tokens (words) of length $T$. Each token comes from a vocabulary of size $W$. We wish to encode the tokens as vectors. To do this, we look at the words surrounding a given word in the corpus probabilistically. If $c$ is the center word, we can consider the probability of a word $j$ places away being $o$. We denote this probability $p_j(u|c)$. If we have each word represented by vectors, an appropriate model for the probability could be a softmax over the entire vocabulary size:
+\begin{equation}
+p(o|c)=\frac{\exp(u_o^t v_c)}{\sum_{w=1}^W\exp(u_w^t v_c)}
+\end{equation}
 
 \end{document}
