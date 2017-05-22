@@ -368,6 +368,28 @@ I(X;Y)=H_{KL}(p(x,y)||p(x)p(y))
 \end{equation}
 Again we see that mutual information in some sense measures distance to independence.
 
+\section{Perplexity}
+Given a discrete random variable $X$ with entropy $H(X)$, the \textit{perplexity} of the associated distribution is defined as:
+\begin{equation}
+b^{H(X)}=b^{-\sum_x p(x)\log_b p(x)}
+\end{equation}
+Here, the base of the logarithm in the entropy definition has been reinstated. 
+
+\subsection{Interpretation in terms of thermodynamics}
+In Boltzmann's theory of thermodynamics, the entropy $S$ of a system is defined by:
+\begin{equation}
+S=k_B\log W
+\end{equation}
+Here $W$ is the number of microstates which realizes the macroscopic description of the system. The microstates are all assumed to be equally likely. The proportionality constant $k_B$ is Boltzmann's constant. This is equivalent to:
+\begin{equation}
+e^S=e^{k_B\log W}=W^{k_B}
+\end{equation}
+If we ignore the constant, this means that perplexity can - in a very rough sense - be thought of as the "number of states" which realizes the systems macrostate. Or at least a quantity related to this notion.
+
+\subsection{Perplexity of experimental distribution}
+
+
+
 \section{Model selection}
 If we're in a situation where we have a model which outputs a probability distribution $p$ based of the inputs, and we have a target distribution of $y$, then we can use the KL-divergence and cross-entropy as a criterion for selecting a model that is good in some sense.
 
