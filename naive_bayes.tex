@@ -1,0 +1,39 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Naive Bayes}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Example: Document classification}
+Assume the corpus $C$ is divided into $k$ of disjoint categories $C_1, C_2,\ldots, C_k$. We now want to develop a way to evaluate in which category a new document $d$ should be classified.
+
+For the \textit{naive Bayes} classifier, we assume that the occurence of a word $w_i$ in a document in $C_j$ is stochastic, and happens independently of the occurence of other words. It is naive in the sense, that this is obviously not true. But it may still yield good results.
+
+\subsection{Theory}
+The new document $d$ can be written $d=(w_1,\ldots,w_n)$, where all the words $w_i$ are in the vocabulary $V$. Now, consider the probability that a random document from $C_j$ contains all the words of $d$. According to the assumptions of naive Bayes, this is simply a product of the probabilities of each individual word being in a random document from $C_j$:
+\begin{equation}
+p(d|C_j)=\prod_{i=1}^n p(w_i|C_j)
+\end{equation}
+Of course, the probability we're interested in is $p(C_j|d)$: The probability of being in $C_j$ assuming that the words in $d$ are all present. To calculate this, \textit{Bayes' theorem} is used. The general version is:
+\begin{equation}
+p(A|B)\propto p(B|A)p(A)
+\end{equation}
+Since we're only interested in relative probabilities (i.e. which $j$ is most likely?), the normalization constant is irrelevant here. In this case:
+\begin{equation}
+p(C_j|d)\propto p(d|C_j)p(C_j)=p(C_j)\prod_{i=1}^n p(w_i|C_j)
+\end{equation}
+
+\end{document}

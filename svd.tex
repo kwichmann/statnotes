@@ -161,7 +161,7 @@ A^g AA^g=A^g,
 it is called a \textit{reflexive generalized inverse}.
 
 \subsection{Left inverses}
-If $A\in\mathbb{R}^{m\times n}$ has rank $n$, then the null space is trivial, and hence the corresponding linear transformation is injective. This means that the equation $Ax=b$ may or may not have a solution, but if it exists, it's unique. The matrix $A^tA$ has rank $n$ as well, and hence is invertible. This can be used to construct a left inverse:
+If $A\in\mathbb{R}^{m\times n}$ has rank $n$, then the null space is trivial, and hence the corresponding linear transformation is injective. This means that the equation $Ax=b$ may or may not have a solution, but if it exists, it's unique. In particular, if $n=m$ the existence is guaranteed, but if $n<m$ it's possible, but unlikely. The matrix $A^tA$ has rank $n$ as well, and hence is invertible. This can be used to construct a left inverse:
 \begin{equation}
 A^{-1}_L=(A^t A)^{-1}A^t,\qquad A^{-1}_L A=(A^t A)^{-1}A^t A=I_n
 \end{equation}
@@ -183,7 +183,7 @@ Here $x$ is a 1 by 1 matrix (or simply a real number). It is immediately clear, 
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{left_inverse}
+\includegraphics{left_inverse}
 \caption{The geometry of equation \ref{impossible_equation}}
 \label{fig:left_inverse}
 \end{figure}
@@ -233,6 +233,7 @@ In other words, the solution obtained by using $A^{-1}_R$ is the projection of t
 \subsubsection{Example}
 Consider the equation:
 \begin{equation}
+\label{many_solutions}
 \begin{pmatrix}1 & 1\end{pmatrix}\begin{pmatrix}x \\ y\end{pmatrix}=4
 \end{equation}
 This clearly has infinitely many solutions, as it is equivalent to $x+y=4$ or $y=-x+4$. Let's consider the right inverse of $A=\begin{pmatrix}1 & 1\end{pmatrix}$:
@@ -243,8 +244,14 @@ Hence, the solution picked out by $A^{-1}_R$ is:
 \begin{equation}
 \begin{pmatrix}x \\ y\end{pmatrix}=A^{-1}_R b=\frac{1}{2}\begin{pmatrix}1 \\ 1\end{pmatrix}4=\begin{pmatrix}2 \\ 2\end{pmatrix}
 \end{equation}
+The situation is shown in figure \ref{fig:right_inverse}.
 
-
+\begin{figure}
+\centering
+\includegraphics{right_inverse}
+\caption{The geometry of equation \ref{many_solutions}}
+\label{fig:right_inverse}
+\end{figure}
 
 \subsection{Reflexive, generalized inverses}
 Both of of these inverses (when they exist) satisfies equation \ref{generalized_inverse}. They also satisfy \ref{reflexive_generalized_inverse}. For instance:
@@ -259,8 +266,13 @@ The \textit{Moore-Penrose pseudoinverse} or simply the pseudoinverse of a real m
 \label{moore-penrose}
 (AA^+)^t=AA^+,\qquad(A^+ A)^t=A^+ A
 \end{equation}
-In other words, for which $AA^+$ and $A^+ A$ are symmetrical.
-
+In other words, for which $AA^+$ and $A^+ A$ are symmetrical\footnote{If $A$ has complex entries, the condition instead becomes that $A$ should be Hermitian.}. Summing it all up, the pseudoinverse has to satisfy the following four conditions:
+\begin{enumerate}
+\item $AA^+ A=A$
+\item $A^+ AA^+=A^+$
+\item $(AA^+)^t=AA^+$
+\item $(A^+ A)^t=A^+ A$
+\end{enumerate}
 \subsection{Uniqueness}
 If such a pseudoinverse exists, it is unique (hence our use of definite article above). To show this, let $B_1$ and $B_2$ be pseudoinverses of $A$. Then:
 \begin{align}
@@ -280,6 +292,80 @@ B_1=B_1 AB_1=B_2 AB_1=B_2 AB_2=B_2
 \subsection{Intuition behind the pseudoinverse}
 The idea behind the pseudoinverse is similar to the one used in singular value decomposition: The dimension of the column and row spaces of a matrix $A\in\mathbb{R}^{m\times n}$ have the same dimension, $r$. So if $y\in\mathbb{R}^m$ is in the column space, there is exactly one vector $x\in\mathbb{R}^n$ so that $Ax=y$. However, for $y$ in the left null space, we're in trouble. But what if we just send these these vectors to the zero vector? This corresponds to projecting onto the column space.
 
+\subsection{Definition for diagonal matrices}
+Let $D$ be a diagonal, but not necessarily square matrix, i.e. $D\in\mathbb{R}^{m\times n}$. The diagonal entries are denoted $d_i$. So $D_{ij}=d_i\delta_{ij}$. Following the intuition section, we will set the pseudoinverse of $D$ to be the diagonal $n\times m$ matrix whose diagonal entries are set equal to:
+\begin{equation}
+d_i^+=
+\begin{cases}
+0\textrm{ for }d_i=0 \\
+\frac{1}{d_i}\textrm{ otherwise}
+\end{cases}
+\end{equation}
+We can use this to write the entries of $D^+$ as $D^+_{ij}=(D_{ji})^+=d_i^+\delta_{ij}$.
+
+\subsubsection{Checking the axioms}
+We must now check that the four points above are satisfied:
+\begin{enumerate}
+\item Calculate the indices of $DD^+ D$:
+\begin{equation}
+(DD^+ D)_{ij}=\sum_{k=1}^n\sum_{l=1}^m D_{ik}D^+_{kl}D_{lj}=\sum_{k=1}^n\sum_{l=1}^m d_i\delta_{ik}d_k^+\delta_{kl}d_l\delta_{lj}
+\end{equation}
+Two of the deltas cancel out, so:
+\begin{equation}
+(DD^+ D)_{ij}=d_i d^+_i d_i\delta_{ij}
+\end{equation}
+Now, consider the product of the first two terms:
+\begin{equation}
+\label{pseudo_diagonal}
+d_i d^+_i=
+\begin{cases}
+0\textrm{ if }d_i=0 \\
+1\textrm{ if }d_i\neq 0
+\end{cases}
+\end{equation}
+Multiplying by $d_i$ we get $d_i$ in both cases, and so:
+\begin{equation}
+(DD^+ D)_{ij}=d_i\delta_{ij}
+\end{equation}
+
+\item Using the same strategy:
+\begin{equation}
+(D^+ DD^+)_{ij}=\sum_{k=1}^m\sum_{l=1}^m D^+_{ik}D_{kl}D^+_{lj}=\sum_{k=1}^n\sum_{l=1}^m d_i^+\delta_{ik}d_k\delta_{kl}d_l^+\delta_{lj}
+\end{equation}
+Again, two deltas cancel:
+\begin{equation}
+(D^+ DD^+)_{ij}=d_i^+ d_i d_i^+\delta_{ij}
+\end{equation}
+By using equation \ref{pseudo_diagonal} again we get:
+\begin{equation}
+(D^+ DD^+)_{ij}=d_i^+\delta_{ij}
+\end{equation}
+
+\item Same strategy:
+\begin{align}
+(DD^+)^t_{ij}=(DD^+)_{ji}&=\sum_{k=1}^n D_{jk}D^+_{ki}=\sum_{k=1}^n d_j\delta_{jk}d^+_k\delta_{ki}=d_i d^+_i\delta_{ij}&=\\
+d^+_i d_i\delta{ij}=\sum_{k=1}^m d^+_i\delta_{ik}d_k\delta_{kj}&=\sum_{k=1}^m D_{ik}D^+_{kj}=(DD^+)_{ij}
+\end{align}
+
+\item Analogous to 3.
+\end{enumerate}
+
+\subsection{Definition for arbitrary matrices}
+We can now use the singular value decomposition to generalize the pseudoinverse. If $A\in\mathbb{R}^{m\times n}$ is an arbitrary matrix, then we may write $A=UD V^t$ as above. Now, we set the psuedoinverse to:
+\begin{equation}
+A^+=VD^+ U^t
+\end{equation}
+
+\subsection{Checking the axioms}
+We can now show that this definition obeys the four axioms above. Each of the proofs hinge on the result for diagonal matrices:
+\begin{enumerate}
+\item $AA^+ A=UDV^t VD^+ U^t UDV^t=UDD^+ DV^t=UDV^t=A$
+\item $A^+ AA^+=VD^+ U^t UDV^t VD^+ U^t=VD^+ DD^+ U^t=VD^+ U^t=A^+$
+\item $(AA^+)^t=(UDV^t VD^+ U^t)^t=(UDD^+ U^t)=$ \\
+$U(DD^+)^t U^t= UDD^+ U^t=UDV^t VD^+ U^t=AA^+$
+\item $(A^+A)^t=(VD^+ U^t UDV^t)^t=(VD^+ DV^t)=$ \\
+$V(D^+ D)^t V^t=VD^+ DV^t=VD^+ U^t UDV^t=A^+ A$
+\end{enumerate}
 
 \section{Principal component analysis}
 \textit{Principal component analysis} (or simply PCA) is an algorithm that achieves lossy compression of the information in a data set using SVD.
