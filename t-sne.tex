@@ -1,0 +1,29 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{t-distributed stochastic neighbor embedding}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+\textit{t-distributed stochastic neighbor embedding} - or t-SNE for short - is a dimensionality reduction algorithm. It takes a dataset in many dimensions and transforms it into a set with a lower dimensionality, usually two or three.
+
+\subsection{Terminology}
+Let $x_1, x_2,\cdots, x_N$ be a dataset in a high dimensional (euclidean) space. And let $\sigma_1, \sigma_2,\cdots,\sigma_N$ be a set of standard deviations of the same size.
+
+\section{First transformation}
+Let one of the data points $x_i$ be given. Now consider the conditional probability of drawing $x_j$ from a Gaussian distribution centered at $x_i$ with standard deviation $\sigma_i$:
+
+\end{document}
