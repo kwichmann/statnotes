@@ -63,7 +63,21 @@ The second is a standard result for the softmax function:
 \begin{equation}
 \frac{\partial \hat{y}_i}{\partial z^{(2)}_j}=s_i(z^{(2)})(\delta_{ij}-s_j(z^{(2)})=\hat{y}_i(\delta_{ij}-\hat{y}_j)
 \end{equation}
-And:
+Let's pause for a moment and combine the two:
+\begin{equation}
+\label{output_derivative}
+\frac{\partial J}{\partial z^{(2)}_j}=\sum_{i=1}^{D_y}\frac{\partial J}{\partial\hat{y}_i}\frac{\partial \hat{y}_i}{\partial z^{(2)}_j}=-\sum_{i=1}^{D_y}\frac{\delta_{ic}}{\hat{y}_c}\hat{y}_i(\delta_{ij}-\hat{y}_j)
+\end{equation}
+The Kronecker delta removes the sum and we get:
+\begin{equation}
+-\frac{1}{\hat{y}_c}\hat{y}_c(\delta_{jc}-\hat{y}_j)=-(\delta_{jc}-\hat{y}_j)=\hat{y}_j-\delta_{jc}
+\end{equation}
+But $\delta_{jc}=t_j$, and we get that the derivative is simply equal to the \textit{error} in the output layer:
+\begin{equation}
+\label{ce_softmax}
+\frac{\partial J}{\partial z^{(2)}_j}=\delta^{(2)}_j
+\end{equation}
+Here, $\delta^{(2)}_j=\hat{y}_j-\delta_{jc}$. Going back to the original derivation, the third derivative is:
 \begin{equation}
 \frac{\partial z^{(2)}_j}{\partial h_k}=W^{(2)}_{kj}
 \end{equation}
@@ -77,30 +91,47 @@ And finally:
 \end{equation}
 Inserting, letting the delta functions cancel, and renaming indices, this becomes:
 \begin{equation}
-\frac{\partial J}{\partial x_i}=-\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}(\delta_{kc}-\hat{y}_k)
-\end{equation}
-But since $t_i=\delta_{ic}$ this is the same as:
-\begin{equation}
 \label{error_derivative}
-\frac{\partial J}{\partial x_i}=\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}(\hat{y}_k-t_k)
+\frac{\partial J}{\partial x_i}=\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k
 \end{equation}
-We may rephrase this is terms of \textit{errors} for the different layers. The error in the output layer is:
-\begin{equation}
-\delta^{(2)}_k=\hat{y}_k-t_k
-\end{equation}
-And the backpropagated error in the hidden layer is:
+We may rephrase this in terms of the backpropagated errors in the hidden layer:
 \begin{equation}
 \delta^{(1)}_j=\sum_{k=1}^{D_y}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k
 \end{equation}
 Now equation \ref{error_derivative} can be rewritten as:
 \begin{equation}
-\frac{\partial J}{\partial x_i}=\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k=\sum_{j=1}^H W^{(1)}\delta^{(1)}_j
+\frac{\partial J}{\partial x_i}=\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k=\sum_{j=1}^H W^{(1)}_{ij}\delta^{(1)}_j
 \end{equation}
 
 \section{The word2vec algorithm}
-Imagine a large corpus of consecutive tokens (words) of length $T$. Each token comes from a vocabulary of size $W$. We wish to encode the tokens as vectors. To do this, we look at the words surrounding a given word in the corpus probabilistically. If $c$ is the center word, we can consider the probability of a word $j$ places away being $o$. We denote this probability $p_j(u|c)$. If we have each word represented by vectors, an appropriate model for the probability could be a softmax over the entire vocabulary size:
+
+\subsection{The situation}
+Imagine a large corpus of consecutive tokens (words) of length $T$. Each token comes from a vocabulary of size $W$. We wish to encode the tokens as vectors. To do this, we look at the words surrounding a given word in the corpus probabilistically. If $c$ is the center word, we can consider the probability of a word $j$ places away being $o$. We should really denote this probability $p_j(o|c)$, but since we're considering skipgrams, we will not worry about the value of $j$ as long as it is within the specified distance. So we will simply call it $p(o|c)$.
+
+\subsection{Softmax and word vectors}
+If we have each word represented by vectors, an appropriate model for the probability could be a softmax over the entire vocabulary size:
 \begin{equation}
 p(o|c)=\frac{\exp(u_o^t v_c)}{\sum_{w=1}^W\exp(u_w^t v_c)}
 \end{equation}
+Note that each word $w$ has two vectors: $u_w$ and $v_w$. $u_w$ is for $w$ as an 'outside' word, and $v_w$ is for $w$ as a 'center' word.
 
+\subsection{Error function and derivatives}
+An appropriate error function for the softmax is the cross-entropy error. The situation is entirely analogous to the propagation from the hidden layer to the output layer in the neural network described in last section. I.e. it is described by equations \ref{output_derivative} and \ref{ce_softmax} with the following replacements:
+\begin{itemize}
+\item $j\mapsto o$
+\item $z^{(2)}_j\mapsto z_o=u^t_0 v_c$
+\item $i\mapsto w$
+\item $\hat{y}_i\mapsto p(o|c)$
+\end{itemize}
+So, the derivative with respect to $v_c$ is:
+\begin{equation}
+\frac{\partial J}{\partial v_c}=\sum_{o=1}^W\frac{\partial J}{\partial z_0}\frac{\partial z_0}{\partial v_c}=\sum_{o=1}^W\delta^{(2)}_o u_o
+\end{equation}
+Remember, that the error is a scalar, while $u_o$ is a vector:
+\begin{equation}
+u_0=
+\begin{pmatrix}
+u_{o1} \\ \vdots \\ u_{oW} 
+\end{pmatrix}
+\end{equation}
 \end{document}
