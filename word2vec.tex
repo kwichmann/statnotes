@@ -119,19 +119,38 @@ Note that each word $w$ has two vectors: $u_w$ and $v_w$. $u_w$ is for $w$ as an
 An appropriate error function for the softmax is the cross-entropy error. The situation is entirely analogous to the propagation from the hidden layer to the output layer in the neural network described in last section. I.e. it is described by equations \ref{output_derivative} and \ref{ce_softmax} with the following replacements:
 \begin{itemize}
 \item $j\mapsto o$
-\item $z^{(2)}_j\mapsto z_o=u^t_0 v_c$
+\item $z^{(2)}_j\mapsto z_o=u^t_o v_c$
 \item $i\mapsto w$
 \item $\hat{y}_i\mapsto p(o|c)$
 \end{itemize}
 So, the derivative with respect to $v_c$ is:
 \begin{equation}
-\frac{\partial J}{\partial v_c}=\sum_{o=1}^W\frac{\partial J}{\partial z_0}\frac{\partial z_0}{\partial v_c}=\sum_{o=1}^W\delta^{(2)}_o u_o
+\label{v_derivative}
+\frac{\partial J}{\partial v_c}=\sum_{o=1}^W\frac{\partial J}{\partial z_0}\frac{\partial z_0}{\partial v_c}=\sum_{o=1}^W\delta^{(2)}_o u_o=\sum_{o=1}^W u_o\delta^{(2)}_o
 \end{equation}
 Remember, that the error is a scalar, while $u_o$ is a vector:
 \begin{equation}
-u_0=
+u_o=
 \begin{pmatrix}
 u_{o1} \\ \vdots \\ u_{oW} 
 \end{pmatrix}
 \end{equation}
+Let's collect all the $u$ vectors into a matrix:
+\begin{equation}
+U=
+\begin{pmatrix}
+| & \cdots & | \\
+u_1 & \cdots & u_W \\
+| & \cdots & |
+\end{pmatrix}
+\end{equation}
+Now equation \ref{v_derivative} may be re-written:
+\begin{equation}
+\frac{\partial J}{\partial v_c}=U^t\delta^{(2)}
+\end{equation}
+Similarly, we will be interested in the derivative with respect to $u_w$:
+\begin{equation}
+\frac{\partial J}{\partial u_w}=\sum_{o=1}^W\frac{\partial J}{\partial z_o}\frac{\partial z_o}{\partial u_w}=\sum_{o=1}^W\delta^{(2)}_o\delta_{ow}=\delta^{(2)}_w
+\end{equation}
+
 \end{document}
