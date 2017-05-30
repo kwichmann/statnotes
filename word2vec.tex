@@ -106,7 +106,7 @@ Now equation \ref{error_derivative} can be rewritten as:
 \section{The word2vec algorithm}
 
 \subsection{The situation}
-Imagine a large corpus of consecutive tokens (words) of length $T$. Each token comes from a vocabulary of size $W$. We wish to encode the tokens as vectors. To do this, we look at the words surrounding a given word in the corpus probabilistically. If $c$ is the center word, we can consider the probability of a word $j$ places away being $o$. We should really denote this probability $p_j(o|c)$, but since we're considering skipgrams, we will not worry about the value of $j$ as long as it is within the specified distance. So we will simply call it $p(o|c)$.
+Imagine a large corpus of consecutive tokens (words) of length $T$. Each token comes from a vocabulary of size $W$. We wish to encode the tokens as vectors. To do this, we look at the words surrounding a given word in the corpus probabilistically. If $c$ is the center word, we can consider the probability of a word $j$ places away being $o$. We should really denote this probability $p_j(o|c)$, but for now we will simply call it $p(o|c)$.
 
 \subsection{Softmax and word vectors}
 If we have each word represented by vectors, an appropriate model for the probability could be a softmax over the entire vocabulary size:
@@ -150,7 +150,49 @@ Now equation \ref{v_derivative} may be re-written:
 \end{equation}
 Similarly, we will be interested in the derivative with respect to $u_w$:
 \begin{equation}
-\frac{\partial J}{\partial u_w}=\sum_{o=1}^W\frac{\partial J}{\partial z_o}\frac{\partial z_o}{\partial u_w}=\sum_{o=1}^W\delta^{(2)}_o\delta_{ow}=\delta^{(2)}_w
+\label{u_derivative}
+\frac{\partial J}{\partial u_w}=\sum_{o=1}^W\frac{\partial J}{\partial z_o}\frac{\partial z_o}{\partial u_w}=\sum_{o=1}^W\delta^{(2)}_o\delta_{ow}v_c=\delta^{(2)}_w v_c
 \end{equation}
+
+\subsection{Derivatives of $\log p$}
+We will also need derivatives of the logarithm of $p$:
+\begin{equation}
+\log p(o|c)=\log\left(\frac{\exp(u_o^t v_c)}{\sum_{w=1}^W\exp(u_w^t v_c)}\right)=\log(\exp(u_o^t v_c))-\log\left[\sum_{w=1}^W\exp(u_w^t v_c)\right]
+\end{equation}
+This simplifies to:
+\begin{equation}
+\log p(o|c)=u_o^t v_c-\log\left[\sum_{w=1}^W\exp(u_w^t v_c)\right]
+\end{equation}
+
+\subsubsection{With respect to $v_c$}
+First, let's differentiate with respect to $v_c$:
+\begin{equation}
+\frac{\partial\log p}{\partial v_c}=u_0-\frac{\partial}{\partial v_c}\log\left[\sum_{w=1}^W\exp(u_w^t v_c)\right]
+\end{equation}
+Let's consider the last term by itself. It can be calculated using the chain rule. It is basically of the form:
+\begin{equation}
+\frac{\partial}{\partial x}\log(f(x))=\frac{1}{f(x)}\frac{\partial f}{\partial dx}
+\end{equation}
+Here, this means:
+\begin{equation}
+\frac{\partial}{\partial v_c}\log\left[\sum_{w=1}^W\exp(u_w^t v_c)\right]=\frac{\frac{\partial}{\partial v_c}\sum_{x=1}^W\exp(u_x^t v_c)}{\sum_{w=1}^W\exp(u_w^t v_c)}
+\end{equation}
+Consider the numerator:
+\begin{equation}
+\frac{\partial}{\partial v_c}\sum_{x=1}^W\exp(u_x^t v_c)=\sum_{x=1}^W\frac{\partial}{\partial v_c}\exp(u_x^t v_c)=\sum_{x=1}^W\exp(u_x^t v_c)\frac{\partial}{\partial v_c}u_x^t v_c
+\end{equation}
+So the numerator is $\sum_{x=1}^W\exp(u_x^t v_c)u_x$. Now, we may write the entire derivative as:
+\begin{equation}
+\sum_{x=1}^W\frac{\exp(u_x^t v_c)}{\sum_{w=1}^W\exp(u_w^t v_c)}u_x=\sum_{x=1}^W p(x|c)u_x
+\end{equation}
+Summing it all up (and changing the index back to $w$):
+\begin{equation}
+\label{logp_derivative}
+\frac{\partial}{\partial v_c}\log p(o|c)=u_o-\sum_{w=1}^W p(w|c)u_w
+\end{equation}
+
+\subsubsection{With respect to $u_w$}
+Similarly, the derivative with respect to $u_w$ is:
+
 
 \end{document}
