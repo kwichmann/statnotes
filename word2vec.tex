@@ -167,10 +167,11 @@ This simplifies to:
 \subsubsection{With respect to $v_c$}
 First, let's differentiate with respect to $v_c$:
 \begin{equation}
-\frac{\partial\log p}{\partial v_c}=u_0-\frac{\partial}{\partial v_c}\log\left[\sum_{w=1}^W\exp(u_w^t v_c)\right]
+\frac{\partial\log p(o|c)}{\partial v_c}=u_0-\frac{\partial}{\partial v_c}\log\left[\sum_{w=1}^W\exp(u_w^t v_c)\right]
 \end{equation}
 Let's consider the last term by itself. It can be calculated using the chain rule. It is basically of the form:
 \begin{equation}
+\label{log_derivative}
 \frac{\partial}{\partial x}\log(f(x))=\frac{1}{f(x)}\frac{\partial f}{\partial dx}
 \end{equation}
 Here, this means:
@@ -193,6 +194,20 @@ Summing it all up (and changing the index back to $w$):
 
 \subsubsection{With respect to $u_w$}
 Similarly, the derivative with respect to $u_w$ is:
-
+\begin{equation}
+\frac{\partial\log p(o|c)}{\partial u_w}=\frac{\partial}{\partial u_w}\left(u_o^t v_c-\log\left[\sum_{x=1}^W\exp(u_x^t v_c)\right]\right)
+\end{equation}
+The derivative of the first term is non-zero only when $w=o$, so the derivative is $\delta_{ow}v_c$. The derivative of the second term can be used by using equation \ref{log_derivative} and the chain rule again:
+\begin{equation}
+\frac{\partial}{\partial u_w}\log\left[\sum_{x=1}^W\exp(u_x^t v_c)\right]=\frac{\frac{\partial}{\partial u_w}\sum_{x=1}^W\exp(u_x^t v_c)}{\sum_{y=1}^W\exp(u_y^t v_c)}
+\end{equation}
+The numerator is:
+\begin{equation}
+\sum_{x=1}^W\exp(u_x^t v_c)\delta_{xw}v_c=\exp(u_w^t v_c)v_c
+\end{equation}
+All in all, this means that the derivative is:
+\begin{equation}
+\frac{\partial}{\partial u_w}\log p(o|c)=\left[\delta_{ow}-p(w|c)\right]v_c
+\end{equation}
 
 \end{document}
