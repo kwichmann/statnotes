@@ -46,7 +46,7 @@ J(x)=-\log\hat{y}_c
 \end{equation}
 This does not mean that the other components of $\hat{y}$ will not matter, since the softmax indirectly depends on all components.
 
-\subsubsection{Derivative with respect to input}
+\subsubsection{Derivatives with respect to input}
 We now wish to compute the derivative of $J(x)$ with respect to $x$. In shorthand, the chain rule gives us:
 \begin{equation}
 \frac{\partial J}{\partial x}=\frac{\partial J}{\partial\hat{y}}\frac{\partial \hat{y}}{\partial z^{(2)}}\frac{\partial z^{(2)}}{\partial h}\frac{\partial h}{\partial z^{(1)}}\frac{\partial z^{(1)}}{\partial x}
@@ -101,6 +101,40 @@ We may rephrase this in terms of the backpropagated errors in the hidden layer:
 Now equation \ref{error_derivative} can be rewritten as:
 \begin{equation}
 \frac{\partial J}{\partial x_i}=\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k=\sum_{j=1}^H W^{(1)}_{ij}\delta^{(1)}_j
+\end{equation}
+
+\subsubsection{Derivatives with respect to weights and biases}
+Similarly, we may calculate derivatives corresponding to variations in the neural network parameters. For weights in $W^{(2)}$:
+\begin{equation}
+\frac{\partial J}{\partial W^{(2)}_{ij}}=\sum_{k=1}^{D_y}\frac{\partial J}{\partial z^{(2)}_k}\frac{\partial z^{(2)}_k}{\partial W^{(2)}_{ij}}=\sum_{k=1}^{D_y}\delta^{(2)}_k\frac{\partial}{\partial W^{(2)}_{ij}}\left(\sum_{l=1}^H h_l W^{(2)}_{lk}+b^{(2)}_k\right)
+\end{equation}
+Switching the order of derivative and summation, the innermost derivative is $h_l\delta_{il}\delta_{jk}$. The sums then cancel and we end up with:
+\begin{equation}
+\frac{\partial J}{\partial W^{(2)}_{ij}}=h_i\delta^{(2)}_j
+\end{equation}
+For the biases between hidden and output layer:
+\begin{equation}
+\frac{\partial J}{\partial b^{(2)}_i}=\sum_{j=1}^{D_y}\frac{\partial J}{\partial z^{(2)}_j}\frac{\partial z^{(2)}_j}{\partial b^{(2)}_i}=\sum_{j=1}^{D_y}\delta^{(2)}_j\delta_{ij}=\delta^{(2)}_i
+\end{equation}
+We can now use these in calculating the derivatives with respect to the weights between input and hidden layer:
+\begin{equation}
+\frac{\partial J}{\partial W^{(1)}_{ij}}=\sum_{k=1}^H\frac{\partial J}{\partial z^{(1)}_k}\frac{\partial z^{(1)}_k}{\partial W^{(1)}_{ij}}
+\end{equation}
+The first derivative is simply the error term for the hidden layer as defined above. I.e.:
+\begin{equation}
+\frac{\partial J}{\partial W^{(1)}_{ij}}=\sum_{k=1}^H\delta^{(1)}_k\frac{\partial z^{(1)}_k}{\partial W^{(1)}_{ij}}
+\end{equation}
+The remaining derivative is:
+\begin{equation}
+\frac{\partial}{\partial W^{(1)}_{ij}}\left(\sum_{l=1}^{D_x}x_l W^{(1)}_{lk}+b^{(1)}_k\right)=\sum_{l=1}^{D_x}\frac{\partial}{\partial W^{(1)}_{ij}}x_l W^{(1)}_{lk}=x_i\delta_{jk}
+\end{equation}
+Here, one of the Kronecker deltas resulting from the derivative have been absorbed into the sum. The other delta is removed by the $k$ summation, so:
+\begin{equation}
+\frac{\partial J}{\partial W^{(1)}_{ij}}=x_i\delta^{(1)}_j
+\end{equation}
+Finally, the derivative with respect to the bias between the input and hidden layers is almost the same calculation. Here the last differentiation simply turns into a Kroecker delta, so that:
+\begin{equation}
+\frac{\partial J}{\partial b^{(1)}_i}=\delta^{(1)}_i
 \end{equation}
 
 \section{The word2vec algorithm}
