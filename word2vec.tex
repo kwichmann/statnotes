@@ -46,7 +46,7 @@ J(x)=-\log\hat{y}_c
 \end{equation}
 This does not mean that the other components of $\hat{y}$ will not matter, since the softmax indirectly depends on all components.
 
-\subsubsection{Derivatives with respect to input}
+\subsection{Derivatives with respect to input}
 We now wish to compute the derivative of $J(x)$ with respect to $x$. In shorthand, the chain rule gives us:
 \begin{equation}
 \frac{\partial J}{\partial x}=\frac{\partial J}{\partial\hat{y}}\frac{\partial \hat{y}}{\partial z^{(2)}}\frac{\partial z^{(2)}}{\partial h}\frac{\partial h}{\partial z^{(1)}}\frac{\partial z^{(1)}}{\partial x}
@@ -91,19 +91,24 @@ And finally:
 \end{equation}
 Inserting, letting the delta functions cancel, and renaming indices, this becomes:
 \begin{equation}
+\frac{\partial J}{\partial x_i}=\sum_{j=1}^{D_y}\sum_{k=1}^H\delta^{(2)}_j W^{(2)}_{kj}h_k(1-h_k)W^{(1)}_{ik}
+\end{equation}
+The "wrong" order of the $W$ indices can be reverted by using the transpose:
+\begin{equation}
 \label{error_derivative}
-\frac{\partial J}{\partial x_i}=\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k
+\frac{\partial J}{\partial x_i}=\sum_{j=1}^{D_y}\sum_{k=1}^H\delta^{(2)}_j\left(W^{(2)}\right)^t_{jk}h_k(1-h_k)\left(W^{(1)}\right)^t_{ki}
 \end{equation}
 We may rephrase this in terms of the backpropagated errors in the hidden layer:
 \begin{equation}
-\delta^{(1)}_j=\sum_{k=1}^{D_y}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k
+\label{delta1}
+\delta^{(1)}_k=\sum_{j=1}^{D_y}\delta^{(2)}_j\left(W^{(2)}\right)^t_{jk}h_k(1-h_k)=\left[\delta^{(2)}\left(W^{(2)}\right)^t\right]_k h_k(1-h_k)
 \end{equation}
 Now equation \ref{error_derivative} can be rewritten as:
 \begin{equation}
-\frac{\partial J}{\partial x_i}=\sum_{j=1}^H\sum_{k=1}^{D_y}W^{(1)}_{ij}h_j(1-h_j)W^{(2)}_{jk}\delta^{(2)}_k=\sum_{j=1}^H W^{(1)}_{ij}\delta^{(1)}_j
+\frac{\partial J}{\partial x_i}=\frac{\partial J}{\partial x_i}=\sum_{j=1}^{D_y}\sum_{k=1}^H\delta^{(2)}_j\left(W^{(2)}\right)^t_{jk}h_k(1-h_k)\left(W^{(1)}\right)^t_{ki}=\sum_{k=1}^H\delta^{(1)}_k\left(W^{(1)}\right)^t_{ki}
 \end{equation}
 
-\subsubsection{Derivatives with respect to weights and biases}
+\subsection{Derivatives with respect to weights and biases}
 Similarly, we may calculate derivatives corresponding to variations in the neural network parameters. For weights in $W^{(2)}$:
 \begin{equation}
 \frac{\partial J}{\partial W^{(2)}_{ij}}=\sum_{k=1}^{D_y}\frac{\partial J}{\partial z^{(2)}_k}\frac{\partial z^{(2)}_k}{\partial W^{(2)}_{ij}}=\sum_{k=1}^{D_y}\delta^{(2)}_k\frac{\partial}{\partial W^{(2)}_{ij}}\left(\sum_{l=1}^H h_l W^{(2)}_{lk}+b^{(2)}_k\right)
@@ -135,6 +140,105 @@ Here, one of the Kronecker deltas resulting from the derivative have been absorb
 Finally, the derivative with respect to the bias between the input and hidden layers is almost the same calculation. Here the last differentiation with respect to $b^{(1)}$ simply turns into a Kronecker delta, so that:
 \begin{equation}
 \frac{\partial J}{\partial b^{(1)}_i}=\delta^{(1)}_i
+\end{equation}
+
+\subsubsection{Vectorization}
+The above is for one input point $x$. But often we will have a set of $n$ data points. These may be collected in an $n\times D_x$ matrix $X$:
+\begin{equation}
+X=
+\begin{pmatrix}
+- & x_1 & - \\
+\vdots & \vdots & \vdots \\
+- & x_n & -
+\end{pmatrix}
+\in\mathbb{R}^{n\times D_x}
+\end{equation}
+Multiplying $X$ by $W^{(1)}$ we get:
+\begin{equation}
+XW^{(1)}=
+\begin{pmatrix}
+- & x_1W^{(1)} & - \\
+\vdots & \vdots & \vdots \\
+- & x_nW^{(1)} & -
+\end{pmatrix}
+\in\mathbb{R}^{n\times H}
+\end{equation}
+We now need to add $b^{(1)}$ to all the row vectors. This can be done by adding:
+\begin{equation}
+\begin{pmatrix}
+1 \\ \vdots \\ 1
+\end{pmatrix}b^{(1)}=J_n b^{(1)}
+\end{equation}
+Here, $J_n\in\mathbb{R}^{n\times 1}$ denotes the $n$-dimensional vector of all ones. So:
+\begin{equation}
+Z_1=XW^{(1)}+J_n b^{(1)}\in\mathbb{R}^{n\times H}
+\end{equation}
+Now apply the sigmoid to all entries:
+\begin{equation}
+H=\sigma(Z_1)=
+\begin{pmatrix}
+- & h_1 & - \\
+\vdots & \vdots & \vdots \\
+- & h_n & -
+\end{pmatrix}
+\in\mathbb{R}^{n\times H}
+\end{equation}
+Similarly, we now multiply by $W^{(2)}$ and add $b^{(2)}$ to all rows:
+\begin{equation}
+Z_2=HW^{(2)}+J_n b^{(2)}\in\mathbb{R}^{n\times D_y}
+\end{equation}
+Finally apply the softmax rowwise:
+\begin{equation}
+\hat{Y}=s(Z_2)\in\mathbb{R}^{n\times D_y}
+\end{equation}
+Similarly, the labels can be one-hot encoded in a $n\times D_y$ matrix $T$:
+\begin{equation}
+T=
+\begin{pmatrix}
+- & t_1 & - \\
+\vdots & \vdots & \vdots \\
+- & t_n & -
+\end{pmatrix}
+\in\mathbb{R}^{n\times D_y}
+\end{equation}
+The output layer errors are then:
+\begin{equation}
+\Delta_2=\hat{Y}-T\in\mathbb{R}^{n\times D_y}
+\end{equation}
+The derivatives for the $b^{(2)}$ bias for data point $i$ are then the $i$'th row of $\Delta_2$. Since we average over the data points, we get the derivative by averaging $\Delta_2$ columnwise:
+\begin{equation}
+\frac{\partial J}{\partial b^{(2)}}=\frac{1}{n}J_n^t \Delta_2\in\mathbb{R}^{1\times D_y}
+\end{equation}
+For the derivatives of the $W^{(2)}$ weights calculate $H^t\Delta_2$:
+\begin{equation}
+H^t E_2=
+\begin{pmatrix}
+| & \cdots & | \\
+h_1 & \cdots & h_n \\
+| & \cdots & |
+\end{pmatrix}
+\begin{pmatrix}
+- & \delta^{(2)}_1 & - \\
+\vdots & \vdots & \vdots \\
+- & \delta^{(2)}_n & -
+\end{pmatrix}
+\in\mathbb{R}^{H\times D_y}
+\end{equation}
+We now see, that each entry is the sum of the derivatives of the relevant entry of $W^{(2)}$ over all the $n$ data points. Again, we normalize:
+\begin{equation}
+\frac{\partial J}{\partial W^{(2)}}=\frac{1}{n}H^t \Delta_2\in\mathbb{R}^{H\times D_y}
+\end{equation}
+Now, we wish to calculate the errors in the hidden layer. Equation \ref{delta1} shows that this can be written as a hadamard product:
+\begin{equation}
+\Delta_1=\left[\Delta_2 \left(W^{(2)}\right)^t\right]\odot H\odot(J_{nH}-H)\in\mathbb{R}^{n\times H}
+\end{equation}
+Now, the calculation of the remaining derivatives is done analogously:
+\begin{equation}
+\frac{\partial J}{\partial b^{(1)}}=\frac{1}{n}J_n^t \Delta_1\in\mathbb{R}^{1\times H}
+\end{equation}
+And:
+\begin{equation}
+\frac{\partial J}{\partial W^{(1)}}=\frac{1}{n}X^t \Delta_1\in\mathbb{R}^{D_x\times H}
 \end{equation}
 
 \section{The word2vec algorithm}
