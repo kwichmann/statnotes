@@ -155,7 +155,46 @@ Specifically note, that it is not enough to require each component of the random
 q^t X=q_1 X_1+q_2 X_2+\ldots +q_n X_n\sim N\left(q^t\mu,\sum_{i=1}^n q_i^2\sigma_i^2\right)
 \end{equation}
 
-We now consider a very important special case of this:
+\subsection{Dependence vs. correlation}
+Further than that, it turn out that for components of a multivariate normal, independence and uncorrelation is equivalent:
+\begin{theorem}
+Let $X$ be a multivariate normally distributed and $X_1$ and $X_2$ be components of $X$. Then $X_1$ and $X_2$ are independent if and only if they're uncorrelated.
+\end{theorem}
+\begin{proof}
+The 'only if' part is true for any distributions. It's the other way that's interesting. Assume therefore, that $X_1$ and $X_2$ are uncorrelated. Recall, that the moment-generating function (MGF) of a unidimensional normal distribution $Y$ is given by:
+\begin{equation}
+\label{mgf_univariate}
+M_Y(t)=E\left[e^{tY}\right]=\exp\left(E[tY]+\frac{1}{2}\textrm{Var}(tY)\right)
+\end{equation}
+Consider now the bivariate distribution:
+\begin{equation}
+X'=
+\begin{pmatrix}
+X_1 \\ X_2
+\end{pmatrix}
+\end{equation}
+The MGF for $X'$ is:
+\begin{equation}
+M_{X'}(t)=E\left[e^{t^t X'}\right]
+\end{equation}
+Here, $t$ is two-dimensional as well, and $tY$ from before has been replaced by a dot product. But this is equal to:
+\begin{equation}
+E\left[\exp(\underbrace{t_1 X_1 + t_2 X_2}_{'tY'})\right]
+\end{equation}
+Now, by the assumption that $X$ is multivariate normal, the underbraced part must be univariate normal. So we can use (the latter half of) equation \ref{mgf_univariate} to get:
+\begin{equation}
+E\left[e^{t^t X'}\right]=\exp\left(E[X']t+\frac{1}{2}\textrm{Var}X'\right)
+\end{equation}
+Now, $E[X']=t_1\mu_1+t_2\mu_2$, where $mu_1$ and $mu_2$ are the means of $X_1$ and $X_2$ respectively. And because the two are uncorrelated, $\textrm{Var}X'=t_1^2\sigma_1^2+t_2^2\sigma_2^2$. Similarly, here the sigmas are the standard deviations of the $X$ components. So:
+\begin{equation}
+M_{X'}(t)=\exp\left[t_1\mu_1+t_2\mu_2+\frac{1}{2}\left(t_1^2\sigma_1^2+t_2^2\sigma_2^2\right)\right]
+\end{equation}
+But this can be rewritten:
+\begin{equation}
+\exp\left(t_1\mu_1+\frac{1}{2}t_1^2\sigma_1^2\right)\exp\left(t_2\mu_1+\frac{1}{2}t_2^2\sigma_2^2\right)=M_{X_1}(t_1)M_{X_2}(t_2)
+\end{equation}
+Since the joint MGF is equal to the product on the individual ones, we conclude that $X_1$ and $X_2$ are independent.
+\end{proof}
 
 \subsection{The multivariate standard normal}
 The \textit{multivariate standard normal distribution} is the random vector $Z$ that consists of $n$ independent components, all univariate standard normally distributed. According to the previous section, this is a multivariate standard normal. Because of independence, the density function in $\mathbb{R}^n$ is simply a product of terms like equation \ref{uni_snd}:
