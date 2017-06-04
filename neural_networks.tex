@@ -471,6 +471,7 @@ The errors for the last layer is now:
 \end{equation}
 Here $Y$ is a matrix containing the expected outcomes according to the training set:
 \begin{equation}
+\label{y_vector}
 Y=
 \begin{pmatrix}
 |	&	\cdots	& |	\\
@@ -498,5 +499,87 @@ To backpropagate, we need to calculate the errors in the previous layers. Follow
 \Delta^{(L-1)}=\left(\theta^{(L)}\right)^T\Delta^{(K)}\odot A^{(L-1)}\odot(1-A^{(L-1)})
 \end{equation}
 Note that the lower case theta is used here, as there's no bias error to propagate back to.
+
+\section{Example: Learning XOR}
+\textit{Exclusive or} (XOR) is a logical operator with the truth table as shown in table \ref{table:xor}. It is infamous for being linearly non-separable, as shown on figure \ref{fig:xor}. 
+
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+$x_1$ & $x_2$ & $x_1$ XOR $x_2$ \\ \hline
+0    & 0    & 0             \\ \hline
+1    & 0    & 1             \\ \hline
+0    & 1    & 1             \\ \hline
+1    & 1    & 0             \\ \hline
+\end{tabular}
+\caption{XOR truth table.}
+\label{table:xor}
+\end{table}
+
+\begin{figure}
+\centering
+\includegraphics[width=60mm]{xor}
+\caption{XOR is not linearly separable.}
+\label{fig:xor}
+\end{figure}
+
+However, we might try to learn the behaviour using a neural network. Figure \ref{fig:xor_nn} shows just about the simplest possible network for this task. The inputs are $x_1$ and $x_2$ and the output is the probability of the correct answer being 1.
+
+\begin{figure}
+\centering
+\includegraphics[width=80mm]{xor_nn}
+\caption{A simple neural net for learning XOR.}
+\label{fig:xor_nn}
+\end{figure}
+
+\subsection{Vectorized formalism}
+So, we have two input neurons, one hidden layer with two neurons, and finally one output neuron. Our input and output matrices are determined by the four data point in table \ref{table:xor} and following equations \ref{row_of_ones} and \ref{y_vector}:
+\begin{equation}
+X=
+\begin{pmatrix}
+1 & 1 & 1 & 1 \\
+0 & 1 & 0 & 1 \\
+0 & 0 & 1 & 1
+\end{pmatrix}\in\mathbb{R}^{3\times 4},\quad
+Y=
+\begin{pmatrix}
+0 & 1 & 1 & 0
+\end{pmatrix}\in\mathbb{R}^{1\times 4}
+\end{equation}
+The weight matrices take on the form (with and without bias):
+\begin{align}
+\Theta^{(1)}=
+\begin{pmatrix}
+b_1^{(1)} & \theta_{11}^{(1)} & \theta_{12}^{(1)} \\
+b_2^{(1)} & \theta_{21}^{(1)} & \theta_{22}^{(1)}
+\end{pmatrix}\in\mathbb{R}^{2\times 3},&\quad
+\Theta^{(2)}=
+\begin{pmatrix}
+b_1^{(2)} & \theta_{11}^{(2)} & \theta_{12}^{(2)}
+\end{pmatrix}\in\mathbb{R}^{1\times 3} \\
+\theta^{(1)}=
+\begin{pmatrix}
+\theta_{11}^{(1)} & \theta_{12}^{(1)} \\
+\theta_{21}^{(1)} & \theta_{22}^{(1)}
+\end{pmatrix}\in\mathbb{R}^{2\times 2},&\quad
+\theta^{(2)}=
+\begin{pmatrix}
+\theta_{11}^{(2)} & \theta_{12}^{(2)}
+\end{pmatrix}\in\mathbb{R}^{1\times 2}
+\end{align}
+Now, forward propagation takes the form:
+\begin{equation}
+A=g(\Theta^{(1)}X)\in\mathbb{R}^{2\times 4},\quad H=g(\Theta^{(2)}A^*)\in\mathbb{R}^{1\times 4}
+\end{equation}
+Backpropagation is done first by:
+\begin{equation}
+\Delta^{(2)}=H-Y\in\mathbb{R}^{1\times 4},\quad\frac{\partial L}{\partial\Theta^{(2)}}=\Delta^{(2)}(A^*)^t\in\mathbb{R}^{1\times 3}
+\end{equation}
+Then by:
+\begin{equation}
+\Delta^{(1)}=\left(\theta^{(2)}\right)^t\Delta^{(2)}\odot A\odot(1-A)\in\mathbb{R}^{2\times 4},\quad
+\frac{\partial L}{\partial\Theta^{(1)}}=\Delta^{(1)}X^t\in\mathbb{R}^{2\times 3}
+\end{equation}
 
 \end{document}
