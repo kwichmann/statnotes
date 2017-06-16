@@ -380,6 +380,35 @@ Using the standard formula for the covariance of a product, we get:
 If $Q_A$ and $Q_B$ are independent, then they're also uncorrelated. The covariance must therefore be zero. 
 \end{proof}
 
+\section{Properties of the $\chi^2$-distribution}
+
+\subsection{Moment generating function}
+The moment generating function (MGF) of the $\chi^2$-distribution will be usedul in the following. Recall that the MGF of a random variable $X$ is defined as:
+\begin{equation}
+M_X(t)=E\left[e^{tX}\right]
+\end{equation}
+Now, assume that $X\sim\chi^2_r$, where $r$ is the number of degrees of freedom. Recall that the probability density function (pdf) is:
+\begin{equation}
+f(x)=\frac{x^{r/2-1}e^{-x/2}}{2^{r/2}\Gamma(r/2)},\quad x>0
+\end{equation}
+This means that the MGF is:
+\begin{equation}
+\label{chi_mgf1}
+M_X(t)=\int_0^\infty e^{tx}f(x)\ dx=\frac{1}{2^{r/2}\Gamma(r/2)}\int_0^\infty x^{r/2-1}\exp\left[x(t-1/2)\right]\ dx
+\end{equation}
+Recall the standard integral:
+\begin{equation}
+\int_0^\infty x^n\exp(-ax)\ dx=\frac{\Gamma(n+1)}{a^{n+1}}
+\end{equation}
+Here, $n=r/2-1$ and $a=1/2-t$, so the integral part of equation \ref{chi_mgf1} is:
+\begin{equation}
+\frac{\Gamma(r/2)}{(1/2-t)^{r/2}}
+\end{equation}
+So the factorials cancel and we're left with
+\begin{equation}
+M_X(t)=\frac{1}{2^{r/2}(1/2-t)^{r/2}}=\frac{1}{(1-2t)^{r/2}}=(1-2t)^{-r/2}
+\end{equation}
+
 \section{Proof of Cochran's theorem}
 By now we've done most of the heavy lifting needed to actually prove theorem $\ref{cochran}$. We need to show that the three conditions are equivalent.
 
