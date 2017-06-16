@@ -219,6 +219,52 @@ $A$ is diagonalizable, so there exists an orthogonal matrix $O$ such that $A=O^T
 Since trace is invariant under similarity transformations, this means that $\textrm{tr}A=\textrm{tr}D=r$.
 \end{proof}
 
+\begin{theorem}
+Let $A$ and $B$ be matrices such that $A=BA$ and $B=AB$. Then $A$ and $B$ are both idempotent.
+\end{theorem}
+\begin{proof}
+The two results are shown in almost exactly the same way:
+\begin{itemize}
+\item For $A$:
+\begin{equation}
+A=BA=(AB)A=A(BA)=AA=A^2
+\end{equation}
+\item For $B$:
+\begin{equation}
+B=AB=(BA)B=B(AB)=BB=B^2
+\end{equation}
+\end{itemize}
+\end{proof}
+
+\begin{theorem}
+Let $A$ and $B$ be idempotent matrices which satisfies $AB=BA=0$. Then $A+B$ is idempotent.
+\end{theorem}
+\begin{proof}
+Compute the square of $A+B$:
+\begin{equation}
+(A+B)^2=(A+B)(A+B)=A^2+AB+BA+B^2
+\end{equation}
+The two mixed terms disappear by assumption, and since $A$ and $B$ are both idempotent, this is simply equal to $A+B$.
+\end{proof}
+
+\begin{theorem}
+Let $A$ be idempotent. Then $B=I-A$ is also idempotent, and $AB=BA=0$.
+\end{theorem}
+\begin{proof}
+Calculate the square of $B$:
+\begin{equation}
+B^2=(I-A)^2=(I-A)(I-A)=I^2-IA-AI+A^2=I-2A+A=I-A=B
+\end{equation}
+In the penultimate step $A$'s idempotency was used. Now calculate $AB$:
+\begin{equation}
+AB=A(I-A)=A-A^2=A-A=0
+\end{equation}
+Similarly for $BA$:
+\begin{equation}
+BA=(I-A)A=A-A^2=A-A=0
+\end{equation}
+\end{proof}
+
 \subsection{Example: Normal sample yet again}
 It turns out, that the matrices $B^{(1)}$ and $B^{(2)}$ are indeed idempotent. Recall that $B^{(1)}=I_n-\frac{1}{n}J_n$. So:
 \begin{equation}
