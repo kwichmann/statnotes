@@ -367,6 +367,40 @@ $U(DD^+)^t U^t= UDD^+ U^t=UDV^t VD^+ U^t=AA^+$
 $V(D^+ D)^t V^t=VD^+ DV^t=VD^+ U^t UDV^t=A^+ A$
 \end{enumerate}
 
+\subsection{Pseudoinverses as limits}
+The pseudoinverse can also be found through limit procedures:
+\begin{equation}
+A^+=\lim_{\delta\rightarrow 0^+}(A^t A+\delta I)^{-1}A^t=\lim_{\delta\rightarrow 0^+}A^t(AA^t+\delta I)^{-1}
+\end{equation}
+To see why this is true, consider the singular value decomposition for $A$ and $A^t$:
+\begin{equation}
+A=U\Sigma V^t,\quad A^t=V\Sigma U^t
+\end{equation}
+This is not strictly true: In general, the sigma matrices will have differing sizes, but since the only true difference is that one has more zeroes in the diagonal than the other, we will slightly abuse notation and use the same symbol for each. Now the above means that:
+\begin{equation}
+AA^t=U\Sigma V^t V\Sigma U^t=U\Sigma U^t,\quad
+A^t A=V\Sigma U^t U\Sigma V^t=V\Sigma^2 V^t
+\end{equation}
+Now consider the matrix to be inverted in the first limit formula:
+\begin{equation}
+A^t A+\delta I=V\Sigma^2 V^t+\delta VV^t=V(\Sigma^2+\delta)V^t
+\end{equation}
+Hence, the eigenvalues of the matrix are:
+\begin{equation}
+\lambda_i=\frac{1}{\sigma_i^2+\delta}
+\end{equation}
+Since $\sigma_i^2$ is non-negative, and $\delta$ is positive, this means that all eigenvalues are positive, and hence the inverse exists. Collecting all these eigenvalues into a diagonal matrix $\Lambda$ this means that the inverse can be written $V\Lambda^{-1}V^t$. Now multiply by $A^t$:
+\begin{equation}
+(A^t A+\delta I)^{-1}A^t=V\Lambda^{-1}V^t V\Sigma U^t=V\Lambda^{-1}\Sigma U^t
+\end{equation}
+This is a singular value decomposition, with singular values:
+\begin{equation}
+\frac{\sigma_i}{\sigma_i^2+\delta}
+\end{equation}
+As $\delta\rightarrow 0^+$ we get $1/\sigma_i$, unless $\sigma_i=0$, then we get zero. This means that we get exactly what the recipe for constructing the pseudoinverse said!
+
+The second limit formula follows from a completely analogous argument.
+
 \section{Principal component analysis}
 \textit{Principal component analysis} (or simply PCA) is an algorithm that achieves lossy compression of the information in a data set using SVD.
 
