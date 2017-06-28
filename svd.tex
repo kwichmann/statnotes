@@ -367,6 +367,27 @@ $U(DD^+)^t U^t= UDD^+ U^t=UDV^t VD^+ U^t=AA^+$
 $V(D^+ D)^t V^t=VD^+ DV^t=VD^+ U^t UDV^t=A^+ A$
 \end{enumerate}
 
+\subsection{Left and right inverses as pseudoinverses}
+In the previous section, we looked at left and right inverses as projection operators used for getting the best solution to linear equation systems. It turns out, that these are in fact the pseudoinverse of $A$ in their respective cases. This is done by checking that they satisfy the four axioms. The result then follows by the uniqueness of the pseudoinverse.
+
+\subsubsection{Left inverses}
+As above, for $A$ injective, we set $A_L=(A^t A)^{-1}A^t$. We need to show the four axioms are satisfied:
+\begin{itemize}
+\item $AA_L A=A(A^t A)^{-1}A^t A=A$.
+\item $A_L AA_L=(A^t A)^{-1}A^t A(A^t A)^{-1}A^t=(A^t A)^{-1}A^t=A_L$.
+\item $(AA_L)^t=(A(A^t A)^{-1}A^t)^t=A(A^t A)^{-1}A^t=AA_L$.
+\item $(A_L A)^t=I^t=I=A_L A$.
+\end{itemize}
+
+\subsubsection{Right inverses}
+Similarly, when $A$ is surjective, we set $A_R=A^t(AA^t)^{-1}$. As above, we need to show it satisfies the four axioms:
+\begin{itemize}
+\item $AA_R A=AA^t(AA^t)^{-1}A=A$.
+\item $A_R AA_R=A^t(AA^t)^{-1}AA^t(AA^t)^{-1}=A^t(AA^t)^{-1}=A_R$.
+\item $(AA_R)^t=(AA^t(AA^t)^{-1})^t=I^t=I=AA_R$.
+\item $(A_R A)^t=(A^t(AA^t)^{-1}A)^t=A^t(AA^t)^{-1}A=A_R A$.
+\end{itemize}
+
 \subsection{Pseudoinverses as limits}
 The pseudoinverse can also be found through limit procedures:
 \begin{equation}
