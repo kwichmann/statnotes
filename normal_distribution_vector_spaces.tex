@@ -551,7 +551,6 @@ X_1|_{X_2=x_2}\sim N(\xi_1+\Sigma_{12}\Sigma_{22}^{-1}(x_2-\xi_2),\Sigma_{11}-\S
 \end{equation}
 \end{proof}
 
-
 \section{Formulation in terms of precision}
 
 \subsection{Inner products on $\mathbb{R}^n$}
@@ -764,5 +763,16 @@ Using Tonelli's theorem this is equal to:
 \begin{equation}
 \prod_{i=1}^n\int_\mathbb{R}\exp\left[-\frac{1}{2}x_i^2||a_i||^2\right]dm_1(x_i)=\prod_{i=1}^n\frac{\sqrt{2\pi}}{||a_i||}=\frac{(2\pi)^{n/2}}{\prod_{i=1}^n||a_i||}
 \end{equation}
+
+\section{The decomposition theorem}
+The following theorem is very important in the theory of the general linear model. It (or variations of it) is sometimes known as Cochran's theorem.
+\begin{theorem}
+Let $V$ be a vector space with an inner product $\langle\cdot,\cdot\rangle$. Let $U$ be a subspace of $V$ and $p_U$ the associated orthogonal projection. Let $X$ be a normally distributed random vector on $\mathbb{R}^n$ with precision $\langle\cdot,\cdot\rangle$. Then the following is true:
+\begin{itemize}
+\item The random vectors $p(X)$ and $X-p(X)$ are independent.
+\item $p(X)$ is normally distributed on $U$ with a precision equal to the restriction of $\langle\cdot,\cdot\rangle$ to $U$.
+\end{itemize}
+\end{theorem}
+
 
 \end{document}
