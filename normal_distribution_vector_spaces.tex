@@ -710,9 +710,9 @@ Now multiply both sides by $x^t$:
 \begin{equation}
 x^t p_U\Sigma(p_U x)=0\Leftrightarrow (p_U x)^t\Sigma(p_U x)=0
 \end{equation}
-Since $\Sigma$ is full rank and positive definite, this can be seen as a norm $||p_U x||^2=0$. But a norm is only zero when the vectors is, so $p_U x=0$. Hence by the rank-nullity theorem, $\Sigma_U$ has rank $m$.
+Since $\Sigma$ is full rank and positive definite, this can be seen as a norm $||p_U x||^2=0$. But a norm is only zero when the vectors is, so $p_U x=0$. I.e. $\textrm{ker}(\Sigma_U)\subseteq\textrm{ker}(p_U)$. So $\textrm{ker}(\Sigma_U)=\textrm{ker}(p_U)$ and hence by the rank-nullity theorem, $\Sigma_U$ has rank $m$.
 
-The result for $X-p(X)$ follows by noting that it is the orthogonal complement of $p_(X)$, and hence nullity and rank are reversed.
+The result for $X-p(X)$ follows by noting the duality between the two operators: From equations \ref{u_basis} and \ref{u_orthogonal_basis} we know that when applied to basis vectors $e_i$ we get the "reverse" result: $X-p(X)$ is a projection operator as well, but for the orthogonal complement of $p_(X)$. Hence the magnitudes of nullity and rank are reversed, but apart from this, the proof is analogous.
 \end{proof}
 
 \section{Lebesgue measures on vector spaces}
