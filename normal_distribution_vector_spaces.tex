@@ -655,6 +655,66 @@ The orthogonal projection operator $p:V\rightarrow V$ is idempotent. I.e. $p\cir
 Let $v\in V$. Then $p(v)\in U$. But this means that the decomposition of $p(v)$ is $p(v)+0$. So $p\circ p(v)=p(v)$.
 \end{proof}
 
+\subsection{The decomposition theorem}
+The following theorem is very important in the theory of the general linear model. It (or variations/corollaries of it) is sometimes known as Cochran's theorem.
+\begin{theorem}
+Let $V=\mathbb{R}^n$ be a vector space with the usual inner product. Let $U$ be an $m$-dimensional subspace of $V$ and $p_U$ the associated orthogonal projection. Let $X$ be a regularly normally distributed random vector on $V$ with mean $\xi$ and variance $\Sigma$. Then the following is true:
+\begin{itemize}
+\item The random vectors $p_U(X)$ and $X-p_U(X)$ are independent.
+\item $p_U(X)$ is normally distributed with mean $p_U\xi$ and a variance matrix of rank $m$.
+\item Similarly, $X-p_U(X)$ is normally distributed with mean $(1-p_U)\xi$ and a variance matrix with rank $n-m$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+Let $e_1,\cdots,e_m$ be a basis for $U$. Expand to a basis for $V$: $e_1,\dots,e_n$. Now, the projection operator applied to such a basis vector is:
+\begin{equation}
+\label{u_basis}
+p_U e_i=
+\begin{cases}
+e_i\textrm{ for } i\le m \\
+0\textrm{ otherwise}
+\end{cases}
+\end{equation}
+This means that:
+\begin{equation}
+\label{u_orthogonal_basis}
+(1-p_U)e_i=
+\begin{cases}
+0\textrm{ for } i\le m \\
+e_i\textrm{ otherwise}
+\end{cases}
+\end{equation}
+The random vectors $p_U(X)$ and $X-p_U(X)=(1-p_U)X$ are clearly both normally distributed, being linear transformations of the normally distributed $X$. That the means are $p_U\xi$ and $(1-p_U)\xi$ is equally trivial from previous results. But to check that they are independent, we need to consider the covariance matrix:
+\begin{equation}
+C=\textrm{Cov}(p_U X,(1-p_U)X)=p_U\textrm{Cov}(X,X)(1-p_U)^t=p_U\textrm{Var}(X)(1-p_U)^t
+\end{equation}
+But $p_U$ is symmetric, and the variance of $X$ is $\Sigma$ by definition. So we end up with $p_U\Sigma(1-p_U)$. Since the variance matrix is symmetric, we could also write this as its transpose:
+\begin{equation}
+C=p_U\Sigma(1-p_U)=(1-p_U)\Sigma p_U
+\end{equation}
+Now consider this covariance matrix acting on a basis vector $e_i$:
+\begin{equation}
+C e_i=p_U\Sigma(1-p_U)e_i=(1-p_U)\Sigma p_U e_i
+\end{equation}
+If $i\le m$, equation \ref{u_basis} shows that this is zero. On the other hand, if $i>m$, equation \ref{u_orthogonal_basis} shows that it is zero. Since the $e_i$ forms a basis, the only possibility is, that $C=0$. So the two random vectors are uncorrelated, and as normals this means they are also independent.
+
+Now, consider the variance matrix of $p_U(X)$:
+\begin{equation}
+\Sigma_U=p_U\Sigma p_U^t=p_U\Sigma p_U
+\end{equation}
+From equations \ref{u_basis} and \ref{u_orthogonal_basis} we know that $p_U$ has rank $m$. Now we need to show that the same is true for $\Sigma_U$. We will do this by showing them to have the same kernel. If $p_U x=0$ it immediately follows that $\Sigma_U x=0$. In other words $\textrm{ker}(p_U)\subseteq\textrm{ker}(\Sigma_U)$. Now, conversely assume $\Sigma_U x=0$. This means:
+\begin{equation}
+p_U\Sigma(p_U x)=0
+\end{equation}
+Now multiply both sides by $x^t$:
+\begin{equation}
+x^t p_U\Sigma(p_U x)=0\Leftrightarrow (p_U x)^t\Sigma(p_U x)=0
+\end{equation}
+Since $\Sigma$ is full rank and positive definite, this can be seen as a norm $||p_U x||^2=0$. But a norm is only zero when the vectors is, so $p_U x=0$. Hence by the rank-nullity theorem, $\Sigma_U$ has rank $m$.
+
+The result for $X-p(X)$ follows by noting that it is the orthogonal complement of $p_(X)$, and hence nullity and rank are reversed.
+\end{proof}
+
 \section{Lebesgue measures on vector spaces}
 
 \subsection{Coordinate maps}
@@ -764,15 +824,7 @@ Using Tonelli's theorem this is equal to:
 \prod_{i=1}^n\int_\mathbb{R}\exp\left[-\frac{1}{2}x_i^2||a_i||^2\right]dm_1(x_i)=\prod_{i=1}^n\frac{\sqrt{2\pi}}{||a_i||}=\frac{(2\pi)^{n/2}}{\prod_{i=1}^n||a_i||}
 \end{equation}
 
-\section{The decomposition theorem}
-The following theorem is very important in the theory of the general linear model. It (or variations of it) is sometimes known as Cochran's theorem.
-\begin{theorem}
-Let $V$ be a vector space with an inner product $\langle\cdot,\cdot\rangle$. Let $U$ be a subspace of $V$ and $p_U$ the associated orthogonal projection. Let $X$ be a normally distributed random vector on $\mathbb{R}^n$ with precision $\langle\cdot,\cdot\rangle$. Then the following is true:
-\begin{itemize}
-\item The random vectors $p(X)$ and $X-p(X)$ are independent.
-\item $p(X)$ is normally distributed on $U$ with a precision equal to the restriction of $\langle\cdot,\cdot\rangle$ to $U$.
-\end{itemize}
-\end{theorem}
+
 
 
 \end{document}
