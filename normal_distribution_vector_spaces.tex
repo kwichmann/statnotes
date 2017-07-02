@@ -185,7 +185,7 @@ Now, by the assumption that $X$ is multivariate normal, the underbraced part mus
 \begin{equation}
 E\left[e^{t^t X'}\right]=\exp\left(E[X']t+\frac{1}{2}\textrm{Var}X'\right)
 \end{equation}
-Now, $E[X']=t_1\mu_1+t_2\mu_2$, where $mu_1$ and $mu_2$ are the means of $X_1$ and $X_2$ respectively. And because the two are uncorrelated, $\textrm{Var}X'=t_1^2\sigma_1^2+t_2^2\sigma_2^2$. Similarly, here the sigmas are the standard deviations of the $X$ components. So:
+Now, $E[X']=t_1\mu_1+t_2\mu_2$, where $\mu_1$ and $\mu_2$ are the means of $X_1$ and $X_2$ respectively. And because the two are uncorrelated, $\textrm{Var}X'=t_1^2\sigma_1^2+t_2^2\sigma_2^2$. Similarly, here the sigmas are the standard deviations of the $X$ components. So:
 \begin{equation}
 M_{X'}(t)=\exp\left[t_1\mu_1+t_2\mu_2+\frac{1}{2}\left(t_1^2\sigma_1^2+t_2^2\sigma_2^2\right)\right]
 \end{equation}
@@ -332,6 +332,225 @@ By setting $A=OD^{\frac{1}{2}}$ we have achieved a decomposition of $\Sigma$ tha
 One use of the decomposition $A=OD^{\frac{1}{2}}$ is to gain geometrical insight into multivariate Gaussians by what is called \textit{sphering}.
 
 How can we describe the linear map $A$? It is a composite of the map $D^{\frac{1}{2}}$ followed by $O$. $D^{\frac{1}{2}}$ is a pure scaling of each axis. If none of the diagonal entries are zero - i.e. if $\Sigma$ is positive-definite - this turns an origin-centered sphere (which is a contour curve of a multivariate standard normal) into an ellipsoid. This is followed by an orthogonal operation, which means that distance is preserved. The ellipsoid is now rotated and/or reflected around the origin. These are the contour curves of a regular multidimensional Gaussian. If the distribution is singular, one or more dimensions are "squashed out" - we get an elliptic "pancake" instead of an ellipsoid.
+
+\section{Multivariate normals in block form}
+
+\subsection{Definition}
+Consider a multivariate normal on $\mathbb{R}^n$. As shown above, we can characterize such a distribution by a vector of means $\xi\in\mathbb{R}^n$ and a symmetric variance matrix $\Sigma\in\mathbb{R}^{n\times n}$. We now split $\xi$ and $\Sigma$ into \textit{block form} as follows:
+\begin{equation}
+\xi=
+\begin{pmatrix}
+\xi_1 \\ \xi_2
+\end{pmatrix},\quad
+\Sigma=
+\begin{pmatrix}
+\Sigma_{11} & \Sigma_{12} \\
+\Sigma_{21} & \Sigma_{22}
+\end{pmatrix}
+\end{equation}
+Here $\xi_1\in\mathbb{R}^{n_1+}, \xi_2\in\mathbb{R}^{n_2+}$ and $\Sigma_{11}\in\mathbb{R}^{n_1\times n_1}, \Sigma_{12}\in\mathbb{R}^{n_1\times n_2}, \Sigma_{21}\in\mathbb{R}^{n_2\times n_1}$, and $\Sigma_{22}\in\mathbb{R}^{n_2\times n_2}$. The transpose of $\Sigma$ is:
+\begin{equation}
+\Sigma^t=
+\begin{pmatrix}
+\Sigma_{11}^t & \Sigma_{21}^t \\
+\Sigma_{12}^t & \Sigma_{22}^t
+\end{pmatrix}
+\end{equation}
+From this, we immediately see, that since $\Sigma$ is symmetric, we have:
+\begin{equation}
+\Sigma_{11}=\Sigma_{11}^t, \Sigma_{12}=\Sigma_{21}^t, \Sigma_{22}=\Sigma_{2}^t
+\end{equation}
+
+\subsection{Results about multivariate normal distributions in block form}
+\begin{theorem}
+\label{block_split}
+Let $X_1$ and $X_2$ be random vectors in $\mathbb{R}^{n_1}$ and $\mathbb{R}^{n_2}$ respectively. Now assume:
+\begin{equation}
+\begin{pmatrix}
+X_1 \\ X_2
+\end{pmatrix}
+\sim N\left(
+\begin{pmatrix}
+\xi_1 \\ \xi_2
+\end{pmatrix},
+\begin{pmatrix}
+\Sigma_{11} & \Sigma_{12} \\
+\Sigma_{21} & \Sigma_{22}
+\end{pmatrix}
+\right)
+\end{equation}
+Then $X_1\sim N(\xi_1,\Sigma_{11})$ and $X_2\sim N(\xi_2,\Sigma_{22})$.
+\end{theorem}
+\begin{proof}
+It is trivial, that both $X_1$ and $X_2$ are multivariate normal, since all linear combinations of components from each must be univariate normal because of the assumption of the block vector being multivariate normal.
+
+Now consider the following $n_1\times n$ block matrix:
+\begin{equation}
+\begin{pmatrix}
+I_1 & 0
+\end{pmatrix}
+\end{equation}
+Here $I_1$ is the $n_1\times n_1$ unit matrix. Now we may express $X_1$ as follows:
+\begin{equation}
+X_1=\begin{pmatrix}
+I_1 & 0
+\end{pmatrix}
+\begin{pmatrix}
+\Sigma_{11} & \Sigma_{12} \\
+\Sigma_{21} & \Sigma_{22}
+\end{pmatrix}
+\end{equation} 
+The mean must then be:
+\begin{equation}
+\begin{pmatrix}
+I_1 & 0
+\end{pmatrix}
+\begin{pmatrix}
+\xi_1 \\ \xi_2
+\end{pmatrix}
+=\xi_1
+\end{equation}
+And the variance:
+\begin{equation}
+\begin{pmatrix}
+I_1 & 0
+\end{pmatrix}
+\begin{pmatrix}
+\Sigma_{11} & \Sigma_{12} \\
+\Sigma_{21} & \Sigma_{22}
+\end{pmatrix}
+\begin{pmatrix}
+I_1 \\ 0
+\end{pmatrix}
+=\Sigma_{11}
+\end{equation}
+Similarly for $X_2$.
+\end{proof}
+
+\begin{theorem}
+As above, let:
+\begin{equation}
+\begin{pmatrix}
+X_1 \\ X_2
+\end{pmatrix}
+\sim N\left(
+\begin{pmatrix}
+\xi_1 \\ \xi_2
+\end{pmatrix},
+\begin{pmatrix}
+\Sigma_{11} & \Sigma_{12} \\
+\Sigma_{21} & \Sigma_{22}
+\end{pmatrix}
+\right)
+\end{equation}
+Now assume $\Sigma_{22}$ to be invertible. Then the conditional distribution of $X_1$ given $X_2$ is:
+\begin{equation}
+X_1|_{X_2=x_2}\sim N(\xi_1+\Sigma_{12}\Sigma_{22}^{-1}(x_2-\xi_2),\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21})
+\end{equation}
+\end{theorem}
+\begin{proof}
+Consider the following random vector:
+\begin{equation}
+\begin{pmatrix}
+I_1 & -\Sigma_{12}\Sigma_{22}^{-1} \\
+0   & I_2
+\end{pmatrix}
+\begin{pmatrix}
+X_1 \\ X_2
+\end{pmatrix}
+=
+\begin{pmatrix}
+X_1-\Sigma_{12}\Sigma_{22}^{-1}X_2 \\ X_2
+\end{pmatrix}
+\end{equation}
+Call the upper block random vector $Z$:
+\begin{equation}
+Z=X_1-\Sigma_{12}\Sigma_{22}^{-1}X_2
+\end{equation}
+Now, we know that the random vector $\begin{pmatrix}Z \\ X_2\end{pmatrix}$ must be multivariate normal, as it's a linear transform of the multivariate normal $\begin{pmatrix}X_1 \\ X_2\end{pmatrix}$. Let us calculate the mean:
+\begin{equation}
+E\left[\begin{pmatrix}Z \\ X_2\end{pmatrix}\right]=
+\begin{pmatrix}
+I_1 & -\Sigma_{12}\Sigma_{22}^{-1} \\
+0   & I_2
+\end{pmatrix}
+\begin{pmatrix}\xi_1 \\ \xi_2\end{pmatrix}
+=
+\begin{pmatrix}
+\xi_1-\Sigma_{12}\Sigma_{22}^{-1}\xi_2 \\ \xi_2
+\end{pmatrix}
+\end{equation}
+And the variance:
+\begin{align}
+\textrm{Var}\left(\begin{pmatrix}Z \\ X_2\end{pmatrix}\right)=&
+\begin{pmatrix}
+I_1 & -\Sigma_{12}\Sigma_{22}^{-1} \\
+0   & I_2
+\end{pmatrix}
+\begin{pmatrix}
+\Sigma_{11} & \Sigma_{12} \\
+\Sigma_{21} & \Sigma_{22}
+\end{pmatrix}
+\begin{pmatrix}
+I_1 & -\Sigma_{12}\Sigma_{22}^{-1} \\
+0   & I_2
+\end{pmatrix}^t=
+\\
+&\begin{pmatrix}
+I_1 & -\Sigma_{12}\Sigma_{22}^{-1} \\
+0   & I_2
+\end{pmatrix}
+\begin{pmatrix}
+\Sigma_{11} & \Sigma_{12} \\
+\Sigma_{21} & \Sigma_{22}
+\end{pmatrix}
+\begin{pmatrix}
+I_1 & 0 \\
+-\Sigma_{22}^{-1}\Sigma_{21} & I_2
+\end{pmatrix}=
+\\
+&\begin{pmatrix}
+I_1 & -\Sigma_{12}\Sigma_{22}^{-1} \\
+0   & I_2
+\end{pmatrix}
+\begin{pmatrix}
+\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21} & \Sigma_{12} \\
+\Sigma_{21}-\Sigma_{22}\Sigma_{22}^{-1}\Sigma_{21} & \Sigma_{22}
+\end{pmatrix}=
+\\
+&\begin{pmatrix}
+I_1 & -\Sigma_{12}\Sigma_{22}^{-1} \\
+0   & I_2
+\end{pmatrix}
+\begin{pmatrix}
+\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21} & \Sigma_{12} \\
+0 & \Sigma_{22}
+\end{pmatrix}=
+\\
+&\begin{pmatrix}
+\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21} & \Sigma_{12}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{22} \\
+0 & \Sigma_{22}
+\end{pmatrix}=
+\\
+&\begin{pmatrix}
+\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21} & 0 \\
+0 & \Sigma_{22}
+\end{pmatrix}
+\end{align}
+Since the off-diagonal elements are all zero, we see that all components of $Z$ are uncorrelated with all components of $X_2$. Since the composite block vector is multinormally distributed, it follows that they are also independent. Hence, the conditional distribution of $Z$ given $X_2$ is simply the corresponding marginal distribution:
+\begin{equation}
+Z|_{X_2=x_2}\sim N(\xi_1-\Sigma_{12}\Sigma_{22}^{-1}\xi_2,\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21})
+\end{equation}
+Here, we've utilized theorem \ref{block_split}. But remember, that $Z=X_1-\Sigma_{12}\Sigma_{22}^{-1}X_2$, or equivalently that $X_1=Z+\Sigma_{12}\Sigma_{22}^{-1}X_2$. So:
+\begin{equation}
+X_1|_{X_2=x_2}=Z|_{X_2=X_2}+(\Sigma_{12}\Sigma_{22}^{-1}X_2)|_{X=X_2}=Z|_{X_2=x_2}+\Sigma_{12}\Sigma_{22}^{-1}x_2
+\end{equation}
+This simply means a shift of the mean, so we end up with:
+\begin{equation}
+X_1|_{X_2=x_2}\sim N(\xi_1+\Sigma_{12}\Sigma_{22}^{-1}(x_2-\xi_2),\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21})
+\end{equation}
+\end{proof}
+
 
 \section{Formulation in terms of precision}
 
