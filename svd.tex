@@ -425,6 +425,27 @@ The second limit formula follows from a completely analogous argument.
 \section{Principal component analysis}
 \textit{Principal component analysis} (or simply PCA) is an algorithm that achieves lossy compression of the information in a data set using SVD.
 
+\subsection{Singular value decomposition of data}
+Let $X$ be an $n\times p$ matrix containing $p$ data points of dimensionality $n$. We will assume that the data has been \textit{normalized}, so that the average of each of the $n$ dimensions is zero. In this case, we may write the empirical covariance matrix as:
+\begin{equation}
+\label{empirical_covariance}
+C=\frac{X^t X}{n-1}
+\end{equation} 
+But, we may also do a singular value decomposition of $X$:
+\begin{equation}
+\label{data_svd}
+X=USV^t
+\end{equation}
+Inserting equation \ref{data_svd} into \ref{empirical_covariance} we get:
+\begin{equation}
+C=\frac{1}{n-1}VSU^t USV^t=\frac{1}{n-1}VS^2 V^t
+\end{equation}
+So, the relationship between the eigenvalues of the covariance matrix and the singular values of $S$ are:
+\begin{equation}
+\lambda_i=\frac{1}{n-1}s_i^2
+\end{equation}
+The orthogonal set of rows vectors of $V$ are called \textit{principal axes} and the corresponding \textit{principal components} are the rows of $XV=USVV^t=US$.
+
 \subsection{Autoencoders}
 An \textit{autoencoder} of a set of data points $x_1,\cdots, x_m\in X=\mathbb{R}^n$ consists of two parts:
 \begin{itemize}
@@ -447,7 +468,6 @@ Here, we will require the decoder to be linear. Hence it can be expressed in mat
 g(c)=Dc,
 \end{equation}
 where $D\in\mathbb{R}^{n\times l}$. Furthermore, we will require the columns of $D$ to be orthonormal to each other. This is of course only possible if $l\le n$, but otherwise there would be no compression, so this is entirely reasonable.
-
 
 
 \end{document}
