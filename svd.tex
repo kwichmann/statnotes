@@ -444,13 +444,13 @@ So, the relationship between the eigenvalues of the covariance matrix and the si
 \begin{equation}
 \lambda_i=\frac{1}{n-1}s_i^2
 \end{equation}
-The orthogonal set of rows vectors of $V$ are called \textit{principal axes} and the corresponding \textit{principal components} are the rows of $XV=USVV^t=US$.
+The orthogonal set of rows vectors of $V$ are called \textit{principal axes} and the corresponding \textit{principal components} are the rows of $XV=USV^t V=US$.
 
 \subsection{Autoencoders}
-An \textit{autoencoder} of a set of data points $x_1,\cdots, x_m\in X=\mathbb{R}^n$ consists of two parts:
+An \textit{autoencoder} of a set of data points $x_1,\cdots, x_p\in\mathbb{R}^n$ consists of two parts:
 \begin{itemize}
-\item A \textit{coder} function $f: X\rightarrow C$, which turns an input vector $x\in X$ into an encoded vector $c=f(x)\in C=\mathbb{R}^l$.
-\item A \textit{decoder} function $g: C\rightarrow X$ which transforms encoded vectors back into vectors from the original space $X$.
+\item A \textit{coder} function $f: \mathbb{R}^n\rightarrow\mathbb{R}^m$, which turns an input vector $x\in\mathbb{R}^n$ into an encoded vector $c=f(x)\in\mathbb{R}^m$.
+\item A \textit{decoder} function $g: \mathbb{R}^m\rightarrow\mathbb{R}^n$ which transforms encoded vectors back into vectors from the original space $\mathbb{R}^n$.
 \end{itemize}
 The coder and decoder should ideally be chosen such that for an input $x$, we get the exact input back when we decode the coded input. In this case the autoencoder is \textit{lossless}:
 \begin{equation}
@@ -467,7 +467,7 @@ Here, we will require the decoder to be linear. Hence it can be expressed in mat
 \begin{equation}
 g(c)=Dc,
 \end{equation}
-where $D\in\mathbb{R}^{n\times l}$. Furthermore, we will require the columns of $D$ to be orthonormal to each other. This is of course only possible if $l\le n$, but otherwise there would be no compression, so this is entirely reasonable.
+where $D\in\mathbb{R}^{n\times m}$. Furthermore, we will require the columns of $D$ to be orthonormal to each other. This is of course only possible if $m\le n$, but otherwise there would be no compression, so this is entirely reasonable.
 
 
 \end{document}
