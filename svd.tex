@@ -106,6 +106,8 @@ Since the $a_i$'s are linearly independent, $A^t A$ is invertible, so:
 \end{equation}
 The actual vector is then $A\beta=A(A^t A)^{-1}A^t x$. Which means that the projection operator $p_U:\mathbb{R}^n\rightarrow U$ is linear with the corresponding matrix being $P_U=A(A^t A)^{-1}A^t$.
 
+Note, that if the basis spanning $U$ is chosen to be orthonormal, $A^t A=I_m$, and so $(A^t A)^{-1}=I_m$. Hence $P_U$ simplifies to $AA^t$ in this case.
+
 \begin{theorem}
 \label{projection_characterization}
 The matrix $P_U$ is symmetric and idempotent.
@@ -462,12 +464,87 @@ Here, we will consider \textit{lossy} compression, where this is only approximat
 \end{equation} 
 What this means exactly will vary according to the approach taken.
 
-\subsection{Linear, "orthogonal" decoder}
+\subsection{Linear decoder}
 Here, we will require the decoder to be linear. Hence it can be expressed in matrix form:
 \begin{equation}
 g(c)=Dc,
 \end{equation}
-where $D\in\mathbb{R}^{n\times m}$. Furthermore, we will require the columns of $D$ to be orthonormal to each other. This is of course only possible if $m\le n$, but otherwise there would be no compression, so this is entirely reasonable.
+where $D\in\mathbb{R}^{n\times m}$. This means that the decoded vectors lie in a subspace of $\mathbb{R}^n$ with a dimension of $m$ or less - in the following we assume this dimension to be $m$. We can think of the coded vector $c$ as coordinates for the basis specified by the rows of $D$. There will be several ways to choose the same transformation, so we must expect to restrict the structure of $D$ somehow. More on that below.
 
+Now, consider a coded vector $c=f(x)$. A sensible way to choose $D$ is to require that the squared distance between $x$ and $g(f(x))=Dc$ to be as small as possible. I.e. we seek to minimize:
+\begin{align}
+||Dc-x||^2=&(Dc-x)^t(Dc-x)=(c^t D^t-x^t)(Dc-x)=\\
+&c^t D^t Dc-c^t D^tx-x^t Dc+x^t x
+\end{align}
+Which encoding minimizes this distance? Let's find out by differentiating with respect to $c$:
+\begin{equation}
+\frac{\partial ||Dc-x||^2}{\partial c}=2D^t Dc-D^t x-D^t x=2(D^t Dc-D^t x)
+\end{equation}
+This is zero when:
+\begin{equation}
+D^t Dc-D^t x=0\Leftrightarrow c=(D^t D)^{-1} D^t x
+\end{equation}
+So the optimal encoding in this sense will be linear as well. This means that the entire coding/decoding can be written as:
+\begin{equation}
+g(f(x))=D(D^t D)^{-1} D^t x
+\end{equation}
+I.e. an orthogonal projection on the image space of $D$.
+
+Now, it is an obvious choice to require the row vectors of $D$ to be orthogonal, as it simplifies the projection operator to $DD^t$:
+\begin{equation}
+g(f(x))=DD^t x
+\end{equation}
+This constraint can be written as $D^t D=I_m$.
+
+\subsection{Full data set}
+This is just one data point however. We have $p$ such points. Because of the linearity we can conveniently write the encoding of all $p$ points in one matrix equation:
+\begin{equation}
+g(f(X))=DD^t X\in\mathbb{R}^{n\times p}
+\end{equation}
+To get the differences between this and the original points, subtract $X$:
+\begin{equation}
+\Delta=X-DD^t X=(I_n-DD^t)X
+\end{equation}
+We may view this matrix as $p$ row vectors of differences:
+\begin{equation}
+\Delta=
+\begin{pmatrix}
+| & \cdots & | \\
+\delta_1 & \cdots & \delta_p \\
+| & \cdots & |
+\end{pmatrix}
+\end{equation}
+We wish to minimize to total, squared distance. To get this, consider the following product:
+\begin{equation}
+\Delta^t \Delta=
+\begin{pmatrix}
+- & \delta_1^t & -\\
+\vdots & \vdots & \vdots \\
+- & \delta_p^t & -
+\end{pmatrix}
+\begin{pmatrix}
+| & \cdots & | \\
+\delta_1 & \cdots & \delta_p \\
+| & \cdots & |
+\end{pmatrix}
+\end{equation}
+So each entry is a dot product between differences, $[\Delta^t \Delta]_{ij}=\delta_i^t\delta_j$. However, we're only interested in the cases where $i=j$. Which means we need to sum over the diagonal: We seek to minimize the \textit{trace} of $\Delta^t \Delta$. However, $\Delta^t \Delta$ can also be written as:
+\begin{equation}
+X^t(I_n-DD^t)^t(I_n-DD^t)X=X^t(I_n-DD^t)(I_n-DD^t)X=X^t(I_n-DD^t)X
+\end{equation}
+Here we've used that since $DD^t$ is a projection operator, so is $I_n-DD^t$. Hence it is idempotent. The trace is:
+\begin{equation}
+\textrm{tr}[X^t(I_n-DD^t)X]=\textrm{tr}[X^tX]-\textrm{tr}[X^t DD^t X]
+\end{equation}
+The first term is just a constant. This means that the problem reduces to maximizing $\textrm{tr}[X^t DD^t X]$, still subject to $D^t D=I_m$.
+
+\subsection{Solving the optimization problem}
+This problem can be solved by induction over $m$. First consider the case where $m=1$. Here $D=d\in\mathbb{R}^{n\times 1}$. The constraint is $d^t d=1$.
+
+A constrained optimization problem such as this can be solved using \textit{Lagrange multipliers}. Here, the constraints can be written as $m^2$ equations:
+\begin{equation}
+d_i^t d_j=\delta_{ij}\Leftrightarrow d_i^t d_j-\delta_{ij}=0
+\end{equation}
+Here $d_i$ is the $i$'s row vector of $D$.
 
 \end{document}
