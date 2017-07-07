@@ -538,8 +538,15 @@ Here we've used that since $DD^t$ is a projection operator, so is $I_n-DD^t$. He
 \end{equation}
 The first term is just a constant. This means that the problem reduces to maximizing $\textrm{tr}[X^t DD^t X]$, still subject to $D^t D=I_m$.
 
-\subsection{Solving the problem for $m=1$}
-This problem can be solved by induction over $m$. First consider the case where $m=1$. Here $D=d\in\mathbb{R}^{n\times 1}$. The constraint is $d^t d=1$. We seek to maximize:
+\subsection{Connection to covariance}
+We now wish to show, that this is equivalent to maximizing the trace over the quadratic form $D^t CD$, where $C$ is the covariance matrix. Note that we're still assuming the data to be normalized, such that equation \ref{empirical_covariance} holds. More specifically, we will prove that:
+\begin{equation}
+\textrm{tr}[X^t DD^t X]=(n-1)\textrm{tr}[D^t CD]
+\end{equation}
+This is done by induction over $m$.
+
+\subsubsection{Base case: $m=1$}
+First consider the case where $m=1$. Here $D=d\in\mathbb{R}^{n\times 1}$. The constraint is $d^t d=1$. We seek to maximize:
 \begin{equation}
 \textrm{tr}[X^t dd^t X]=\sum_{i=1}^p(X^t dd^t X)_{ii}=\sum_{i=1}^p\sum_{j=1}^n X^t_{ij}d_i d_j X_{ji}
 \end{equation}
@@ -547,28 +554,97 @@ Here, we have explicitly written out the sum, and used that $d$ only has one dim
 \begin{equation}
 \sum_{i=1}^p\sum_{j=1}^n d_i X^t_{ij} X_{ji} d_j=\textrm{tr}[d^t X^t Xd]=d^t X^t Xd
 \end{equation}
-In the last step, we've used that the result is $1\times 1$. Now, under the assumption that the data are centered, this is essentially a quadratic form in the covariance matrix of the data. Recall that:
+In the last step, we've used that the result is $1\times 1$. Now, under the assumption that the data are centered, this is essentially a quadratic form in the covariance matrix of the data. Recall that according to equation \ref{empirical_covariance}
 \begin{equation}
 X^t X=(n-1)C
 \end{equation}
-The constant doesn't matter in an optimization problem. This means we seek to maximize $d^t Cd$, still under the constraint that $d^t d=1\Leftrightarrow d^t d-1=0$. Such a constraint can be dealt with through a Lagrange multiplier. The corresponding Lagrangian is:
+So:
 \begin{equation}
-L=d^t Cd-\lambda(d^t d-1)
+\textrm{tr}[X^t dd^t X]=(n-1)d^t Cd
 \end{equation}
-Now find the derivative:
+Since $d^t Cd$ is just a number, it is equal to its own trace. and we're done.
+
+\subsubsection{A practical lemma}
+The following result will be useful, both for the induction step and the maximization itself:
+\begin{theorem}
+\label{split_trace}
+Let $A\in\mathbb{R}^{n\times m}$ be a matrix split into block form as follows:
 \begin{equation}
-\frac{\partial L}{\partial d}=2Cd=2\lambda d,\quad
+A=\begin{pmatrix}
+A' & | & a
+\end{pmatrix},\quad
+A'\in\mathbb{R}^{n\times(m-1)}, a\in\mathbb{R}^{n\times 1}
+\end{equation}
+Furthermore, let $B\in\mathbb{R}^{n\times n}$. Then:
+\begin{equation}
+\textrm{tr}[A^t BA]=\textrm{tr}[(A')^t BA']+a^t Ba
+\end{equation}
+\end{theorem}
+\begin{proof}
+Write out the trace:
+\begin{equation}
+\textrm{tr}[A^t BA]=\sum_{i=1}^m\sum_{j=1}^n\sum_{k=1}^n
+\begin{pmatrix}
+(A')^t \\ - \\ a
+\end{pmatrix}_{ij}
+B_{jk}
+\begin{pmatrix}
+A' & | & a
+\end{pmatrix}_{ki}
+\end{equation}
+Now, split the $i$-sum into two, one from 1 to $m-1$ and the last term where $i=m$.
+\begin{equation}
+\sum_{i=1}^{m-1}\sum_{j=1}^n\sum_{k=1}^n(A')^t_{ij}B_{jk}A_{ki}+\sum_{j=1}^n\sum_{k=1}^n a_j b_{jk}a_k=\textrm{tr}[(A')^t BA']+a^t Ba
+\end{equation}
+\end{proof}
+
+\subsubsection{Induction step: $(m-1)\Rightarrow(m)$}
+Assume the hypothesis true for $m-1$. Now we wish to show that this implies truth for $m$ as well. In the latter case, we may write $D$ in the block form:
+\begin{equation}
+D=\begin{pmatrix}
+D' & | & d
+\end{pmatrix},\quad
+D'\in\mathbb{R}^{n\times(m-1)}, d\in\mathbb{R}^{n\times 1}
+\end{equation}
+Now, use the cyclical property of the trace:
+\begin{equation}
+\textrm{tr}[X^t DD^t X]=\textrm{tr}[D^t XX^t D]
+\end{equation}
+Now use theorem \ref{split_trace} with $A=D$ and $B=XX^t$:
+\begin{equation}
+\textrm{tr}[D^t XX^t D]=\textrm{tr}[(D')^t XX^t D']+d^t XX^t d
+\end{equation}
+Now use the cyclical property again on the first term, and use the same rearranging in the second term as we did in the base case:
+\begin{equation}
+\textrm{tr}[X^t DD^t X]=\textrm{tr}[(D')^t XX^t D']+d^t X^t Xd
+\end{equation}
+According to the induction hypothesis, the first term is $(n-1)\textrm{tr}[(D')^t CD^t]$. And from the induction step reasoning, we know the the second term is $(n-1)d^t Cd$. Now we can use theorem \ref{split_trace} "in reverse":
+\begin{equation}
+(n-1)\textrm{tr}[(D')^t CD^t]+(n-1)d^t Cd=(n-1)\textrm{tr}[D^t CD]
+\end{equation}
+
+\subsection{Solving the maximization problem}
+So, having proven that $\textrm{tr}[X^t DD^t X]=(n-1)\textrm{tr}[D^t CD]$. For optimization, the constant $n-1$ is irrelevant. Now, use theorem \ref{split_trace} repeatedly on $\textrm{tr}[D^t CD]$ to get:
+\begin{equation}
+\textrm{tr}[D^t CD]=d_1^t Cd_1+\cdots +d_m^t Cd_m
+\end{equation}
+Still, this is subject to $D^t D=I_m$. To maximize such a sum, we need to maximize each of the summands. So we have a set of maximization problems with a constraint on our hands. Such a constraint can be dealt with through a Lagrange multiplier. The constraint on each row vector is:
+\begin{equation}
+d_i^t d_i=1\Leftrightarrow d_i^t d_i-1=0
+\end{equation}
+So, the corresponding Lagrangian for the $i$'th equation is:
+\begin{equation}
+L=d_i^t Cd_i+\lambda(d_i^t d_i-1)
+\end{equation}
+Now find the derivatives:
+\begin{equation}
+\frac{\partial L}{\partial d_i}=2Cd_i-2\lambda d_i
 \end{equation}
 Setting this equal to zero, we get an eigenvalue problem:
 \begin{equation}
-Cd=\lambda d
+Cd_i=\lambda d_i
 \end{equation}
-So we search for the normalized eigenvector of $C$ which maximizes $d^t Cd=d^t\lambda d=\lambda$. So we need to pick the largest eigenvalue and the corresponding eigenvector.
+So we search for the normalized eigenvector of $C$ which maximizes $d_i^t Cd_i=d_i^t\lambda d_i=\lambda$. So we need to pick the largest eigenvalues and the corresponding eigenvectors. We can only pick each value once\footnote{Unless the corresponding eigenspace has more than one dimension.} because of the requirement that the rows are orthogonal. In short, we need to pick out the $m$ largest eigenvalues of $C$ and have the rows of $D$ be the corresponding (normalized) eigenvectors - the principal axes.
 
-\subsection{Induction step: $m>1$}
-An intuitive hypothesis based on the result for $m=1$ is, that for a general $m\le n$, the solution is to let $D$ be a matrix of eigenvalues corresponding to th $m$ largest eigenvalues of $C$. We may prove this by induction. The previous section is the induction start. Now consider the induction step.
-
-\subsubsection{$(m)\Rightarrow(m+1)$}
-Assume the hypothesis above to be true for a value $m$. Now we wish to prove this implies the hypothesis fo $(m+1)$.
 
 \end{document}
