@@ -1,0 +1,39 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png, .jpg}
+
+\title{Exponential families}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+These statistical models are of great importance in theoretical statistics.
+
+\section{Definition}
+An \textit{exponential family} in $k$ dimensions on a measurable space $(\mathcal{X},\mathbb{E})$ is a parametrized statistical model $\{\nu_\theta|\theta\in\Theta\}$ with the following ingredients:
+\begin{itemize}
+\item A parameter space $\Theta\subseteq\mathbb{R}^k$ which is an open, convex set.
+\item A measurable function $t:\mathcal{X}\rightarrow\mathbb{R}^k$ known as the \textit{canonical sample function}.
+\item A $\sigma$-finite measure $\mu$ on $(\mathcal{X},\mathbb{E})$ known as the \textit{base measure} for the family.
+\end{itemize}
+The probability measures in the family are then given by:
+\begin{equation}
+\forall A\in\mathbb{E}, \theta\in\Theta:\ \nu_\theta(A)=\frac{1}{c(\theta)}\int_A\exp\left[\theta^t t(x)\right]\ d\mu(x)
+\end{equation}
+Here, $c(\theta)$ is a normalization constant given by:
+\begin{equation}
+c(\theta)=\int_A\exp\left[\theta^t t(x)\right]\ d\mu(x)
+\end{equation}
+We will assume $c(\theta)<\infty$ for all $\theta\in\Theta$. The study of an exponential family often comes down to studying this function, as well as the image measure $t(\mu)$, known as the \textit{structural measure} of the family.
+
+\end{document}
