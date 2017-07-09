@@ -46,7 +46,14 @@ We consider a repeated coin toss, each i.i.d. Bernoulli processes with parameter
 \begin{equation}
 L_k(p)=\binom{n}{k}p^k(1-p)^{n-k}
 \end{equation}
-Here $p\in\Theta=[0,1]$.
+Here $p\in\Theta=[0,1]$. Figure \ref{fig:binomial_likelihood} shows examples of this function.
+
+\begin{figure}
+\centering
+\includegraphics[width=.8\textwidth]{binomial_likelihood}
+\caption{Likelihood function for $n=10$ and $k=2, 5, 9$ (green, red, orange) respectively.}
+\label{fig:binomial_likelihood}
+\end{figure}
 
 Now, er can perform MLE by finding the value of the parameter $p$ which maximizes $L_k$. We differentiate using the product rule:
 \begin{equation}
@@ -58,7 +65,7 @@ k(p^{k-1}(1-p)^{n-k}&=p^k(n-k)(1-p)^{n-k-1}\Leftrightarrow \\
 k(1-p)&=(n-k)p\Leftrightarrow \\
 k&=np
 \end{align}
-In other words, $p_{\textrm{MLE}}=\frac{k}{n}$ This will probably not be much of a surprise to anyone.
+In other words, $p_{\textrm{MLE}}=\frac{k}{n}$. This will probably not be much of a surprise to anyone.
 
 However, this estimate might not always be sensible. Specifically, if you've made a very small amount of count throws. If $n=1$, you will conclude that $p=0$ or $p=1$, which meshes badly with our intuition about coin throws. This may be modelled as a \textit{prior distribution} of $p$, leading to a Bayesian analysis. Contrast with the case where $m\gg 1$: When we have a lot of repetitions, we will be more certain of the value of the parameter $p$. This idea of probability as a limit for a large number of repetitions is at the heart of the frequentist interpretation.
 
@@ -105,9 +112,40 @@ V_x(\theta)=\nabla_\theta l_x(\theta)
 \end{equation}
 \item The \textit{observed information function} is the Hessian matrix of the log-likelihood function:
 \begin{equation}
-\mathcal{J}_x(\theta)=H\theta[l_x(\theta)]=\nabla_\theta\nabla^t_\theta l_x(\theta)
+\mathcal{J}_x(\theta)=H_\theta[l_x(\theta)]=\nabla_\theta\nabla^t_\theta l_x(\theta)
 \end{equation}
-
 \end{itemize}
+
+\subsection{Example: Coin toss}
+As we saw above, here the likelihood is given by the binomial distribution:
+\begin{equation}
+L_k(p)=\binom{n}{k}p^k(1-p)^{n-k}\Rightarrow l_k(p)=-\log\binom{n}{k}-k\log p-(n-k)\log(1-p)
+\end{equation}
+Now to get the score function, we differentiate with respect to $p$:
+\begin{equation}
+V_k(p)=\frac{\partial l_x}{\partial p}=-\frac{k}{p}+\frac{n-k}{1-p}=\frac{(n-k)p-k(1-p)}{p(1-p)}=\frac{n-k}{p(1-p)}
+\end{equation}
+Three examples of the score function are shown in figure \ref{fig:binomial_score}.
+
+\begin{figure}
+\centering
+\includegraphics[width=.8\textwidth]{binomial_score}
+\caption{Score function for $n=10$ and $k=2, 5, 9$ (green, red, orange) respectively.}
+\label{fig:binomial_score}
+\end{figure}
+
+The observed information function, like the score function, is simply a scalar in this case:
+\begin{equation}
+\mathcal{J}_x(p)=\frac{\partial V_x}{\partial p}=\frac{k}{p^2}+\frac{n-k}{(1-p)^2}
+\end{equation}
+Examples of these functions are shown in figure \ref{fig:binomial_observed_information}.
+
+\begin{figure}
+\centering
+\includegraphics[width=.8\textwidth]{binomial_observed_information}
+\caption{Observed information function for $n=10$ and $k=2, 5, 9$ (green, red, orange) respectively.}
+\label{fig:binomial_observed_information}
+\end{figure}
+
 
 \end{document}
