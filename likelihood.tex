@@ -55,7 +55,7 @@ Here $p\in\Theta=[0,1]$. Figure \ref{fig:binomial_likelihood} shows examples of 
 \label{fig:binomial_likelihood}
 \end{figure}
 
-Now, er can perform MLE by finding the value of the parameter $p$ which maximizes $L_k$. We differentiate using the product rule:
+Now, we can perform MLE by finding the value of the parameter $p$ which maximizes $L_k$. We differentiate using the product rule:
 \begin{equation}
 \frac{\partial L_k}{\partial p}=\binom{n}{k}\left(k(p^{k-1}(1-p)^{n-k}-p^k(n-k)(1-p)^{n-k-1}\right)
 \end{equation}
@@ -95,7 +95,7 @@ l_x(\mu)=-\log L_x(\mu)=-n\log\frac{1}{\sqrt{2\pi\sigma^2}}+\sum_{i=1}^n\frac{(w
 \end{equation}
 Differentiating to find the minimum:
 \begin{equation}
-\frac{\partial l_x}{\partial\mu}=\frac{1}{2\sigma^2}\sum_{i=1}^n 2(w_i-\mu)=\frac{1}{\sigma^2}\sum_{i=1}^n w_i-n\mu
+\frac{\partial l_x}{\partial\mu}=\frac{1}{2\sigma^2}\sum_{i=1}^n 2(w_i-\mu)=\frac{1}{\sigma^2}\left[\sum_{i=1}^n w_i-n\mu\right]
 \end{equation}
 Setting this to zero we find:
 \begin{equation}
@@ -103,7 +103,7 @@ Setting this to zero we find:
 \end{equation}
 Once again, hardy a surprising result.
 
-\section{Score function and observed information function}
+\section{Score function and observed information}
 When the parameter space is an open subset of $\mathbb{R}^k$ (usually the case), we define these as follows:
 \begin{itemize}
 \item The \textit{score function} is the gradient of the log-likelihood:
@@ -115,8 +115,7 @@ V_x(\theta)=\nabla_\theta l_x(\theta)
 \mathcal{J}_x(\theta)=H_\theta[l_x(\theta)]=\nabla_\theta\nabla^t_\theta l_x(\theta)
 \end{equation}
 \end{itemize}
-
-
+The \textit{observed information} is the observed information function evaluated at the MLE estimator: $\mathcal{J}_x(\theta_{\textrm{MLE}})$.
 
 \subsection{Example: Coin toss}
 As we saw above, here the likelihood is given by the binomial distribution:
@@ -150,13 +149,21 @@ Examples of these functions are shown in figure \ref{fig:binomial_observed_infor
 \label{fig:binomial_observed_information}
 \end{figure}
 
+The observed information is found by setting $p=p_{\textrm{MLE}}=\frac{k}{n}$ in \ref{binomial_observed_information}:
+\begin{equation}
+\frac{kn^2}{k^2}+\frac{n-k}{\frac{(n-k)^2}{n^2}}=\frac{n^2}{k}+\frac{n^2}{n-k}=\frac{n^2(n-k+k)}{k(n-k)}=\frac{n}{\frac{k}{n}\cdot\left(1-\frac{k}{n}\right)}
+\end{equation}
+Reinstating $p_{\textrm{MLE}}$, this means that the observed information is:
+\begin{equation}
+\frac{n}{p_{\textrm{MLE}}(1-p_{\textrm{MLE}})}
+\end{equation}
 
 \section{Fisher information}
 The \textit{Fisher information} (somtimes simply called the information) is the expected value of the observed information function:
 \begin{equation}
 \mathcal{I}(\theta)=E[\mathcal{J}_x(\theta)]
 \end{equation}
-Note that this is not a function of the actual outcome - The Fisher information is a property of the model, not the actual observations.
+Note that this is not a function of the actual outcome - The Fisher information is a property of the model, not the realized observations.
 
 \subsection{Example: Bernoulli distribution}
 The (log)likelihood for a random Bernoulli variable $X$ is:
@@ -204,5 +211,61 @@ All in all, we get:
 \mathcal{I}(p)=\frac{n}{p(1-p)}
 \end{equation}
 
+\section{Bartlett's identities}
+These identities holds when the log-likelihood is sufficiently nice that integration and differentiation with respect to $\theta$ are interchangeable. In that case, the following two theorems are true:
+\begin{theorem}
+The expectation value of the score function is zero:
+\begin{equation}
+E[V_x(\theta)]=0
+\end{equation}
+\end{theorem}
+\begin{proof}
+To prove the identity, note that because $L_x(\theta)$ regarded as a function of $x$ is a probability density function we have:
+\begin{equation}
+\int L_x(\theta)\ d\mu(x)=1
+\end{equation}
+Differentiating with respect to $\theta$ on each side of the equation and using the regularity assumption above we get:
+\begin{equation}
+\frac{\partial}{\partial\theta}\int L_x(\theta)\ d\mu(x)=\int\frac{\partial}{\partial\theta}L_x(\theta)\ d\mu(x)=0
+\end{equation}
+Now rewrite the integrand by multiplying by 1 in the form $\frac{L_x(\theta)}{L_x(\theta)}$ (we assume that the likelihood is positive everywhere):
+\begin{equation}
+\int\underbrace{\frac{\frac{\partial L_x}{\partial\theta}}{L_x(\theta)}}L_x(\theta)\ d\mu(x)=0
+\end{equation}
+Now, the underbraced part is actually the score function except for a sign change, since:
+\begin{equation}
+V_x(\theta)=\frac{\partial l_x}{\partial\theta}=-\frac{\partial}{\partial\theta}\log L_x(\theta)=-\frac{1}{L_x(\theta)}\frac{\partial L_x}{\partial\theta}
+\end{equation}
+Which means:
+\begin{equation}
+\int V_x(\theta)L_x(\theta)\ d\mu(x)=0
+\end{equation}
+But this is just the expected value.
+\end{proof}
+
+\begin{theorem}
+The variance of the score function is equal to the Fisher information:
+\begin{equation}
+\textrm{Var}(V_x(\theta))=\mathcal{I}(\theta)
+\end{equation}
+\end{theorem}
+\begin{proof}
+The proof uses the same basic idea as above, except that a second derivative is used:
+\begin{equation}
+\frac{\partial^2}{\partial\theta^2}\int L_x(\theta)\ d\mu(x)=\int\frac{\partial^2}{\partial\theta^2}L_x(\theta)\ d\mu(x)=0
+\end{equation}
+Following the same steps as above, the integrand can be written as:
+\begin{align}
+\frac{\partial}{\partial\theta}\left[V_x(\theta)L_x(\theta)\right]=&\frac{\partial V_x}{\partial\theta}L_x(\theta)+V_x(\theta)\frac{\partial L_x}{\partial\theta} \\
+&\mathcal{J}_x(\theta)L_x(\theta)-\left(V_x(\theta)\right)^2 L_x(\theta)
+\end{align}
+Here, the second term has been rewritten in the same way we did above. Now, when integrating this yields:
+\begin{equation}
+\mathcal{I}(\theta)-\textrm{Var}(V_x(\theta))=0
+\end{equation}
+Here we've used that the expectation value of the score is zero. The desired result immediately follows.
+\end{proof}
+
+These are known as Bartlett's first and second identity, respectively. In principle, one could continue this pattern to higher order derivatives for more identities.
 
 \end{document}
