@@ -116,6 +116,8 @@ V_x(\theta)=\nabla_\theta l_x(\theta)
 \end{equation}
 \end{itemize}
 
+
+
 \subsection{Example: Coin toss}
 As we saw above, here the likelihood is given by the binomial distribution:
 \begin{equation}
@@ -136,7 +138,8 @@ Three examples of the score function are shown in figure \ref{fig:binomial_score
 
 The observed information function, like the score function, is simply a scalar in this case:
 \begin{equation}
-\mathcal{J}_x(p)=\frac{\partial V_x}{\partial p}=\frac{k}{p^2}+\frac{n-k}{(1-p)^2}
+\label{binomial_observed_information}
+\mathcal{J}_k(p)=\frac{\partial V_k}{\partial p}=\frac{k}{p^2}+\frac{n-k}{(1-p)^2}
 \end{equation}
 Examples of these functions are shown in figure \ref{fig:binomial_observed_information}.
 
@@ -146,6 +149,60 @@ Examples of these functions are shown in figure \ref{fig:binomial_observed_infor
 \caption{Observed information function for $n=10$ and $k=2, 5, 9$ (green, red, orange) respectively.}
 \label{fig:binomial_observed_information}
 \end{figure}
+
+
+\section{Fisher information}
+The \textit{Fisher information} (somtimes simply called the information) is the expected value of the observed information function:
+\begin{equation}
+\mathcal{I}(\theta)=E[\mathcal{J}_x(\theta)]
+\end{equation}
+Note that this is not a function of the actual outcome - The Fisher information is a property of the model, not the actual observations.
+
+\subsection{Example: Bernoulli distribution}
+The (log)likelihood for a random Bernoulli variable $X$ is:
+\begin{equation}
+L_x(p)=p^x(1-p)^{1-x}\Rightarrow l_x(p)=-x\log p-(1-x)\log(1-p)
+\end{equation}
+The score function is:
+\begin{equation}
+V_x(p)=-\frac{x}{p}+\frac{1-x}{1-p}
+\end{equation}
+The observed information function is:
+\begin{equation}
+\mathcal{J}_x(p)=\frac{x}{p^2}+\frac{1-x}{(1-p)^2}
+\end{equation}
+Now, to get the Fisher information we find the expectation value by summing over the two possible values of $x$:
+\begin{align}
+\mathcal{I}(p)=E[\mathcal{J}_x(p)]=&\sum_x P(X=x)\mathcal{J}_x(p)=p\frac{1}{p^2}+(1-p)\frac{1}{(1-p)^2}= \\
+&\frac{1}{p}+\frac{1}{1-p}=\frac{1-p+p}{p(1-p)}=\frac{1}{p(1-p)}
+\end{align}
+This is simply the reciprocal of the variance of $X$.
+
+\subsection{Example: Binomial distribution}
+From equation \ref{binomial_observed_information} we know that:
+\begin{equation}
+\mathcal{J}_k(p)=\frac{k}{p^2}+\frac{n-k}{(1-p)^2}=\frac{(1-p)^2 k+p^2(n-k)}{p^2(1-p)^2}
+\end{equation}
+The numerator is:
+\begin{equation}
+(1-2p+p^2)k+p(n-k)=k-2pk+p^2 k+pn-pk=k-2pk+np^2
+\end{equation}
+So:
+\begin{equation}
+\mathcal{J}_k(p)=\frac{(1-2p)k+np^2}{p^2(1-p)^2}
+\end{equation}
+Now, the Fisher information is found by taking the expectation value of this, again by summing over outcomes (here $n+1$ possibilities). This means that everything that does not involve $k$ can be taken outside of the expectation:
+\begin{equation}
+\mathcal{I}(p)=E[\mathcal{J}_x(p)]=\frac{1}{p^2(1-p)^2}((1-2p)\ E[k]+np^2)
+\end{equation}
+The expected value of $k$ is $np$, so the parenthesis is equal to:
+\begin{equation}
+(1-2p)np+np^2=np-2np^2+np^2=np-np^2=n(p-p^2)=np(1-p)
+\end{equation}
+All in all, we get:
+\begin{equation}
+\mathcal{I}(p)=\frac{n}{p(1-p)}
+\end{equation}
 
 
 \end{document}
