@@ -268,4 +268,50 @@ Here we've used that the expectation value of the score is zero. The desired res
 
 These are known as Bartlett's first and second identity, respectively. In principle, one could continue this pattern to higher order derivatives for more identities.
 
+\section{Likelihood for exponential families}
+Recall, that an exponential family $\mathcal{P}$ on a measurable space $(\mathcal{X},\mathbb{E})$ has parameter space $\Theta\subseteq\mathbb{R}^k$, a measurable $t:\mathbb{E}\rightarrow\mathbb{R}^k$ and a base measure $\mu$ on $(\mathcal{X},\mathbb{E})$ such that:
+\begin{equation}
+\forall A\in\mathbb{E}, \theta\in\Theta:\ \nu_\theta(A)=\frac{1}{c(\theta)}\int_A\exp\left[\theta^t t(x)\right]\ d\mu(x)
+\end{equation}
+Here $c(\theta)$ is a normalization constant. In other words, $\mu$ is a dominating measure for the model, and the associated likelihood function is:
+\begin{equation}
+L_x(\theta)=\frac{1}{c(\theta)}\exp[\theta^t t(x)]
+\end{equation}
+
+\subsection{Useful identities}
+These formulas from the general theory of exponentials families will come in handy in a second:
+\begin{equation}
+\label{t_mean}
+\frac{\partial}{\partial\theta}\log c(\theta)=E[t(x)]\equiv\tau(\theta)
+\end{equation}
+\begin{equation}
+\label{t_variance}
+\frac{\partial^2}{\partial\theta^2}\log c(\theta)=\textrm{Var}(t(x))\equiv\kappa(\theta)
+\end{equation}
+
+\subsection{Log-likelihood}
+The log-likelihood function takes on a particularly simple form for such a model:
+\begin{equation}
+l_x(\theta)=-\log L_x(\theta)=\log c(\theta)-\theta^t t(x)
+\end{equation}
+
+\subsection{Score function}
+The score function is then:
+\begin{equation}
+V_x(\theta)=\frac{\partial l_x}{\partial\theta}=\frac{\partial c}{\partial\theta}-t(x)
+\end{equation}
+Using equation \ref{t_mean} this becomes:
+\begin{equation}
+V_x(\theta)=\tau(\theta)-t(x)
+\end{equation}
+
+\subsection{Observed information function}
+The observed information function is:
+\begin{equation}
+\mathcal{J}_x(\theta)=\frac{\partial^2 l_x}{\partial\theta^2}=\frac{\partial^2 c}{\partial\theta^2}=\kappa(\theta)
+\end{equation}
+This means that - somewhat counter-intuitive - the observed information function does not depend on the observation $x$ at all!
+
+This has the immediate consequence that the observed information as well as the Fisher information is also equal to $\kappa(\theta)$. 
+
 \end{document}
