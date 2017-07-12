@@ -11,7 +11,7 @@
 \graphicspath{ {img/} }
 \DeclareGraphicsExtensions{.png, .jpg}
 
-\title{Likelihood}
+\title{Likelihood theory}
 \author{Kristian Wichmann}
 
 \begin{document}
@@ -158,8 +158,55 @@ Reinstating $p_{\textrm{MLE}}$, this means that the observed information is:
 \frac{n}{p_{\textrm{MLE}}(1-p_{\textrm{MLE}})}
 \end{equation}
 
+\subsection{Example: Fish weights}
+Again, consider the example with the normally distributed fish weights, this time with an unknown variance $\sigma^2$ as well. The likelihood function in this case is:
+\begin{equation}
+L_x(\mu,\sigma^2)=\prod_{i=1}^n\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{(x_i-\mu)^2}{2\sigma^2}\right]
+\end{equation}
+Here, $x_i$ is the observed weight of the $i$'th fish. The log-likelihood is:
+\begin{equation}
+l_x(\mu,\sigma^2)=-\log L_x(\mu,\sigma^2)=\frac{n}{2}\log(2\pi)+\frac{n}{2}\log\sigma^2+\sum_{i=1}^n\frac{(x_i-\mu)^2}{2\sigma^2}
+\end{equation}
+The score function is then a two dimensional vector:
+\begin{equation}
+V_x(\mu,\sigma^2)=\left(\frac{\partial l_x}{\partial\mu}\quad\frac{\partial l_x}{\partial(\sigma^2)}\right)^t
+\end{equation}
+Note that it's $\sigma^2$ which is the parameter, not $\sigma$ itself. Differentiating with respect to each parameter, we find:
+\begin{align}
+\frac{\partial l_x}{\partial\mu}=&\frac{1}{2\sigma^2}\sum_{i=1}^n 2(x_i-\mu)(-1)=-\frac{1}{\sigma^2}\sum_{i=1}^n(x_i-\mu)\\
+\frac{\partial l_x}{\partial(\sigma^2)}=&\frac{n}{2}\frac{1}{\sigma^2}-\frac{1}{2(\sigma^2)^2}\sum_{i=1}^n(x_i-\mu)^2
+\end{align}
+That makes the score vector:
+\begin{equation}
+V_x(\mu,\sigma^2)=\left(-\frac{1}{\sigma^2}\sum_{i=1}^n(x_i-\mu)\quad\frac{n}{2\sigma^2}-\frac{1}{2\sigma^4}\sum_{i=1}^n(x_i-\mu)^2\right)^t
+\end{equation}
+The observed information function is a two by two matrix:
+\begin{equation}
+\mathcal{J}_x(\mu,\sigma^2)=
+\begin{pmatrix}
+\frac{\partial^2 l_x}{\partial\mu^2} & \frac{\partial^2 l_x}{\partial\mu\partial(\sigma^2)} \\
+\frac{\partial^2 l_x}{\mu\partial(\sigma^2)\partial} & \frac{\partial^2 l_x}{\partial(\sigma^2)^2}
+\end{pmatrix}
+\end{equation}
+By the usual rules of second partial derivatives, the matrix is symmetric, so there's three calculations to be done:
+\begin{align}
+\frac{\partial^2 l_x}{\partial\mu^2}=&\frac{\partial}{\partial\mu}\left[-\frac{1}{\sigma^2}\sum_{i=1}^n(x_i-\mu)\right]=\frac{1}{\sigma^2}\sum_{i=1}^n1=\frac{n}{\sigma^2}\\
+\frac{\partial^2 l_x}{\partial\mu\partial(\sigma^2)}=&\frac{\partial}{\partial(\sigma^2)}\left[-\frac{1}{\sigma^2}\sum_{i=1}^n(x_i-\mu)\right]=\frac{1}{\sigma^4}\sum_{i=1}^n(x_i-\mu) \\
+\frac{\partial^2 l_x}{\partial(\sigma^2)^2}=&\frac{\partial}{\partial(\sigma^2)}\left[\frac{n}{2\sigma^2}-\frac{1}{2(\sigma^2)^2}\sum_{i=1}^n(x_i-\mu)^2\right]=\\
+&-\frac{n}{2(\sigma^2)^2}+\frac{1}{(\sigma^2)^3}\sum_{i=1}^n(x_i-\mu)^2
+\end{align}
+Putting it all together:
+\begin{equation}
+\label{normal_observed_information}
+\mathcal{J}_x(\mu,\sigma^2)=
+\begin{pmatrix}
+\frac{n}{\sigma^2} & \frac{1}{\sigma^4}\sum_{i=1}^n(x_i-\mu) \\
+\frac{1}{\sigma^4}\sum_{i=1}^n(x_i-\mu) & -\frac{n}{2\sigma^4}+\frac{1}{\sigma^6}\sum_{i=1}^n(x_i-\mu)^2
+\end{pmatrix}
+\end{equation}
+
 \section{Fisher information}
-The \textit{Fisher information} (somtimes simply called the information) is the expected value of the observed information function:
+The \textit{Fisher information} (sometimes simply called the information) is the expected value of the observed information function:
 \begin{equation}
 \mathcal{I}(\theta)=E[\mathcal{J}_x(\theta)]
 \end{equation}
@@ -271,6 +318,7 @@ These are known as Bartlett's first and second identity, respectively. In princi
 \section{Likelihood for exponential families}
 Recall, that an exponential family $\mathcal{P}$ on a measurable space $(\mathcal{X},\mathbb{E})$ has parameter space $\Theta\subseteq\mathbb{R}^k$, a measurable $t:\mathbb{E}\rightarrow\mathbb{R}^k$ and a base measure $\mu$ on $(\mathcal{X},\mathbb{E})$ such that:
 \begin{equation}
+\label{exponential_family}
 \forall A\in\mathbb{E}, \theta\in\Theta:\ \nu_\theta(A)=\frac{1}{c(\theta)}\int_A\exp\left[\theta^t t(x)\right]\ d\mu(x)
 \end{equation}
 Here $c(\theta)$ is a normalization constant. In other words, $\mu$ is a dominating measure for the model, and the associated likelihood function is:
@@ -313,5 +361,9 @@ The observed information function is:
 This means that - somewhat counter-intuitive - the observed information function does not depend on the observation $x$ at all!
 
 This has the immediate consequence that the observed information as well as the Fisher information is also equal to $\kappa(\theta)$. 
+
+But wait! We know that the binomial and normal distributions are both exponential families. Yet, above we found their observed information functions in equations \ref{binomial_observed_information} and \ref{normal_observed_information} to explicitly depend on the observations. So what is happening? The problem is, that these distributions are not "naturally" formulated in the exponential form above: \textit{Reparametrization} is needed to express them in the form of equation \ref{exponential_family}.
+
+\section{Reparametrization}
 
 \end{document}
