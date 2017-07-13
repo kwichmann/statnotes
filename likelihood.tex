@@ -365,5 +365,58 @@ This has the immediate consequence that the observed information as well as the 
 But wait! We know that the binomial and normal distributions are both exponential families. Yet, above we found their observed information functions in equations \ref{binomial_observed_information} and \ref{normal_observed_information} to explicitly depend on the observations. So what is happening? The problem is, that these distributions are not "naturally" formulated in the exponential form above: \textit{Reparametrization} is needed to express them in the form of equation \ref{exponential_family}.
 
 \section{Reparametrization}
+A reparametrization of a model is a transformation of the parameter space. To study such a connection, consider two different, injective parametrizations of the same model $\mathcal{P}$ on $(\mathcal{X},\mathbb{E},\mu)$:
+\begin{equation}
+P_\Theta:\Theta\rightarrow\mathcal{P}, \theta\mapsto\nu_\theta,\quad P_\Lambda:\Lambda\rightarrow\mathcal{P},\lambda\mapsto\xi_\lambda
+\end{equation}
+Because of injectivity, both of these are invertible. Therefore a reparametrization from $\Theta$ to $\Lambda$ can be achieved by:
+\begin{equation}
+\phi=P_\Lambda^{-1}\circ P_\Theta
+\end{equation}
+This means that:
+\begin{equation}
+\nu_\theta=\xi_{\phi(\theta)}
+\end{equation}
+Now, since $\mu$ dominates the model, each $\nu$ and $\xi$ has a density function with respect to $\mu$. For $\xi_\lambda$, let's call this density $f_\lambda$. This means that the likelihood for the parametrization $P_\Lambda$ is:
+\begin{equation}
+L_x(\lambda)=f_\lambda(x)
+\end{equation}
+But since $\nu_\theta=\xi_{\phi(\theta)}$ this means we can get the likelihood for the parametrization $P_\Theta$:
+\begin{equation}
+\label{reparametrization}
+\tilde{L}_x(\theta)=f_{\phi(\theta)}(x)=(L_x\circ\phi)(\theta)
+\end{equation}
+Here, we've used a tilde to make it clear that this is a different likelihood function.
+
+\subsection{Example: Coin toss}
+The likelihood in terms of the probability of heads $p$ is:
+\begin{equation}
+L_k(p)=\binom{n}{k}p^k(1-p)^{n-k}
+\end{equation}
+Now, we wish to reparametrize to the log odds $\psi$:
+\begin{equation}
+\psi=\log\frac{p}{1-p}
+\end{equation}
+We may express $p$ in terms of $\psi$ as follows:
+\begin{equation}
+e^\psi=\frac{p}{1-p}\Leftrightarrow e^\psi-pe^\psi=p\Leftrightarrow p\left(1+e^\psi\right)=e^\psi\Leftrightarrow p=\frac{e^\psi}{1+e^\psi}
+\end{equation}
+So, our reparametrization function $\phi$ is given by:
+\begin{equation}
+\phi:p\mapsto\frac{e^\psi}{1+e^\psi}
+\end{equation}
+Now equation \ref{reparametrization} becomes:
+\begin{equation}
+\tilde{L}_k(\psi)=\binom{n}{k}\left(\frac{e^\psi}{1+e^\psi}\right)^k\left(1-\frac{e^\psi}{1+e^\psi}\right)^{n-k}
+\end{equation}
+The contents of the second parenthesis may be rewritten:
+\begin{equation}
+1-\frac{e^\psi}{1+e^\psi}=\frac{1+e^\psi-e^\psi}{1+e^\psi}=\frac{1}{1+e^\psi}
+\end{equation}
+This means:
+\begin{equation}
+\tilde{L}_k(\psi)=\binom{n}{k}\frac{e^{\psi k}}{(1+e^\psi)^n}
+\end{equation}
+This parametrization is an exponential family in the usual form, with the dominating measure being the counting measure on $\{0,1,2,\cdots,k\}$ times $\binom{n}{k}$, the sample function being canonical (identity) and $c(\psi)=\frac{1}{(1+e^\psi)^n}$.
 
 \end{document}
