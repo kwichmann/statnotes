@@ -1,0 +1,108 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png, .jpg}
+
+\title{General feed forward neural networks}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Formalism and nomenclature}
+Consider a feed forward neural net with $L+1$ layers, in the sense that layer zero is the input layer and layer $L$ the output layer. Each non-input layer has its own activation function $\sigma_l$.
+
+The size of layer $l$ we will denote $S_l$. So layer $l$ has a $S_l\times S_{l-1}$ matrix of weights $W^{(l)}$ and a bias vector $b^{(l)}$ with dimension $S_l$. So, given an input vector $x$ (with dimension $S_{l-1}$), the pre-activation and the activation of layer $l$ can be expressed as:
+\begin{equation}
+\label{forward_propagation}
+z^{(l)}=W^{(l)} x + b^{(l)},\quad a^{(l)}=\sigma_l(z^{(l)})=\sigma_l(W^{(l)} x + b^{(l)})
+\end{equation}
+
+We will consider $N$ data points, each with a feature vector of dimension $S_0$. We group these into an $S_0\times N$ matrix $X$:
+\begin{equation}
+X=
+\begin{pmatrix}
+| & \cdots & | \\
+x_1 & \cdots & x_N \\
+| & \cdots & |
+\end{pmatrix}
+\end{equation}
+Note that this is the transpose of the usual "data frame" structure.
+
+We can now write the pre-activations and activations of the first layer as:
+\begin{equation}
+Z^{(1)}=W^{(1)} X+b^{(1)},\quad A^{(1)}=\sigma_1(Z^{(1)})=\sigma_1(W^{(1)} X+b^{(1)})
+\end{equation}
+Here, we've used "$+b^{(1)}$" as a shorthand for adding the vector $b^{(1)}$ to every column. We could write this as "$+b^{(1)} J^t_{N}$" if we wanted to be accurate. ($J_N$ is a column vector of $N$ ones).
+
+Similarly, we may generally write the pre-activations and activations of layer $l$ as:
+\begin{equation}
+Z^{(l)}=W^{(l)} A^{(l-1)}+b^{(l)},\quad A^{(l)}=\sigma_l(Z^{(l)})=\sigma_l(W^{(l)} A^{(l-1)}+b^{(l)})
+\end{equation}
+
+Finally, we have an error function $J$ which measures the distance to some target data $T\in\mathbb{R}^{S_L\times N}$:
+\begin{equation}
+T=
+\begin{pmatrix}
+| & \cdots & | \\
+t_1 & \cdots & t_N \\
+| & \cdots & |
+\end{pmatrix}
+\end{equation}
+We will assume the error function is of the form $J=J(T,A^{(L)})$, taking on real values. I.e. it only depends on the targets and the activations of the output layer.
+
+\section{Backpropagation}
+Forward propagation through the network is described by equation \ref{forward_propagation}. The procedure is assumed to be done before we look at how to determine partial derivatives of $J$ through backpropagation.
+
+\subsection{Output layer}
+The derivatives with respect to the output layer weights and biases will take a rather abstract form in this general formalism:
+\begin{equation}
+\label{output_grad}
+\frac{\partial J}{\partial W^{(L)}_{ij}}=\sum_{k=1}^{S_L}\sum_{n=1}^N\frac{\partial J}{\partial A^{(L)}_{kn}}\frac{\partial A^{(L)}_{kn}}{\partial W^{(L)}_{ij}},\quad\frac{\partial J}{\partial b^{(L)}_i}=\sum_{k=1}^{S_L}\sum_{n=1}^N\frac{\partial J}{\partial A^{(L)}_{kn}}\frac{\partial A^{(L)}_{kn}}{\partial b^{(L)}_i}
+\end{equation}
+We may find the derivatives of $A^{(L)}$ with respect to the weights and biases:
+\begin{equation}
+\label{output_a_grad}
+\frac{\partial A^{(L)}_{kn}}{\partial W^{(L)}_{ij}}=\frac{\partial\sigma_L}{\partial Z^{(L)}_{kn}}\frac{\partial Z^{(L)}_{kn}}{\partial W^{(L)}_{ij}}
+\end{equation}
+Finally, we may calculate the derivatives of $Z^{(L)}$ with respect to the weights:
+\begin{equation}
+\frac{\partial Z^{(L)}_{kn}}{\partial W^{(L)}_{ij}}=\frac{\partial}{\partial W^{(L)}_{ij}}(W^{(L)}A^{(L-1)}+b^{(L)})_{kn}=\frac{\partial}{\partial W^{(L)}_{ij}}\left(\sum_{l=1}^{S_{L-1}}W^{(L)}_{kl}A^{(L-1)}_{ln}+b^{(L)}_k\right)
+\end{equation}
+Differentiating $W^{(L)}$ with respect to $W^{(L)}$ yields two Kronecker deltas:
+\begin{equation}
+\label{output_z_grad}
+\frac{\partial Z^{(L)}_{kn}}{\partial W^{(L)}_{ij}}=\sum_{l=1}^{S_{L-1}}\delta_{ik}\delta_{jl}A^{(L-1)}_{ln}=\delta_{ik} A^{(L-1)}_{jn}
+\end{equation}
+Now, we may insert equations \ref{output_a_grad} and \ref{output_z_grad} into \ref{output_grad}:
+\begin{equation}
+\frac{\partial J}{\partial W^{(L)}_{ij}}=\sum_{k=1}^{S_L}\sum_{n=1}^N\frac{\partial J}{\partial A^{(L)}_{kn}}\frac{\partial\sigma_L}{\partial Z^{(L)}_{kn}}\delta_{ik} A^{(L-1)}_{jn}=\sum_{n=1}^N\frac{\partial J}{\partial A^{(L)}_{in}}\frac{\partial\sigma_L}{\partial Z^{(L)}_{in}}A^{(L-1)}_{jn}
+\end{equation}
+We can rewrite this in matrix form by using the Hadamard product between the two derivatives and swapping the indices of $A^{(L-1)}$, turning into a transpose:
+\begin{equation}
+\label{output_weights_matrix}
+\frac{\partial J}{\partial W^{(L)}}=\left[\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]\left(A^{(L-1)}\right)^t
+\end{equation}
+The procedure for the biases is the same until we get to the $Z^{(L)}$ derivative:
+\begin{equation}
+\frac{\partial Z^{(L)}_{kn}}{\partial b^{(L)}_i}=\frac{\partial}{\partial b^{(L)}_i}\left(\sum_{l=1}^{S_{L-1}}W^{(L)}_{kl}A^{(L-1)}_{ln}+b^{(L)}_k\right)=\delta_{ik}
+\end{equation}
+Reinserting all the way back to equation \ref{output_grad} we get:
+\begin{equation}
+\frac{\partial J}{\partial b^{(L)}_i}=\sum_{k=1}^{S_L}\sum_{n=1}^N\frac{\partial J}{\partial A^{(L)}_{kn}}\frac{\partial\sigma_L}{\partial Z^{(L)}_{kn}}\delta_{ik}=\sum_{n=1}^N\frac{\partial J}{\partial A^{(L)}_{in}}\frac{\partial\sigma_L}{\partial Z^{(L)}_{in}}
+\end{equation}
+Again, we can write this is matrix notation using the Hadamard product:
+\begin{equation}
+\label{output_bias_matrix}
+\frac{\partial J}{\partial b^{(L)}_i}=\left[\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]J_N^t
+\end{equation}
+
+\end{document}
