@@ -105,4 +105,32 @@ Again, we can write this is matrix notation using the Hadamard product:
 \frac{\partial J}{\partial b^{(L)}_i}=\left[\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]J_N^t
 \end{equation}
 
+\subsubsection{Example error function: Euclidean distance}
+A common form of error function is:
+\begin{equation}
+J(T,A^{(L)})=\frac{1}{2N}\sum_{m=1}^N||a^{(L)}_m-t_m||^2
+\end{equation}
+Here, $a^{(L)}_m$ is the $m$'th column of $A^{(L)}$ and the double dashes is the usual Euclidean norm in $S_L$ dimensions. So we may rewrite:
+\begin{equation}
+J(T,A^{(L)})=\frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}(A^{(L)}_{jm}-T_{jm})^2
+\end{equation}
+Now we can find the derivative:
+\begin{equation}
+\frac{\partial J}{\partial A^{(L)}_{in}}=\frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}\frac{\partial}{\partial A^{(L)}_{in}}(A^{(L)}_{jm}-T_{jm})^2
+\end{equation}
+Again, we get two Kronecker deltas:
+\begin{equation}
+\frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}2(A^{(L)}_{jm}-T_{jm})\delta_{ij}\delta_{nm}=\frac{1}{N}(A^{(L)}_{in}-T_{in})
+\end{equation}
+The quantity in parenthesis is the $ij$ element of the error term matrix for the output layer:
+\begin{equation}
+\Delta^{(L)}=A^{(L)}_{in}-T_{in}
+\end{equation}
+So we can write the derivative in matrix form:
+\begin{equation}
+\frac{\partial J}{\partial A^{(L)}}=\Delta^{(L)}
+\end{equation}
+
+
+
 \end{document}
