@@ -47,6 +47,7 @@ Similarly, we may generally write the pre-activations and activations of layer $
 \begin{equation}
 Z^{(l)}=W^{(l)} A^{(l-1)}+b^{(l)},\quad A^{(l)}=\sigma_l(Z^{(l)})=\sigma_l(W^{(l)} A^{(l-1)}+b^{(l)})
 \end{equation}
+We will also identify $X$ with the activations of "layer zero": $A^{(0)}=X$.
 
 Finally, we have an error function $J$ which measures the distance to some target data $T\in\mathbb{R}^{S_L\times N}$:
 \begin{equation}
@@ -86,11 +87,20 @@ Now, we may insert equations \ref{output_a_grad} and \ref{output_z_grad} into \r
 \begin{equation}
 \frac{\partial J}{\partial W^{(L)}_{ij}}=\sum_{k=1}^{S_L}\sum_{n=1}^N\frac{\partial J}{\partial A^{(L)}_{kn}}\frac{\partial\sigma_L}{\partial Z^{(L)}_{kn}}\delta_{ik} A^{(L-1)}_{jn}=\sum_{n=1}^N\frac{\partial J}{\partial A^{(L)}_{in}}\frac{\partial\sigma_L}{\partial Z^{(L)}_{in}}A^{(L-1)}_{jn}
 \end{equation}
-We can rewrite this in matrix form by using the Hadamard product between the two derivatives and swapping the indices of $A^{(L-1)}$, turning into a transpose:
+We can rewrite this using the Hadamard product between the two derivatives and swapping the indices of $A^{(L-1)}$, turning into a transpose:
+\begin{equation}
+\sum_{n=1}^N\left[\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]_{in}\left(A^{(L-1)}\right)^t_{nj}
+\end{equation}
+Or in matrix form:
 \begin{equation}
 \label{output_weights_matrix}
-\frac{\partial J}{\partial W^{(L)}}=\left[\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]\left(A^{(L-1)}\right)^t
+\frac{\partial J}{\partial W^{(L)}}=\left[\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]\left(A^{(L-1)}\right)^t=H^{(L)}\left(A^{(L-1)}\right)^t
 \end{equation}
+Here we've introduced $H^{(L)}$, the matrix of the Hadamard product, for notational ease:
+\begin{equation}
+H^{(L)}=\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}
+\end{equation}
+
 The procedure for the biases is the same until we get to the $Z^{(L)}$ derivative:
 \begin{equation}
 \frac{\partial Z^{(L)}_{kn}}{\partial b^{(L)}_i}=\frac{\partial}{\partial b^{(L)}_i}\left(\sum_{l=1}^{S_{L-1}}W^{(L)}_{kl}A^{(L-1)}_{ln}+b^{(L)}_k\right)=\delta_{ik}
@@ -102,8 +112,22 @@ Reinserting all the way back to equation \ref{output_grad} we get:
 Again, we can write this is matrix notation using the Hadamard product:
 \begin{equation}
 \label{output_bias_matrix}
-\frac{\partial J}{\partial b^{(L)}_i}=\left[\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]J_N^t
+\frac{\partial J}{\partial b^{(L)}}=\left[\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]J_N^t=H^{(L)}J_N^t
 \end{equation}
+
+\subsection{Output layer "error"}
+We will call the quantity $\frac{\partial J}{\partial A^{(L)}}$ the output layer "error":
+\begin{equation}
+\Delta^{(L)}=\frac{\partial J}{\partial A^{(L)}}
+\end{equation}
+The quotes are used, because there's no need for this to be equal/proportional to what we usually call errors, i.e. distance between the output $A^{(L)}$ and $T$. However, often this is the case (or rather, $J$ is specifically chosen to make this so - see below). At any rate, we may now write:
+\begin{align}
+\label{output_weights_H}
+H^{(L)}=&\Delta^{(L)}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\\
+\frac{\partial J}{\partial W^{(L)}}=&H^{(L)}\left(A^{(L-1)}\right)^t=\left[\Delta^{(L)}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]\left(A^{(L-1)}\right)^t\\
+\label{output_bias_H}
+\frac{\partial J}{\partial b^{(L)}}=&H^{(L)}J_N^t=\left[\Delta^{(L)}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]J_N^t
+\end{align}
 
 \subsubsection{Example error function: Euclidean distance}
 A common form of error function is:
@@ -116,21 +140,76 @@ J(T,A^{(L)})=\frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}(A^{(L)}_{jm}-T_{jm})^2
 \end{equation}
 Now we can find the derivative:
 \begin{equation}
-\frac{\partial J}{\partial A^{(L)}_{in}}=\frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}\frac{\partial}{\partial A^{(L)}_{in}}(A^{(L)}_{jm}-T_{jm})^2
+\Delta^{(L)}_{in}=\frac{\partial J}{\partial A^{(L)}_{in}}=\frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}\frac{\partial}{\partial A^{(L)}_{in}}(A^{(L)}_{jm}-T_{jm})^2
 \end{equation}
 Again, we get two Kronecker deltas:
 \begin{equation}
 \frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}2(A^{(L)}_{jm}-T_{jm})\delta_{ij}\delta_{nm}=\frac{1}{N}(A^{(L)}_{in}-T_{in})
 \end{equation}
-The quantity in parenthesis is the $ij$ element of the error term matrix for the output layer:
+The quantity in parenthesis is the $ij$ element of the error term matrix for the output layer. So indeed we get:
 \begin{equation}
-\Delta^{(L)}=A^{(L)}_{in}-T_{in}
+\Delta^{(L)}=\frac{1}{N}\left(A^{(L)}_{in}-T_{in}\right)
 \end{equation}
-So we can write the derivative in matrix form:
+Or in matrix form:
 \begin{equation}
-\frac{\partial J}{\partial A^{(L)}}=\Delta^{(L)}
+\Delta^{(L)}=\frac{1}{N}\left(A^{(L)}-T\right)
 \end{equation}
 
+\subsection{Last hidden layer}
 
+\subsubsection{Weights}
+Now, let's consider derivatives with respect to weights in layer $L-1$. Simply applying the chain rule, we get:
+\begin{equation}
+\label{last_hidden_weights}
+\frac{\partial J}{\partial W^{(L-1)}_{ij}}=\sum_{k=1}^{S_L}\sum_{n=1}^N\sum_{k'=1}^{S_{L-1}}\sum_{n'=1}^N\frac{\partial J}{\partial A^{(L)}_{kn}}\frac{\partial\sigma_L}{\partial Z^{(L)}_{kn}}\frac{\partial Z^{(L)}_{kn}}{\partial A^{(L-1)}_{k'n'}}\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}_{k'n'}}\frac{\partial Z^{(L-1)}_{k'n'}}{\partial W^{(L-1)}_{ij}}
+\end{equation}
+Now, this will obviously be very similar to the calculations above, but to be certain, let's proceed carefully. The only term in the above we have not calculated yet is:
+\begin{align}
+\frac{\partial Z^{(L)}_{kn}}{\partial A^{(L-1)}_{k'n'}}=&\frac{\partial}{\partial A^{(L-1)}_{k'n'}}\left(W^{(L)}A^{(L-1)}+b^{(L)}\right)_{kn}=\\
+&\frac{\partial}{\partial A^{(L-1)}_{k'n'}}\left(\sum_{l=1}^{S_{L-1}}W^{(L)}_{kl}A^{(L-1)}_{ln}+b^{(L)}_k\right)=\\
+&\sum_{l=1}^{S_{L-1}}W^{(L)}_{kl}\delta_{lk'}\delta_{nn'}=W^{(L)}_{kk'}\delta_{nn'}
+\end{align}
+Now we're ready to insert into equation \ref{last_hidden_weights}:
+\begin{align}
+\frac{\partial J}{\partial W^{(L-1)}_{ij}}=&\sum_{k=1}^{S_L}\sum_{n=1}^N\sum_{k'=1}^{S_{L-1}}\sum_{n'=1}^N\Delta^{(L)}_{kn}\frac{\partial\sigma_L}{\partial Z^{(L)}_{kn}}W^{(L)}_{kk'}\delta_{nn'}\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}_{k'n'}}\delta_{ik'}A^{(L-2)}_{jn'}=\\
+&\sum_{k=1}^{S_L}\sum_{n=1}^N H^{(L)}_{kn}W^{(L)}_{ki}\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}_{in}}A^{(L-2)}_{jn}
+\end{align}
+Use the trick of rearranging terms and swapping indices:
+\begin{align}
+\frac{\partial J}{\partial W^{(L-1)}_{ij}}=&\sum_{k=1}^{S_L}\sum_{n=1}^N\left(W^{(L)}\right)^t_{ik}H^{(L)}_{kn}\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}_{in}}\left(A^{(L-2)}\right)^t_{nj}=\\
+&\sum_{n=1}^N\left[\left(W^{(L)}\right)^t H^{(L)}\right]_{in}\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}_{in}}\left(A^{(L-2)}\right)^t_{nj}
+\end{align}
+Once again, we can collect the first two terms into a Hadamard product:
+\begin{align}
+\frac{\partial J}{\partial W^{(L-1)}_{ij}}=&\sum_{n=1}^N\left[\left(W^{(L)}\right)^t H^{(L)}\odot\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}_{in}}\right]_{in}\left(A^{(L-2)}\right)^t_{nj}=\\
+&\left[\left(W^{(L)}\right)^t H^{(L)}\odot\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}}\left(A^{(L-2)}\right)^t\right]_{ij}
+\end{align}
+Or in matrix form:
+\begin{equation}
+\label{last_hidden_weights_matrix}
+\frac{\partial J}{\partial W^{(L-1)}}=\left[\underbrace{\left(W^{(L)}\right)^t H^{(L)}}_{\Delta^{(L-1)}}\odot\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}}\right]\left(A^{(L-2)}\right)^t
+\end{equation}
+Here, we've defined the underbraced part to be the "error" for layer $L-1$. The formula now takes a form very similar to equation \ref{output_weights_H}:
+\begin{equation}
+\frac{\partial J}{\partial W^{(L-1)}}=\left[\Delta^{(L-1)}\odot\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}}\right]\left(A^{(L-2)}\right)^t=H^{(L-1)}\left(A^{(L-2)}\right)^t
+\end{equation}
+Here, we've defined the $H$ for layer $L-1$ as:
+\begin{equation}
+H^{(L-1)}=\Delta^{(L-1)}\odot\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}}
+\end{equation}
+
+\subsubsection{Biases}
+This will be very similar to the weights case. The only thing that changes, is that the last term in the chain rule decomposition is:
+\begin{equation}
+\frac{\partial Z^{(L-1)}_{k'n'}}{\partial b^{(L-1)}_i}=\delta_{ik'}
+\end{equation}
+So all of the calculations play out the same way as above, except there's no multiplication by $A^{(L-2)}$. Instead we get:
+\begin{equation}
+\frac{\partial J}{\partial b^{(L-1)}_i}=\sum_{n=1}^N\left[\left(W^{(L)}\right)^t H^{(L)}\odot\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}_{in}}\right]_{in}=\sum_{n=1}^N H^{(L-1)}_{in}
+\end{equation}
+Or in matrix form:
+\begin{equation}
+\frac{\partial J}{\partial b^{(L-1)}}=H^{(L-1)}J^t_N
+\end{equation}
 
 \end{document}
