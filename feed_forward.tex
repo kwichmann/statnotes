@@ -60,10 +60,10 @@ t_1 & \cdots & t_N \\
 \end{equation}
 We will assume the error function is of the form $J=J(T,A^{(L)})$, taking on real values. I.e. it only depends on the targets and the activations of the output layer.
 
-\section{Backpropagation}
+\section{Backpropagation - Output layer}
 Forward propagation through the network is described by equation \ref{forward_propagation}. The procedure is assumed to be done before we look at how to determine partial derivatives of $J$ through backpropagation.
 
-\subsection{Output layer}
+\subsection{Weights}
 The derivatives with respect to the output layer weights and biases can be found through the chain rule:
 \begin{equation}
 \label{output_grad}
@@ -111,6 +111,7 @@ Here we've introduced $H^{(L)}$, the matrix of the Hadamard product, for notatio
 H^{(L)}=\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}
 \end{equation}
 
+\subsection{Biases}
 The procedure for the biases is the same until we get to the $Z^{(L)}$ derivative:
 \begin{equation}
 \frac{\partial Z^{(L)}_{kn}}{\partial b^{(L)}_i}=\frac{\partial}{\partial b^{(L)}_i}\left(\sum_{l=1}^{S_{L-1}}W^{(L)}_{kl}A^{(L-1)}_{ln}+b^{(L)}_k\right)=\delta_{ik}
@@ -139,7 +140,7 @@ H^{(L)}=&\Delta^{(L)}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\\
 \frac{\partial J}{\partial b^{(L)}}=&H^{(L)}J_N^t=\left[\Delta^{(L)}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]J_N^t
 \end{align}
 
-\subsubsection{Example error function: Euclidean distance}
+\subsection{Example error function: Euclidean distance}
 A common form of error function is:
 \begin{equation}
 J(T,A^{(L)})=\frac{1}{2N}\sum_{m=1}^N||a^{(L)}_m-t_m||^2
@@ -165,9 +166,9 @@ Or in matrix form:
 \Delta^{(L)}=\frac{1}{N}\left(A^{(L)}-T\right)
 \end{equation}
 
-\subsection{Last hidden layer}
+\section{Backpropagation - Last hidden layer}
 
-\subsubsection{Weights}
+\subsection{Weights}
 Now, let's consider derivatives with respect to weights in layer $L-1$. Simply applying the chain rule, we get:
 \begin{equation}
 \label{last_hidden_weights}
@@ -208,21 +209,21 @@ Here, we've defined the $H$ for layer $L-1$ as:
 H^{(L-1)}=\Delta^{(L-1)}\odot\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}}
 \end{equation}
 
-\subsubsection{Biases}
+\subsection{Biases}
 This will be very similar to the weights case. The only thing that changes, is that the last term in the chain rule decomposition is:
 \begin{equation}
 \frac{\partial Z^{(L-1)}_{k'n'}}{\partial b^{(L-1)}_i}=\delta_{ik'}
 \end{equation}
 So all of the calculations play out the same way as above, except there's no multiplication by $A^{(L-2)}$. Instead we get:
 \begin{equation}
-\frac{\partial J}{\partial b^{(L-1)}_i}=\sum_{n=1}^N\left[\left(W^{(L)}\right)^t H^{(L)}\odot\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}_{in}}\right]_{in}=\sum_{n=1}^N H^{(L-1)}_{in}
+\frac{\partial J}{\partial b^{(L-1)}_i}=\sum_{n=1}^N\left[\left(W^{(L)}\right)^t H^{(L)}\odot\frac{\partial\sigma_{L-1}}{\partial Z^{(L-1)}}\right]_{in}=\sum_{n=1}^N H^{(L-1)}_{in}
 \end{equation}
 Or in matrix form:
 \begin{equation}
 \frac{\partial J}{\partial b^{(L-1)}}=H^{(L-1)}J^t_N
 \end{equation}
 
-\section{General layer}
+\section{Backpropagation - General layer}
 Here, we wish to prove that in general, the formula for derivatives of $J$ with respect to weights and biases from any layer $l$ can be written:
 \begin{equation}
 \frac{\partial J}{\partial W^{(l)}}=H^{(l)}\left(A^{(l-1)}\right)^t,\quad \frac{\partial J}{\partial b^{(l)}}=H^{(l)}J_N^t
@@ -269,7 +270,7 @@ Now use the usual trick of swapping indices:
 \end{equation}
 This is exactly the $ij$'th element of $\Delta^{(l-1)}$, as desired.
 
-\subsubsection{Weights}
+\subsection{Weights}
 The lemma makes it easy to derive the formula for weights in the $l$'th layer:
 \begin{align}
 \frac{\partial J}{\partial W^{(l)}}=&\underbrace{\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L})}\frac{\partial Z^{(L)}}{\partial A^{(L-1)}}\odot\cdots\odot\frac{\partial\sigma_{l+1}}{\partial Z^{(l+1})}\frac{\partial Z^{(l+1)}}{\partial A^{(l)}}}_{\frac{\partial J}{\partial A^{(l)}}}\odot\frac{\partial\sigma_l}{\partial Z^{(l)}}\frac{\partial Z^{(l)}}{\partial W^{(l)}}=\\
@@ -286,7 +287,7 @@ Back in matrix form:
 \frac{\partial J}{\partial W^{(l)}}=H^{(l)}\left(A^{(l)}\right)^t
 \end{equation}
 
-\subsubsection{Biases}
+\subsection{Biases}
 This is almost the same as for the weights:
 \begin{align}
 \frac{\partial J}{\partial b^{(l)}}=&\underbrace{\frac{\partial J}{\partial A^{(L)}}\odot\frac{\partial\sigma_L}{\partial Z^{(L})}\frac{\partial Z^{(L)}}{\partial A^{(L-1)}}\odot\cdots\odot\frac{\partial\sigma_{l+1}}{\partial Z^{(l+1})}\frac{\partial Z^{(l+1)}}{\partial A^{(l)}}}_{\frac{\partial J}{\partial A^{(l)}}}\odot\frac{\partial\sigma_l}{\partial Z^{(l)}}\frac{\partial Z^{(l)}}{\partial b^{(l)}}=\\
