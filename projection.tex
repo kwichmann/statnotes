@@ -1,0 +1,345 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Projection operators}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Orthogonal complement}
+Let $V$ be a finite-dimensional vector space with an inner product $\langle\cdot,\cdot\rangle$. Let $U$ be a subspace of $V$. Then we define the \textit{orthogonal complement} of $U$ as:
+\begin{equation}
+U^\perp=\{v\in V|\forall u\in U: \langle u, v\rangle = 0\}
+\end{equation}
+\begin{theorem}
+$U^\perp$ is a subspace of $V$.
+\end{theorem}
+\begin{proof}
+According to the subspace theorem, we need to show three things:
+\begin{itemize}
+\item $U^\perp$ is not empty: Clearly $0\in U^\perp$.
+\item Closed under addition: If $v_1,v_2\in U^\perp$, then for all $u\in U^\perp$:
+\begin{equation}
+\langle v_1+v_2,u\rangle=\langle v_1,u\rangle + \langle v_2,u\rangle = 0 
+\end{equation}
+\item Closed under scalar multiplication: If $v\in U^\perp$ and $c\in\mathbb{R}$ then for all $u\in U^\perp$:
+\begin{equation}
+\langle cv,u\rangle = c\langle v,u\rangle = 0
+\end{equation}
+\end{itemize}
+\end{proof}
+
+Since the only vector perpendicular to itself is $0$, we further conclude that $U\cap U^\perp=\{0\}$.
+
+\begin{theorem}
+If $e_1, e_2,\ldots,e_m$ is an orthonormal basis for $U$, then for any $v\in V$:
+\begin{equation}
+v-\sum_{i=1}^m\langle v,e_i\rangle e_i\in U^\perp
+\end{equation}
+\end{theorem}
+\begin{proof}
+Let $u\in U$. Then we can write $u=\sum_{j=1}^m\lambda_j e_j$ for some coefficients $\lambda_j$. Now calculate the inner product with the vector above:
+\begin{equation}
+\langle v-\sum_{i=1}^m\langle v,e_i\rangle e_i\ ,\ \sum_{j=1}^m\lambda_j e_j\rangle=\sum_{i=j}^m\lambda_j\langle v,e_j\rangle-\sum_{i=1}^m\sum_{j=1}^m\lambda_j\langle v,e_i\rangle\langle e_i,e_j\rangle
+\end{equation}
+Since $\langle e_i,e_j\rangle=\delta_{ij}$ this vanishes.
+\end{proof}
+
+This means that we may write any $v\in V$ as a sum of vectors from $U$ and $U^\perp$ respectively:
+\begin{equation}
+\label{u_uperp}
+v=\underbrace{\sum_{i=1}^m\langle v,e_i\rangle e_i}_{\in U}\ +\ \underbrace{v-\sum_{i=1}^m\langle v,e_i\rangle e_i}_{\in U^\perp}
+\end{equation}
+
+\begin{theorem}
+The decomposition into elements from $U$ and $U^\perp$ from equation \ref{u_uperp} is unique.
+\end{theorem}
+\begin{proof}
+Let $v=u_1+u^\perp_1$ and $v=u_2+u^\perp_2$ be two such decompositions. Then $u_1+u^\perp_1=u_2+u^\perp_2$ and hence $u_1-u_2=u^\perp_2-u^\perp_1$. But this means that this vector is a member of both $U$ and $U^\perp$, and hence it must be $0$. This means $u_1=u_2$ and $u^\perp_1=u^\perp_2$.
+\end{proof}
+
+\section{The orthogonal projection}
+The previous section motivates the following:
+\begin{definition}
+Let $V$ be a finite-dimensional inner product vector space and $U$ a subspace of $V$. The orthogonal projection from $V$ onto $U$ is the map $p:V\rightarrow V$ which satisfies:
+\begin{equation}
+\forall v\in V:\quad p(v)\in U,\quad v-p(v)\in U^\perp
+\end{equation}
+\end{definition}
+As we see, one could also define the co-domain of $p$ to be $U$. Usually, the distinction will not matter much.
+
+\begin{theorem}
+The orthogonal projection operator is linear.
+\end{theorem}
+\begin{proof}
+We need to show additivity and homogeneity:
+\begin{itemize}
+\item Additivity: Let $v_1,v_2\in V$. Then $p(v_1)+p(v_2)\in U$ and:
+\begin{equation}
+v_1-p(v_1)+v_2-p(v_2)=v_1+v_2-(p(v_1)+p(v_2))\in U^\perp
+\end{equation}
+Adding the two we get $v_1+v_2$. So $p(v_1+v_2)=p(v_1)+p(v_2)$.
+\item Homogeneity. Let $v\in V$ and $c\in\mathbb{R}$. Then $cp(v)\in U$ and $c(v-p(v))=cv-cp(v)\in U^\perp$. Adding the two we get $cv$, so $p(cv)=cp(v)$. 
+\end{itemize}
+\end{proof}
+
+\begin{theorem}
+The orthogonal projection operator $p:V\rightarrow V$ is idempotent. I.e. $p\circ p=p$.
+\end{theorem}
+\begin{proof}
+Let $v\in V$. Then $p(v)\in U$. But this means that the decomposition of $p(v)$ is $p(v)+0$. So $p\circ p(v)=p(v)$.
+\end{proof}
+
+\section{Orthogonal subspaces}
+Two subspaces $L_1, L_2\subseteq V$ of an inner product space are said to be \textit{orthogonal} if every vector from $L_1$ is orthogonal to every vector from $L_2$. We may characterize this property through the orthogonal projection operators of the spaces:
+\begin{theorem}
+\label{projection_lemma1}
+Let $V$ be a finite dimensional vector space with inner product $\langle\cdot,\cdot\rangle$. Let $L_1$ and $L_2$ be subspaces of $V$ with associated orthoogonal projection operators $p_1$ and $p_2$. Then, the following are equivalent:
+\begin{itemize}
+\item $L_1$ and $L_2$ are orthogonal.
+\item $p_1\circ p_2=0$
+\item $p_2\circ p_1=0$
+\end{itemize}
+\end{theorem}
+\begin{proof}
+First, assume $L_1$ and $L_2$ to be orthogonal, and let $v\in V$. First, $p_2(v)\in L_2$. But because of the orthogonality we also have $p_2(v)\in L_1^\perp$. So $p_1(p_2(v))=0$. By a totally symmetric argument, $p_2(p_1(v))=0$.
+
+Conversely, assume $p_1\circ p_2=0$. Let $v_1\in L_1$ and $v_2\in L_2$. This means that $p_1(v_1)=v_1$, and $p_2(v_2)=v_2$. Then:
+\begin{equation}
+\langle v_1,v_2\rangle=\langle p_1(v_1),p_2(v_2)\rangle
+\end{equation}
+But $p_1$ is symmetric, so:
+\begin{equation}
+\langle p_1(v_1),p_2(v_2)\rangle=\langle v_1,p_1(p_2(v_2))\rangle=\langle v_1,0\rangle=0
+\end{equation}
+So $L_1$ and $L_2$ are orthogonal. Again, a symmetrical proof can be made starting from $p_2\circ p_1=0$.
+\end{proof}
+
+We can also use it to tell when subspaces are contained in each other:
+
+\begin{theorem}
+\label{projection_lemma2}
+Let $V$ be a finite dimensional vector space with inner product $\langle\cdot,\cdot\rangle$. Let $L_1$ and $L_2$ be subspaces of $V$ with associated orthogonal projection operators $p_1$ and $p_2$. Then, the following are equivalent:
+\begin{itemize}
+\item $L_1\subseteq L_2$
+\item $p_1\circ p_2=p_2$
+\item $p_2\circ p_1=p_2$
+\end{itemize}
+\end{theorem}
+\begin{proof}
+Assume $L_1\subseteq L_2$. Then $L_2$ and $L_1^\perp$ must be orthogonal. From theorem \ref{projection_lemma1} we know this means $p_2$ and the orthogonal projection on $L_1^\perp$, $1-p_1$, must be zero when combined either way:
+\begin{align}
+p_2\circ(1-p_1)=p_2-p_2\circ p_1=0\Leftrightarrow& p_2\circ p_1=p_2 \\
+(1-p_1)\circ p_2=p_2-p_1\circ p_2=0\Leftrightarrow& p_1\circ p_2=p_2
+\end{align}
+
+Conversely, assume $p_1\circ p_2=p_2$. Then $(1-p_1)\circ p_2=p_2$. According to theorem \ref{projection_lemma1} $L_1^\perp$ and $L_2$ are orthogonal. But then $L_2\subseteq L_1$. A completely analogous argument can be made for $p_2\circ p_1=p_2$.
+\end{proof}
+
+\section{Relative, orthogonal complement}
+Let $V$ be a finite dimensional vector space with inner product $\langle\cdot,\cdot\rangle$. Let $L_1$ and $L_2$ be subspaces of $V$, such that $L_2\subseteq L_1$. Then we define the \textit{orthogonal complement of} $L_2$ \textit{relative to} $L_1$ as:
+\begin{equation}
+L_1\ominus L_2=\{v\in V|v\in L_1\textrm{ and }\forall w\in L_2: \langle v,w\rangle = 0\}
+\end{equation}
+In other words, $L_1\ominus L_2=L_1\cap L_2^\perp$. But we still view this as a subspace of $V$ rather than $L_1$.
+
+\begin{theorem}
+\label{projection_lemma3}
+Let $V$ be a finite dimensional vector space with inner product $\langle\cdot,\cdot\rangle$. Let $L_2\subseteq L_1$ be subspaces of $V$ with associated orthogonal projection operators $p_2$ and $p_1$. Then $p_1-p_2$ is the orthogonal projection operator of $L_1\ominus L_2$.
+\end{theorem}
+\begin{proof}
+Start by noting, that since $L_2\subseteq L_1$, for any $v\in V$, $p_1(v),p_2(v)\in L_1$ and hence $(p_1-p_2)v\in L_1$. Now let $w\in L_2$. Then, using the symmetry of $p_1$ and $p_2$:
+\begin{align}
+\langle(p_1-p_2)(v),w\rangle=&\langle p_1(v),w\rangle-\langle p_2(v),w\rangle=\\
+&\langle v,p_1(w)\rangle-\langle v,p_2(w)\rangle=\\
+&\langle v,w\rangle-\langle v,w\rangle=0
+\end{align}
+So $(p_1-p_2)(v)\in L_2^\perp$ as well, and so we conclude $(p_1-p_2)(v)\in L_1\ominus L_2$.
+
+Now, let $v\in V$ and $w\in L_1\ominus L_2$. Then we calculate:
+\begin{align}
+\langle v-(p_1-p_2)(v),w\rangle=&\langle v,w\rangle-\langle p_1(v),w\rangle+\langle p_2(v),w\rangle=\\
+&\langle v,w\rangle-\langle v,p_1(w)\rangle+\langle v,p_2(w)\rangle=\\
+&\langle v,w\rangle-\langle v,w\rangle+\langle v,0\rangle=0
+\end{align}
+This is exactly the condition an orthogonal projection operator must satisfy.
+\end{proof}
+
+\section{Geometric orthogonality}
+Let $V$ be a finite dimensional vector space with inner product $\langle\cdot,\cdot\rangle$. Let $L_1$ and $L_2$ be subspaces of $V$, and let $L_0=L_1\cap L_2$. We now call $L_1$ and $L_2$ \textit{geometrically orthogonal} iff:
+\begin{equation}
+L_1\ominus L_0\perp L_2\ominus L_0
+\end{equation}
+We will use the following notation:
+\begin{equation}
+L_1\perp_G L_2
+\end{equation}
+
+\begin{theorem}
+\label{projection_lemma4}
+Let $V$ be a finite dimensional vector space with inner product $\langle\cdot,\cdot\rangle$. Let $L_1$ and $L_2$ be subspaces of $V$, and let $L_0=L_1\cap L_2$. et $p_0, p_1$, and $p_2$ be the orthogonal projections of $L_0, L_1$, and $L_2$. The following three statements are then equivalent:
+\begin{itemize}
+\item $L_1\perp_G L_2$
+\item $p_1\circ p_2=p_2\circ p_1$
+\item $p_1\circ p_2=p_0$
+\end{itemize}
+\end{theorem}
+\begin{proof}
+From theorem \ref{projection_lemma3} we know that $p_1-p_0$ and $p_2-p_0$ are the orthogonal projections into $L_1\ominus L_0$ and $L_2\ominus L_0$ respectively. According to theorem \ref{projection_lemma1} $L_1\ominus L_0$ and $L_2\ominus L_0$ are orthogonal if and only if:
+\begin{equation}
+(p_1-p_0)\circ(p_2-p_0)=0
+\end{equation}
+Expanding the left side:
+\begin{equation}
+p_1\circ p_2-p_1\circ p_0-p_0\circ p_2+p_0\circ p_0
+\end{equation}
+Since $L_0\subseteq L_1$, according to theorem \ref{projection_lemma2} $p_1\circ p_0=0_0$. And likewise, because $L_0\subseteq L_2$, we must have $p_0\circ p_2=p_0$. Finally, because of idempotence, $p_0\circ p_0=p_0$. So:
+\begin{equation}
+(p_1-p_0)\circ(p_2-p_0)=p_1\circ p_2-p_0-p_0+p_0=p_1\circ p_2-p_0
+\end{equation}
+This is zero exactly when $p_1\circ p_2=p_0$. So we've shown that the first and third statements are equivalent.
+
+Next, assume $p_1\circ p_2=p_0$, and let $v, w\in V$. Then:
+\begin{align}
+\langle (p_1\circ p_2)(v),w\rangle=&\langle p_0(v),w\rangle=\\
+&\langle v,p_0(w)\rangle=\\
+&\langle v,(p_1\circ p_2)(w)\rangle=\\
+&\langle v,p_1(p_2(w))\rangle=\\
+&\langle p_1(v),p_2(w),\rangle=\langle (p_2\circ p_1)(v),w\rangle
+\end{align}
+Here, we've repeated used the symmetry of projection operators. Since this is true for arbitrary $v,w\in V$ we must have $p_1\circ p_2=p_2\circ p_1$.
+
+Finally, assume $p_1\circ p_2=p_2\circ p_1$. For any $v\in V$, $p_1(v)\in L_1$ and $p_2(v)\in L_2$. So $p_2(p_1(v))\in L_1$ and $p_1(p_2(v))\in L_2$. But since the two are equal, they must lie in $L_1\cap L_2$. Now assume $v\in V, w\in L_1\cap L_2$. Then we calculate:
+\begin{equation}
+\langle v-p_1(p_2(v)),w\rangle=\langle v,w\rangle-\langle p_1(p_2((v)),w\rangle=\langle v,w\rangle-\langle v,p_2(p_1(w))\rangle
+\end{equation}
+In the last step, we repeated used the symmetry of the $p$'s. Now, since $p_2(p_1(w))\in L_1\cap L_2$ it is simply $w$ and we get:
+\begin{equation}
+\langle v-p_1(p_2(v)),w\rangle=\langle v,w\rangle-\langle v,w\rangle=0
+\end{equation}
+This shows that $p_1\circ p_2$ is the orthogonal projection operator on $L_1\cap L_2$, and therefore equal to $p_0$.
+\end{proof}
+
+\section{Projections on sums of subspaces}
+Recall, that if $L_1$ and $L_2$ are both subspaces of the vector space $V$, we can form a new subspace as follows:
+\begin{equation}
+L_1+L_2=\{v_1+v_2|v_1\in L_1, v_2\in L_2\}
+\end{equation}
+We now wish to consider orthogonal projections on such spaces. It will turn out that we can only express it in terms of the orthogonal projection operators of $L_1$ and $L_2$ in certain cases.
+
+\begin{theorem}
+\label{projection_lemma5}
+Let $V$ be a finite dimensional vector space with inner product $\langle\cdot,\cdot\rangle$. Let $L_1$ and $L_2$ be subspaces of $V$ with associated orthogonal projection operators $p_1$ and $p_2$. If $L_1$ and $L_2$ are orthogonal then:
+\begin{equation}
+\textrm{dim}(L_1+l_2)=\textrm{dim}(L_1)+\textrm{dim}(L_2)
+\end{equation}
+And the orthogonal projection on $L_1+L_2$ is:
+\begin{equation}
+p_{1+2}=p_1+p_2
+\end{equation}
+Furthermore:
+\begin{equation}
+\forall v\in V:\ ||p_{1+2}v||^2=||p_1 v||^2+||p_2 v||^2
+\end{equation}
+\end{theorem}
+\begin{proof}
+The dimensionality follows trivially from the orthogonality, since the union of a basis for $L_1$ and $L_2$ respectively will be a basis for the sum.
+
+Let $v\in V$. Since $p_1 v\in L_1$ and $p_2 v\in L_2$, it follows that $(p_1+p_2)(v)\in L_1+L_2$. If $w\in L_1+L_2$ we can decompose it as $w=w_1+w_2$, where $w_1\in L_1$ and $w_2\in L_2$. Now calculate:
+\begin{align}
+\langle v-(p_1+p_2)(v),w\rangle=&\langle v-p_1 v-p_2 v,w_1+w_2\rangle=\\
+&\langle v-p_1 v-p_2 v,w_1\rangle+\langle v-p_1 v-p_2 v,w_2\rangle=\\
+&\langle v-p_1 v,w_1\rangle-\langle p_2 v,w_1\rangle+\\
+&\langle v-p_2 v,w_2\rangle-\langle p_1 v,w_2\rangle
+\end{align}
+Because $p_1$ and $p_2$ are projection operators, the first term on each line is zero by definition. And because $L_1$ and $L_2$ are orthogonal, so are the other two terms. So the total is zero, which proves that $p_1+p_2$ is the orthogonal projection operator of $L_1+L_2$.
+
+Finally, the norm relation follows directly from Pythagoras' theorem.
+\end{proof}
+
+We will now extend this result to the case where $L_1$ and $L_2$ are geometrically orthogonal rather than strictly so. To do so we need a result about sums of such subspaces:
+
+\begin{theorem}
+\label{sum_split_three_way}
+Let $V$ be a finite dimensional vector space with inner product $\langle\cdot,\cdot\rangle$. Let $L_1$ and $L_2$ be geometrically orthogonal subspaces of $V$. Then $L_0=L_1\cap L_2$ is orthogonal to both $L_1\ominus L_0$ and $L_1\ominus L_0$. In addition:
+\begin{equation}
+L_1+L_2=L_1\ominus L_0+L_2\ominus L_0+L_0
+\end{equation}
+\end{theorem}
+\begin{proof}
+Remember that $L_1\ominus L_0=L_1\cap L_0^\perp$. Hence any vector $v\in L_1\ominus L_0$ is also in $L_0^\perp$. And so is orthogonal to $L_0$. Similarly for $L_2\ominus L_0$.
+
+Now, let $B_0=\{e_1,e_2,\cdots,e_{n_0}\}$ be as basis for $L_0$. Since $L_1\subseteq L_0$ we can expand this into a basis for $L_1$: $B_1=B_0\cup\{e_{n_0+1},\cdots,e_{n_1}\}$. Now, the basis for $L_1\ominus L_0$ must then be $\{e_{n_0+1},\cdots,e_{n_1}\}$. Similarly, we can construct a basis $B_2=B_0\cup\{f_{n_0+1},\cdots,f_{n_2}\}$ for $L_2$, which leads to the basis $\{f_{n_0+1},\cdots,f_{n_1}\}$ for $L_1\ominus L_0$. Now consider the sum:
+\begin{equation}
+L_1\ominus L_0+L_2\ominus L_0+L_0
+\end{equation}
+This is spanned by $\{e_{n_0+1},\cdots,e_{n_1}\}\cup\{f_{n_0+1},\cdots,f_{n_2}\}\cup B_0=B_1\cup B_2$. Which means that it is exactly equal to $L_1+L_2$.
+\end{proof}
+
+\begin{theorem}
+\label{projection_lemma6}
+Let $V$ be a finite dimensional vector space with inner product $\langle\cdot,\cdot\rangle$. Let $L_1$ and $L_2$ be subspaces of $V$ with associated orthogonal projection operators $p_1$ and $p_2$. If $L_1$ and $L_2$ are geometrically orthogonal the orthogonal projection on the sum space is:
+\begin{equation}
+p_{1+2}=p_1+p_2-p_1\circ p_2
+\end{equation}
+Furthermore:
+\begin{equation}
+\forall v\in V:\ ||p_{1+2}v||^2=||p_1 v||^2+||p_2 v||^2-||p_1\circ p_2 v||^2
+\end{equation}
+\end{theorem}
+Note: With the notation from theorem \ref{projection_lemma4} we could also write these equations as:
+\begin{equation}
+p_{1+2}=p_1+p_2-p_0,\quad ||p_{1+2}v||^2=||p_1 v||^2+||p_2 v||^2-||p_0 v||^2
+\end{equation}
+\begin{proof}
+Since $L_1\perp_G L_2$, we know from theorem \ref{projection_lemma4} that $L_1\ominus L_0$ and $L_2\ominus L_0$, where $L_0=L_1\cap L_2$, are (properly) orthogonal. And $L_0$ is orthogonal to both according to theorem \ref{sum_split_three_way}, which also states that:
+\begin{equation}
+L_1+L_2=(L_1\ominus L_0)+(L_2\ominus L_0)+L_0
+\end{equation}
+According to theorem \ref{projection_lemma5} we can now find the projection operator as:
+\begin{equation}
+p_{1+2}=(p_1-p_0)+(p_2-p_0)+p_0=p_1+p_2-p_0
+\end{equation}
+The norm identity from the same theorem now states:
+\begin{equation}
+\label{three_way_pythagoras}
+||p_{1+2}v||^2=||(p_1-p_0)v||^2+||(p_2-p_0)v||^2+||p_0 v||^2
+\end{equation}
+Consider the first term:
+\begin{equation}
+||p_1 v-p_0 v||^2=||p_1 v||^2+||p_0 v||^2-2\langle p_1 v, p_0 v\rangle
+\end{equation}
+We can rewrite the inner product using the symmetry of projections, theorem \ref{projection_lemma2}, and the idempotency of $p_0$:
+\begin{align}
+\langle p_1 v, p_0 v\rangle=&\langle v, p_1\circ p_0 v\rangle=\\
+&\langle v, p_0 v\rangle=\\
+&\langle v, p_0\circ p_0 v\rangle=\\
+&\langle p_0 v, p_0 v\rangle=||p_0 v||\\
+\end{align}
+This means that:
+\begin{equation}
+||p_1 v-p_0 v||^2=||p_1 v||^2-||p_0 v||^2
+\end{equation}
+Similarly:
+\begin{equation}
+||p_2 v-p_0 v||^2=||p_2 v||^2-||p_0 v||^2
+\end{equation}
+Now equation \ref{three_way_pythagoras} becomes:
+\begin{align}
+||p_{1+2}v||^2=&||p_1 v||^2-||p_0 v||^2+||p_2 v||^2-||p_0 v||^2+||p_0 v||^2\\
+&||p_1 v||^2+||p_2 v||^2-||p_0 v||^2
+\end{align}
+\end{proof}
+
+\end{document}
