@@ -275,6 +275,103 @@ y=X\beta+\underbrace{Z\gamma+\delta}_{\epsilon}
 \end{equation}
 Here, $\delta$ is the error terms associated with the new variables. We will assume that since the missing variables are important/good, the expectation value of this error is zero: $E[\delta]=0$. The error term of the original model is now the underbraced part of the equation.
 
+\section{Linear models in Euclidean space}
+Let $V=\mathbb{R}^n$ with the usual inner product. A linear model on $V$ consists of the following basic ingredients:
+\begin{itemize}
+\item A subspace $L\subset V$ (notice the requirement for $L$ to be a proper subspace), known as the \textit{mean value subspace}. The dimension of $L$ is denoted $k$.
+\item A symmetric, positive definite matrix $\Sigma$, which will act as the base covariance of the elements of the model.
+\end{itemize}
+The linear model then consists of all the regular normal distributions on $V$ where the mean value is in $L$, and the variance matrix is proportional to $\Sigma$:
+\begin{equation}
+X_{\mu,\sigma^2}\sim N\left(\mu,\sigma^2\Sigma\right),\quad\mu\in L,\sigma^2\in\mathbb{R}_+
+\end{equation}
+Often, we will simply let $\Sigma=I_n$. This corresponds to the situation where the components of $X$ are independent and have the same variance. This is the assumption in models like linear regression and analysis of variance.
+
+\subsection{Likelihood function}
+The density function of a multivariate normal gives us the likelihood function for the model:
+\begin{equation}
+L_x(\mu,\sigma^2)=\frac{1}{\sqrt{\textrm{det}(2\pi\sigma^2\Sigma)}}\exp\left[-\frac{1}{2\sigma^2}(x-\mu)^t\Sigma^{-1}(x-\mu)\right]
+\end{equation}
+Here $x\in\mathbb{R}^n$ is the observation. The log-likelihood is then:
+\begin{equation}
+l_x(\mu,\sigma^2)=\frac{1}{2}\log\left(\textrm{det}(2\pi\sigma^2\Sigma)\right)+\frac{1}{2\sigma^2}(x-\mu)^t\Sigma^{-1}(x-\mu)
+\end{equation}
+We can simplify this by introducing a new inner product on $V$ with associated norm:
+\begin{equation}
+\langle x,y\rangle_\Sigma=x^t\Sigma^{-1}y,\quad ||x||^2_\Sigma=x^t\Sigma^{-1}x
+\end{equation}
+Then the log-likelihood is simply:
+\begin{equation}
+l_X(\mu,\sigma^2)=\frac{1}{2}\log\left(\textrm{det}(2\pi\sigma^2\Sigma)\right)+\frac{1}{2\sigma^2}||x-\mu||^2_\Sigma
+\end{equation}
+
+\subsection{Maximum likelihood estimation}
+We can now perform MLE on the model. 
+
+\subsubsection{MLE for $\mu$}
+Remember that $\mu$ is constrained to lie in $L$. Let $\{e_1,e_2,\cdots,e_k\}$ be an orthonormal basis for $L$ with respect to the inner product $\langle\cdot,\cdot\rangle_\Sigma$. Then the constraint is:
+\begin{equation}
+\mu=\sum_{j=1}^k c_j e_i
+\end{equation}
+Now we may write the log-likelihood as a function of $c$:
+\begin{equation}
+\label{loglikelihood_c}
+l_X(c,\sigma^2)=\frac{1}{2}\log\left(\textrm{det}(2\pi\sigma^2\Sigma)\right)+\frac{1}{2\sigma^2}||x-\sum_{j=1}^k c_j e_j||^2_\Sigma
+\end{equation}
+The full norm expression from equation \ref{loglikelihood_c} can be expanded as:
+\begin{align}
+||x-\sum_{j=1}^k c_j e_j||^2_\Sigma=&\langle x,x\rangle_\Sigma+\langle\sum_{j=1}^k c_j e_j,\sum_{j'=1}^k c_{j'}e_{j'}\rangle_\Sigma-2\langle x,\sum_{j=1}^k c_j e_j\rangle_\Sigma=\\
+&\langle x,x\rangle_\Sigma+\sum_{j=1}^k\sum_{j'=1}^k c_j c_{j'}\langle e_j,e_{j'}\rangle_\Sigma-2\sum_{j=1}^k c_j\langle x,e_j\rangle_\Sigma=\\
+&\langle x,x\rangle_\Sigma+\sum_{j=1}^k\left[c_j^2-2c_j\langle x,e_j\rangle_\Sigma\right]
+\end{align}
+Here we've used the orthonormality of the $e$'s. We now find the derivative of the log-likelihood:
+\begin{equation}
+\frac{l_X}{\partial c_i}=\frac{1}{2\sigma^2}\sum_{j=1}^k\left[2c_j\delta_{ij}-2\delta_{ij}\langle x,e_j\rangle_\Sigma\right]=\frac{1}{\sigma^2}[c_i-\langle x,e_i\rangle_\Sigma]
+\end{equation}
+These should be zero for all $i$ at minimum, so:
+\begin{equation}
+c_i=\langle x,e_i\rangle_\Sigma\end{equation}
+But this corresponds to projecting $x$ on to $L$ with respect to the inner product $\langle\cdot,\cdot\rangle_\Sigma$. And so the maximum likelihood estimate is:
+\begin{equation}
+\mu_{\textrm{MLE}}=p_L(x)
+\end{equation}
+Here it's understood that the projection is with respect to the new inner $\Sigma$-product. This fact could also have been found by using Pythagoras' theorem:
+\begin{equation}
+\label{pythagoras_mle}
+||x-\mu||^2_\Sigma=||x-p_L(x)||^2_\Sigma+||p_L(x)-\mu||^2_\Sigma
+\end{equation}
+The first term is constant given the observations. So we need to minimize $||p_L(x)-\mu||^2_\Sigma$. Which is clearly happening when $p_L(x)-\mu=0$, leading to the very same conclusion.
+
+\subsubsection{MLE for $\sigma^2$}
+The profile log-likelihood given the MLE estimate for $\mu$ is:
+\begin{equation}
+\tilde{l}_X(\sigma^2)=\frac{1}{2}\log\left(\textrm{det}(2\pi\sigma^2\Sigma)\right)+\frac{1}{2\sigma^2}||x-\mu_{\textrm{MLE}}||^2_\Sigma
+\end{equation}
+But from equation \ref{pythagoras_mle} we know that:
+\begin{equation}
+||x-\mu_{\textrm{MLE}}||^2_\Sigma=||x-p_L(x)||^2_\Sigma
+\end{equation}
+We also want to rewrite the determinant as:
+\begin{equation}
+\textrm{det}(2\pi\sigma^2\Sigma)=\textrm{det}(2\pi\Sigma)(\sigma^2)^N
+\end{equation}
+So, splitting the logarithm into a sum:
+\begin{equation}
+\tilde{l}_X(\sigma^2)=\frac{1}{2}\log\left(\textrm{det}(2\pi\Sigma)\right)+\frac{N}{2}\log(\sigma^2)+\frac{1}{2\sigma^2}||x-p_L(x)||^2_\Sigma
+\end{equation}
+The derivative with respect to $\sigma^2$ is:
+\begin{equation}
+\frac{\partial\tilde{l}_x}{\partial(\sigma^2)}=\frac{N}{2\sigma^2}-\frac{1}{2(\sigma^2)^2}||x-p_L(x)||^2_\Sigma=\frac{1}{2\sigma^2}\left[N-\frac{1}{\sigma^2}||x-p_L(x)||^2_\Sigma\right]
+\end{equation}
+For this to be zero, we must have:
+\begin{equation}
+\frac{1}{\sigma^2}||x-p_L(x)||^2_\Sigma=N\Leftrightarrow\sigma^2=\frac{||x-p_L(x)||^2_\Sigma}{N}
+\end{equation}
+This is the MLE estimate of $\sigma^2$:
+\begin{equation}
+\sigma^2_{\textrm{MLE}}=\frac{||x-p_L(x)||^2_\Sigma}{N}
+\end{equation}
+
 \section{Abstract definition of a linear model}
 This section will deal with the linear model in its most abstract form.
 
