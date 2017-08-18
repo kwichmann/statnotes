@@ -1,0 +1,127 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Logistic regression}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Definitions and setup}
+
+\subsection{Logistic model}
+A logistic model on $\mathbb{R}^n$ is a function:
+\begin{equation}
+x\mapsto a=\sigma(w^t x+b)=\sigma(z)
+\end{equation}
+Here, $\sigma$ is the logistic sigma function, $w\in\mathbb{R}^n$ is the weight vector, and $b\in\mathbb{R}$ the bias. The result $a$ is usually interpreted as the probability of a given condition being true; it is a binary classification model.
+
+\subsection{Training set}
+The training set consists of $m$ labelled data points. I.e. we have $m$ points in $\mathbb{R}^n$ along with a labelling of whether the condition is question is actually met for the data point, one-hot encoded. So $m$ pairs $(x^{(i)},y^{(i})$. Corresponding $a$'s and $z$'s are defined through:
+\begin{equation}
+a^{(i)}=\sigma(w^t x^{(i)}+b)=\sigma(z^{(i)})
+\end{equation}
+
+\subsection{Cost and loss functions}
+To train the model, we need to specify a function to optimize. Here, for a single data point $x^{(i)}$ we will use the cross-entropy:
+\begin{equation}
+C^{(i)}=-\left[y^{(i)}\log a^{(i)}+(1-y^{(i)})\log(1-a^{(i)})\right]
+\end{equation}
+This is the cost function. The loss function is the average of the cost for the entire training set:
+\begin{equation}
+J=\frac{1}{m}\sum_{i=1}^m C^{(i)}
+\end{equation}
+We wish to find the values of $w$ and $b$ which minimizes $J$.
+
+\section{Finding derivatives}
+To minimize, we seek the derivatives:
+\begin{equation}
+\frac{\partial J}{\partial w},\quad\frac{\partial J}{\partial b}
+\end{equation}
+Both can be found using the chain rule:
+\begin{equation}
+\frac{\partial J}{\partial w}=\sum_{i=1}^m\frac{\partial J}{\partial a^{(i)}}\frac{\partial a^{(i)}}{\partial z^{(i)}}\frac{\partial z^{(i)}}{\partial w},\quad
+\frac{\partial J}{\partial b}=\sum_{i=1}^m\frac{\partial J}{\partial a^{(i)}}\frac{\partial a^{(i)}}{\partial z^{(i)}}\frac{\partial z^{(i)}}{\partial b}
+\end{equation}
+The first two terms in each formula are the same. The first one:
+\begin{align}
+\frac{\partial J}{\partial a^{(i)}}=-&\frac{1}{m}\left[\frac{y^{(i)}}{a^{(i)}}-\frac{1-y^{(i)}}{1-a^{(i)}}\right]=\\
+-&\frac{1}{m}\frac{y^{(i)}(1-a^{(i)})-(1-y^{(i)})a^{(i)}}{a^{(i)}(1-a^{(i)})}=\\
+&\frac{1}{m}\frac{a^{(i)}-y^{(i)}}{a^{(i)}(1-a^{(i)})}
+\end{align}
+Here we've used that we only get a non-zero result when the index matches. The second comes from a standard result for the logistic sigmoid:
+\begin{equation}
+\frac{\partial a^{(i)}}{\partial z^{(i)}}=a^{(i)}(1-a^{(i)})
+\end{equation}
+So when combined, the denominator cancels:
+\begin{equation}
+\frac{\partial J}{\partial a^{(i)}}\frac{\partial a^{(i)}}{\partial z^{(i)}}=\frac{1}{m}a^{(i)}-y^{(i)}=\frac{1}{m}\delta^{(i)}
+\end{equation}
+Here we've introduced the output error $\delta^{(i)}=a^{(i)}-y^{(i)}$.
+
+\subsection{Derivative for $w$}
+In this case the final term is:
+\begin{equation}
+\frac{\partial z^{(i)}}{\partial w}=\frac{\partial}{\partial w}\left(w^t x^{(i)}+b\right)=x^{(i)}
+\end{equation}
+So the derivative is:
+\begin{equation}
+\frac{\partial J}{\partial w}=\frac{1}{m}\sum_{i=1}^m\delta^{(i)}x^{(i)}
+\end{equation}
+
+\subsection{Derivative for $b$}
+Here the final term is:
+\begin{equation}
+\frac{\partial z^{(i)}}{\partial b}=\frac{\partial}{\partial b}\left(w^t x^{(i)}+b\right)=1
+\end{equation}
+So the derivative is:
+\begin{equation}
+\frac{\partial J}{\partial b}=\frac{1}{m}\sum_{i=1}^m\delta^{(i)}
+\end{equation}
+
+\section{Vectoriation}
+For vectorization purposes, we will collect the data in a matrix $X$:
+\begin{equation}
+X=\begin{pmatrix}
+| & \cdots & | \\
+x^{(i)} & \cdots & x^{(m)} \\
+| & \cdots & |
+\end{pmatrix}
+\in\mathbb{R}^{n\times m}
+\end{equation}
+The labels are collected into a row vector:
+\begin{equation}
+Y=\begin{pmatrix}
+y^{(1)} & \cdots & y^{(m)}
+\end{pmatrix}
+\in\mathbb{R}^{1\times m}
+\end{equation}
+We can now find the $z$ values by matrix multiplication:
+\begin{equation}
+Z=w^t X\in\mathbb{R}^{1\times m}
+\end{equation}
+The $a$'s are then found by applying $\sigma$ elementwise:
+\begin{equation}
+A=\sigma(Z)\in\mathbb{R}^{1\times m}
+\end{equation}
+The errors are then:
+\begin{equation}
+\Delta=A-Y\in\mathbb{R}^{1\times m}
+\end{equation}
+And finally, we can get the derivatives:
+\begin{equation}
+\frac{\partial J}{\partial w}=\frac{1}{m}X\Delta^t\in\mathbb{R}^{n\times 1},\quad
+\frac{\partial J}{\partial b}=\frac{1}{m}J_m\Delta^t\in\mathbb{R}^{1\times 1}
+\end{equation}
+Here $J_m$ is the $1\times m$ row vector of all ones.
+\end{document}
