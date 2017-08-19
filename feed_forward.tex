@@ -49,7 +49,7 @@ Z^{(l)}=W^{(l)} A^{(l-1)}+b^{(l)},\quad A^{(l)}=\sigma_l(Z^{(l)})=\sigma_l(W^{(l
 \end{equation}
 We will also identify $X$ with the activations of "layer zero": $A^{(0)}=X$.
 
-Finally, we have an error function $J$ which measures the distance to some target data $T\in\mathbb{R}^{S_L\times N}$:
+Finally, we have a cost function $J$ which measures the distance to some target data $T\in\mathbb{R}^{S_L\times N}$:
 \begin{equation}
 T=
 \begin{pmatrix}
@@ -58,7 +58,7 @@ t_1 & \cdots & t_N \\
 | & \cdots & |
 \end{pmatrix}
 \end{equation}
-We will assume the error function is of the form $J=J(T,A^{(L)})$, taking on real values. I.e. it only depends on the targets and the activations of the output layer.
+We will assume the cost function is of the form $J=J(T,A^{(L)})$, taking on real values. I.e. it only depends on the targets and the activations of the output layer. We will make further assumptions about $J$ later.
 
 \section{Backpropagation - Output layer}
 Forward propagation through the network is described by equation \ref{forward_propagation}. The procedure is assumed to be done before we look at how to determine partial derivatives of $J$ through backpropagation.
@@ -131,7 +131,7 @@ We will call the quantity $\frac{\partial J}{\partial A^{(L)}}$ the output layer
 \begin{equation}
 \Delta^{(L)}=\frac{\partial J}{\partial A^{(L)}}
 \end{equation}
-The quotes are used, because there's no need for this to be equal/proportional to what we usually call errors, i.e. distance between the output $A^{(L)}$ and $T$. However, often this is the case (or rather, $J$ is specifically chosen to make this so - see below). At any rate, we may now write:
+The quotes are used, because there's no need for this to be equal/proportional to what we usually call errors, i.e. distance between the output $A^{(L)}$ and $T$. However, often this is the case (or rather, $J$ is specifically chosen to make $\Delta$, $H$, or $\delta$ defined below equal/proportional to it - see below). At any rate, we may now write:
 \begin{align}
 \label{output_weights_H}
 H^{(L)}=&\Delta^{(L)}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\\
@@ -140,30 +140,60 @@ H^{(L)}=&\Delta^{(L)}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\\
 \frac{\partial J}{\partial b^{(L)}}=&H^{(L)}J_N^t=\left[\Delta^{(L)}\odot\frac{\partial\sigma_L}{\partial Z^{(L)}}\right]J_N^t
 \end{align}
 
-\subsection{Example error function: Euclidean distance}
-A common form of error function is:
+\section{The cost function}
+Let's take a closer look at the cost function. Usually, it can be written as an average of a \textit{loss function} $\mathcal{L}(t,a)$, where $t$ and $a$ are the desired and actual activations for the output layer. Then the cost function can be written:
+\begin{equation}
+J(T,A^{(L)})=\frac{1}{N}\sum_{i=1}^N\mathcal{L}(t_i,a^{(L)}_i)
+\end{equation}
+The "error" term is now:
+\begin{equation}
+\Delta^{(L)}=\frac{\partial J}{\partial A^{(L)}}=\frac{1}{m}\sum_{i=1}^N\frac{\partial}{\partial A^{(L)}}\mathcal{L}(t_i,a^{(L)}_i)
+\end{equation}
+The derivative is only non-zero when differentiating with respect to $a^{(L)}_i$, so this is the same as:
+\begin{equation}
+\Delta^{(L)}=\frac{1}{m}\sum_{i=1}^N\underbrace{\frac{\partial}{\partial a^{(L)}_i}\mathcal{L}(t_i,a^{(L)}_i)}_{\delta^{(L)}_i}
+\end{equation}
+Here, we've defined the error function for specific a data point $\delta^{(L)}_i$.
+
+\subsection{Example: Euclidean distance cost function}
+A common form of cost function is:
 \begin{equation}
 J(T,A^{(L)})=\frac{1}{2N}\sum_{m=1}^N||a^{(L)}_m-t_m||^2
 \end{equation}
-Here, $a^{(L)}_m$ is the $m$'th column of $A^{(L)}$ and the double dashes is the usual Euclidean norm in $S_L$ dimensions. So we may rewrite:
+Here, $a^{(L)}_m$ is the $m$'th column of $A^{(L)}$ and the double dashes is the usual Euclidean norm in $S_L$ dimensions. So with the notation above:
 \begin{equation}
-J(T,A^{(L)})=\frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}(A^{(L)}_{jm}-T_{jm})^2
+\mathcal{L}(t,a^{(L)})=\frac{1}{2}||a^{(L)}-t||^2
 \end{equation}
-Now we can find the derivative:
+The error for a data point is:
 \begin{equation}
-\Delta^{(L)}_{in}=\frac{\partial J}{\partial A^{(L)}_{in}}=\frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}\frac{\partial}{\partial A^{(L)}_{in}}(A^{(L)}_{jm}-T_{jm})^2
+\delta^{(L)}_i=\frac{1}{2}\frac{\partial}{\partial a^{(L)}_i}||a^{(L)}_i-t_i||^2=a^{(L)}_i-t_i
 \end{equation}
-Again, we get two Kronecker deltas:
-\begin{equation}
-\frac{1}{2N}\sum_{m=1}^N\sum_{j=1}^{S_L}2(A^{(L)}_{jm}-T_{jm})\delta_{ij}\delta_{nm}=\frac{1}{N}(A^{(L)}_{in}-T_{in})
-\end{equation}
-The quantity in parenthesis is the $ij$ element of the error term matrix for the output layer. So indeed we get:
-\begin{equation}
-\Delta^{(L)}=\frac{1}{N}\left(A^{(L)}_{in}-T_{in}\right)
-\end{equation}
-Or in matrix form:
+This conforms with the usual notion of error for a data point. The total "error" term becomes:
 \begin{equation}
 \Delta^{(L)}=\frac{1}{N}\left(A^{(L)}-T\right)
+\end{equation}
+
+\subsection{Example: Cross-entropy cost function with logistic sigmoid activation function}
+\label{coursera_case}
+Here the cost function is:
+\begin{equation}
+J(T,A^{(L)})=-\frac{1}{N}\sum_{m=1}^N\left[t_i\log a^{(L)}_i+(1-t_i)\log(1-a^{(L)}_i)\right]
+\end{equation}
+Or in other words:
+\begin{equation}
+\mathcal{L}(t,a^{(L)})=-\left[t\log a^{(L)}+(1-t)\log(1-a^{(L)})\right]
+\end{equation}
+The data point error is:
+\begin{equation}
+\delta^{(L)}_i=-\left[\frac{t_i}{a^{(L)}_i}-\frac{1-t_i}{1-a^{(L)}_i}\right]=\frac{-t_i(1-a^{(L)}_i)+(1-t_i)a^{(L)}_i}{a^{(L)}_i(1-a^{(L)}_i)}=\frac{a^{(L)}_i-t_i}{a^{(L)}_i(1-a^{(L)}_i)}
+\end{equation}
+This looks like what we usually think of as the error, except for the denominator. However, we also see that the same denominator is equal to the derivative of a logistic sigmoid function. Hence we will re-find the familiar from when we get to the Hadamard product. Let's start with $\Delta$:
+\begin{equation}
+\Delta^{(L)}=\frac{1}{N}\sum_{i=1}^N\frac{a^{(L)}_i-t_i}{a^{(L)}_i(1-a^{(L)}_i)}
+\end{equation}
+As noted above, for $H$ the denominator cancels and we get:
+\begin{equation}
+H^{(L)}=\frac{1}{N}(A^{(L)}-T)
 \end{equation}
 
 \section{Backpropagation - Last hidden layer}
@@ -301,4 +331,42 @@ In matrix form:
 \begin{equation}
 \frac{\partial J}{\partial b^{(l)}}=H^{(l)}J^t_N
 \end{equation}
+
+\section{Example: Two-layer tanh-network for binary classification}
+This example is from week 3 of the Coursera course "Neural Networks and Deep Learning" by Andrew Ng. The input layer has 2 dimensions, and the output 1. Since it is a binary classification model, the output activation function is sigmoid, while the hidden layer is tanh:
+\begin{equation}
+\sigma_1(z)=\tanh(z),\quad\sigma_2(z)=\sigma(z)
+\end{equation}
+The training set consists of 400 data points, so $X=\in\mathbb{R}^{2\times 400}$. The labels $T$ are called $Y$, and are one-hot encodings of the true condition, so $T=Y\in\mathbb{R}^{1\times 400}$.
+The hidden layer has $n_h$ layers, so the dimensions of the weights and biases are:
+\begin{equation}
+W^{(1)}\in\mathbb{R}^{n_h\times 2},\quad b^{(1)}\in\mathbb{R}^{n_h\times 1},\quad
+W^{(2)}\in\mathbb{R}^{1\times n_h},\quad b^{(2)}\in\mathbb{R}^{1\times 1}
+\end{equation}
+The loss function is the average cross-entropy for the training set. This means that we're in the same case as in section \ref{coursera_case}. Therefore the Hadamard term for the output layer is:
+\begin{equation}
+H^{(2)}=\frac{1}{m}(A^{(2)}-Y)
+\end{equation}
+So, the $W^{(2)}$-derivative is:
+\begin{equation}
+\frac{\partial J}{\partial W^{(2)}}=H^{(2)}A^{(1)}=\frac{1}{m}\sum_{i=1}^m\left(A^{(2)}_i-Y_i\right)(A^{(1)}_i)^t
+\end{equation}
+And the $b^{(2)}$-derivative:
+\begin{equation}
+\frac{\partial J}{\partial b^{(2)}}=H^{(2)}A^{(1)}=\frac{1}{m}\sum_{i=1}^m\left(A^{(2)}_i-Y_i\right)
+\end{equation}
+Now, we backpropagate the error term:
+\begin{equation}
+\Delta^{(1)}=(W^{(2)})^t H^{(2)}=\frac{1}{m}(W^{(2)})^t(A^{(2)}-Y)
+\end{equation}
+And using the derivative of $\tanh$, the Hadamard term is:
+\begin{equation}
+H^{(1)}_i=\Delta^{(1)}_i(1-(a^{(1)}_i)^2)
+\end{equation}
+Now the derivatives of $W^{(1)}$ and $b^{(1)}$ follow the usual formulas:
+\begin{equation}
+\frac{\partial J}{\partial W^{(1)}}=H^{(1)}(A^{(1)})^t,\quad
+\frac{\partial J}{\partial b^{(1)}}=H^{(1)}(J_2)^t
+\end{equation}
+
 \end{document}
