@@ -32,14 +32,14 @@ The training set consists of $m$ labelled data points. I.e. we have $m$ points i
 a^{(i)}=\sigma(w^t x^{(i)}+b)=\sigma(z^{(i)})
 \end{equation}
 
-\subsection{Cost and loss functions}
+\subsection{Loss and cost functions}
 To train the model, we need to specify a function to optimize. Here, for a single data point $x^{(i)}$ we will use the cross-entropy:
 \begin{equation}
-C^{(i)}=-\left[y^{(i)}\log a^{(i)}+(1-y^{(i)})\log(1-a^{(i)})\right]
+\mathcal{L}^{(i)}=-\left[y^{(i)}\log a^{(i)}+(1-y^{(i)})\log(1-a^{(i)})\right]
 \end{equation}
-This is the cost function. The loss function is the average of the cost for the entire training set:
+This is the loss function. The cost function is the average of the loss for the entire training set:
 \begin{equation}
-J=\frac{1}{m}\sum_{i=1}^m C^{(i)}
+J=\frac{1}{m}\sum_{i=1}^m\mathcal{L}^{(i)}
 \end{equation}
 We wish to find the values of $w$ and $b$ which minimizes $J$.
 
@@ -89,7 +89,7 @@ So the derivative is:
 \frac{\partial J}{\partial b}=\frac{1}{m}\sum_{i=1}^m\delta^{(i)}
 \end{equation}
 
-\section{Vectoriation}
+\section{Vectorization}
 For vectorization purposes, we will collect the data in a matrix $X$:
 \begin{equation}
 X=\begin{pmatrix}
