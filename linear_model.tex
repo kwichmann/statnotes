@@ -4,7 +4,9 @@
 \usepackage{amsthm}
 \usepackage{mathtools}
 \usepackage{MnSymbol}
-\newtheorem{theorem}{Theorem}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
 
 \title{The Linear Model}
 \author{Kristian Wichmann}
@@ -353,24 +355,65 @@ But from equation \ref{pythagoras_mle} we know that:
 \end{equation}
 We also want to rewrite the determinant as:
 \begin{equation}
-\textrm{det}(2\pi\sigma^2\Sigma)=\textrm{det}(2\pi\Sigma)(\sigma^2)^N
+\textrm{det}(2\pi\sigma^2\Sigma)=\textrm{det}(2\pi\Sigma)(\sigma^2)^n
 \end{equation}
 So, splitting the logarithm into a sum:
 \begin{equation}
-\tilde{l}_X(\sigma^2)=\frac{1}{2}\log\left(\textrm{det}(2\pi\Sigma)\right)+\frac{N}{2}\log(\sigma^2)+\frac{1}{2\sigma^2}||x-p_L(x)||^2_\Sigma
+\tilde{l}_X(\sigma^2)=\frac{1}{2}\log\left(\textrm{det}(2\pi\Sigma)\right)+\frac{n}{2}\log(\sigma^2)+\frac{1}{2\sigma^2}||x-p_L(x)||^2_\Sigma
 \end{equation}
 The derivative with respect to $\sigma^2$ is:
 \begin{equation}
-\frac{\partial\tilde{l}_x}{\partial(\sigma^2)}=\frac{N}{2\sigma^2}-\frac{1}{2(\sigma^2)^2}||x-p_L(x)||^2_\Sigma=\frac{1}{2\sigma^2}\left[N-\frac{1}{\sigma^2}||x-p_L(x)||^2_\Sigma\right]
+\frac{\partial\tilde{l}_x}{\partial(\sigma^2)}=\frac{n}{2\sigma^2}-\frac{1}{2(\sigma^2)^2}||x-p_L(x)||^2_\Sigma=\frac{1}{2\sigma^2}\left[n-\frac{1}{\sigma^2}||x-p_L(x)||^2_\Sigma\right]
 \end{equation}
 For this to be zero, we must have:
 \begin{equation}
-\frac{1}{\sigma^2}||x-p_L(x)||^2_\Sigma=N\Leftrightarrow\sigma^2=\frac{||x-p_L(x)||^2_\Sigma}{N}
+\frac{1}{\sigma^2}||x-p_L(x)||^2_\Sigma=n\Leftrightarrow\sigma^2=\frac{||x-p_L(x)||^2_\Sigma}{n}
 \end{equation}
 This is the MLE estimate of $\sigma^2$:
 \begin{equation}
-\sigma^2_{\textrm{MLE}}=\frac{||x-p_L(x)||^2_\Sigma}{N}
+\sigma^2_{\textrm{MLE}}=\frac{||x-p_L(x)||^2_\Sigma}{n}
 \end{equation}
+Since $p_L(x)$ and $x-p_L(x)$ are orthogonal according to the decomposition theorem, we can use Pythagoras' theorem:
+\begin{equation}
+||x||^2_\Sigma=||x-p_L(x)+p_L(x)||^2_\Sigma=||x-p_L(x)||^2_\Sigma+||p_L(x)||^2_\Sigma
+\end{equation}
+So we could also calculate the MLE estimate as:
+\begin{equation}
+\sigma^2_{\textrm{MLE}}=\frac{||x||^2_\Sigma-||p_L(x)||^2_\Sigma}{n}
+\end{equation}
+As we will shortly see, however, the MLE estimate of $\sigma^2$ is biased.
+
+\subsection{Distribution of the MLE estimators}
+We now wish to investigate the distributions of these estimates. For this, the decomposition theorem will come in handy.
+
+First, consider the estimator for $\mu$, $p_L(X)$. We know that $p_L(X)$ is normally distributed with mean $p_L(\mu)$, where $\mu$ is the true mean. We also know that the covariance matrix is $\sigma^2 p_L\Sigma p_L$, where once again $\sigma^2$ is the true value. But this is inconvenient, since we know that it has rank $k$ - the values are constrained to $L$. Let $\{e_1,\cdots,e_k\}$ be a basis for $L$. Then an arbitrary point $x$ in $L$ can be written:
+\begin{equation}
+x=\sum_{i=1}^k\beta_i e_i=A\beta
+\end{equation}
+Here, we've collected the basis vectors in the $n\times k$ matrix $A$:
+\begin{equation}
+A=
+\begin{pmatrix}
+| & \cdots & | \\
+e_1 & \cdots & e_k \\
+| & \cdots & |
+\end{pmatrix}
+\end{equation}
+The question now is what the distribution of the vector $\beta$ is when $X=A\beta$. $A$ is not invertible, but it has the left inverse $A_L^{-1}=(A^t A)^{-1}A^t$:
+\begin{equation}
+(A^t A)^{-1}A^t X=(A^t A)^{-1}A^t A\beta=\beta
+\end{equation}
+So, $\beta$ is normally distributed with mean $A_L^{-1}\mu$. But $A_L^{-1}=p_\beta$ is the projection operator on $L$ in terms of the basis $\{e_1,\cdots,e_k\}$, so we get exactly the $\beta$-coordinates of $p_L(\mu)$. The covariance matrix is:
+\begin{equation}
+\underbrace{A((A^t A)^{-1})^t}_{p_\beta^t}\sigma^2\Sigma\underbrace{(A^t A)^{-1}A^t}_{p_\beta}
+\end{equation}
+So, essentially the true covariance matrix transformed into the $\beta$ space.
+
+Now consider the estimator of the variance $\sigma^2$. According to the decomposition theorem, $X-p_L(X)$ is normally distributed with a covariance matrix $C$ of rank $n-k$. Consider:
+\begin{equation}
+
+\end{equation}
+
 
 \section{Abstract definition of a linear model}
 This section will deal with the linear model in its most abstract form.

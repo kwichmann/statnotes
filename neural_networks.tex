@@ -362,7 +362,7 @@ But $a^{(K-1)}=g\left(z^{(K-1)})\right)$:
 \frac{\partial}{\partial\alpha}g(z^{(K-1)})=g(z^{(K-1)})\odot(1-g(z^{(K-1)}))\odot\frac{\partial z^{(K-1)}}{\partial\alpha}
 \end{equation}
 
-Again, the two first factors can be expressed as activiations, and because $\alpha$ is associated with layer $K-1$, the derivative is analogous to the results from equations \ref{weight_derivative} and \ref{bias_derivative}. Inserting into equation \ref{general_partial_formula}, once again, there's some cancelling out, but this time we get some extra factors:
+Again, the two first factors can be expressed as activations, and because $\alpha$ is associated with layer $K-1$, the derivative is analogous to the results from equations \ref{weight_derivative} and \ref{bias_derivative}. Inserting into equation \ref{general_partial_formula}, once again, there's some cancelling out, but this time we get some extra factors:
 \begin{equation}
 \sum_i\left\{\delta^{(K)}_i\sum_j\theta^{(K)}_{ij}a_j^{(K-1)}\left(1-a_j^{(K-1)}\right)\frac{\partial z^{(K-1)}_j}{\partial\alpha}\right\}
 \end{equation}

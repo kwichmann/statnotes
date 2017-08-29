@@ -1,0 +1,61 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png, .jpg}
+
+\title{Machine learning strategies}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+This note describes a number of strategies, tips and tricks for successfully navigating actual machine learning projects.
+
+\subsection{Orthogonalization}
+\textit{Orthogonalization} is essentially knowing what to tune to achieve what effect.
+
+Ideally, when turning one "knob" on you ML problem, it should only affect one aspect of the outcome - each does only one, easily interpretable, thing. That way, you may tune one "knob" at a time to get the desired behaviour from the algorithm.
+
+\subsubsection{Chain of assumptions}
+When building an ML product, there's a chain of assumptions being made:
+\begin{itemize}
+\item We can fit the parameters well to the training set, so that the chosen cost function is low. In other words, we assume that we can get an acceptable performance on the training set. Sometimes this means getting human level performance or better.
+\item We then hope this model also does well on the dev set.
+\item And on the test set as well.
+\item This should lead to good performance out in the real world.
+\end{itemize}
+For each of these problems, we have different "knobs" to turn in order to get the desired result.
+
+\section{Setting your goal}
+
+
+\section{Comparison to human-level performance}
+
+
+\section{Case study: Bird recognition}
+
+
+\section{Error analysis}
+
+
+\section{Mismatched training/dev/test sets}
+
+
+\section{Learning from multiple tasks}
+
+
+\section{End-to-end deep learning}
+
+
+\section{Case study: Image recognition for driverless car}
+
+\end{document}
