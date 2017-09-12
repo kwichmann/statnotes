@@ -20,6 +20,13 @@
 \section{Introduction}
 This note describes a number of strategies, tips and tricks for successfully navigating actual machine learning projects.
 
+\subsection{The project cycle}
+Basically, the evolution of a ML project over time comes in cycles of three phases:
+\begin{equation}
+\textrm{Idea}\rightarrow\textrm{Code}\rightarrow\textrm{Experiment}
+\end{equation}
+In short: Start with an idea, implement it in code. Then get your hands dirty and experiment with running the code in different ways. Eventually, this will hopefully lead to getting a new and hopefully better idea, which will start the cycle over again, until a satisfactory product has been build.
+
 \subsection{Orthogonalization}
 \textit{Orthogonalization} is essentially knowing what to tune to achieve what effect.
 
@@ -29,13 +36,95 @@ Ideally, when turning one "knob" on you ML problem, it should only affect one as
 When building an ML product, there's a chain of assumptions being made:
 \begin{itemize}
 \item We can fit the parameters well to the training set, so that the chosen cost function is low. In other words, we assume that we can get an acceptable performance on the training set. Sometimes this means getting human level performance or better.
-\item We then hope this model also does well on the dev set.
+\item We then hope this model also does well on the dev set. Failure to do so us typically a sign of overfitting.
 \item And on the test set as well.
 \item This should lead to good performance out in the real world.
 \end{itemize}
-For each of these problems, we have different "knobs" to turn in order to get the desired result.
+For each of these problems, we have different "knobs" to turn in order to get the desired result. Here's some examples that may help achieve succes for each:
+\begin{itemize}
+\item Performance on the training set:
+	\begin{itemize}
+	\item Training a bigger network, or more generally a model with greater capacity.
+	\item Choosing a better strategy for gradient descent. ADAM for instance
+	\end{itemize}
+\item Performance on the dev set:
+	\begin{itemize}
+	\item Regularization, like ridge regression or dropout.
+	\item Getting a bigger training set.
+	\end{itemize}
+\item Performance on the test set:
+	\begin{itemize}
+	\item Get a bigger dev set.
+	\end{itemize}
+\item Performance in the real world:
+	\begin{itemize}
+	\item Change the dev set to better correspond to real world data.
+	\item Change the cost function to better fit the problem.
+	\end{itemize}
+\end{itemize}
+We'll dive into a lot of these in more detail below.
+
+\subsubsection{Non-orthogonal example: Early stopping}
+Some strategies are non-orthogonal. I.e. they affect several of the points in the chain above at the same time. One such example is early stopping, where performance is monitored on the training and dev set simultaneously. Therefore, in this case we're "tuning two knobs" at once.
 
 \section{Setting your goal}
+This is the crucial question for training the model: What are our optimization criteria? Which quantities do we want to optimize, and under which contraints (if any)? This section outlines a number of strategies, and thoughts on when/if it's a good idea to change these goals along the way.
+
+\subsection{Single evaluation metric}
+In this case, there's simply one quantity which gauges the performance of the model. We can then train the model to optimize the quantity. The cost function is an example.
+
+If we have a number of discrete options to choose from, we can simply pick the one with the highest/lowest performance.
+
+Often, there will be several relevant metrics related to a problem. Sometimes we can combine these into one, as the following example shows.
+
+\subsubsection{Example: $F_1$ score}
+For classification, both precision and recall are relevant metrics to consider. If we have trained two classifiers A and B with the properties when evaluated on the dev set shown in table \ref{table:two_classifiers}, it is not immediately clear which one we should pick; there's often a trade-off between the two.
+
+\begin{table}
+\centering
+\label{table:two_classifiers}
+\begin{tabular}{l|c|c|}
+\cline{2-3}
+                                   & \multicolumn{1}{l|}{Precision} & \multicolumn{1}{l|}{Recall} \\ \hline
+\multicolumn{1}{|l|}{Classifier A} & 95\%                           & 90\%                        \\ \hline
+\multicolumn{1}{|l|}{Classifier B} & 98\%                           & 85\%                        \\ \hline
+\end{tabular}
+\caption{Properties of two classifiers}
+\end{table}
+
+One way to combine the two, is the $F_1$ score, which is the harmonic mean of the precision ($P$) and recall ($R$):
+\begin{equation}
+F_1=\frac{2}{\frac{1}{P}+\frac{1}{R}}=\frac{2}{\frac{P+R}{PR}}=\frac{2PR}{P+R}
+\end{equation}
+We may now calculate the $F_1$ score of the two classifiers:
+\begin{equation}
+A: F_1=\frac{2\cdot 0.96\cdot 0.90}{0.96+0.90}\approx 92.4\%\quad
+B: F_1=\frac{2\cdot 0.98\cdot 0.85}{0.98+0.85}\approx 91.0\%
+\end{equation}
+So, with $F_1$ score as the single evaluation metric, we should pick classifier A.
+
+\subsection{Satificing and optimizing metrics}
+Often, it is not possible to include all the relevant metrics into one. We can get around this problem by deciding on a metric that we want to optimize, and for the others decide on a performance that is good enough. The latter as known as satificing metrics.
+
+\subsubsection{Example: Image classification}
+We have trained three image classifiers, and their accuracies on the dev set as well as run time is shown in table \ref{table:satisficing}. We want to optimize accuracy with run time as a saticficing metric, so that is should be below 100 ms.
+
+\begin{table}
+\centering
+\label{table:satisficing}
+\begin{tabular}{l|c|c|}
+\cline{2-3}
+                                   & \multicolumn{1}{l|}{Accuracy} & \multicolumn{1}{l|}{Time/ms} \\ \hline
+\multicolumn{1}{|l|}{Classifier A} & 90\%                           & 80                        \\ \hline
+\multicolumn{1}{|l|}{Classifier B} & 92\%                           & 95                        \\ \hline
+\multicolumn{1}{|l|}{Classifier C} & 95\%                           & 1500                        \\ \hline
+\end{tabular}
+\caption{Three image classifiers}
+\end{table}
+
+The satisficing condition disqualifies classifier C, even though it has the highest accuracy. Of the two that are left, classifier B is picked, as it has the highest accuacy.
+
+\subsection{Setting the goal}
 
 
 \section{Comparison to human-level performance}
