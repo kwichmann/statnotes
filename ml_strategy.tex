@@ -122,9 +122,36 @@ We have trained three image classifiers, and their accuracies on the dev set as 
 \caption{Three image classifiers}
 \end{table}
 
-The satisficing condition disqualifies classifier C, even though it has the highest accuracy. Of the two that are left, classifier B is picked, as it has the highest accuacy.
+The satisficing condition disqualifies classifier C, even though it has the highest accuracy. Of the two that are left, classifier B is picked, as it has the highest accuracy.
 
-\subsection{Setting the goal}
+\subsection{Distributions of dev vs. test sets}
+In a sense, out goal is set by choosing the metric/loss function along with the dev set. Together, these can be thought of as a dart board target. Through the idea $\rightarrow$ code $\rightarrow$ experiment cycle, an ML project team can get progressively closer to hitting the bullseye of this dart board.
+
+But when the time comes to checking the performance at the test set, we might be in trouble if we have not chosen it from the same distribution as the dev set! If these differ, we have actually "moved the target" for the test set, and hence the performance will suffer.
+
+\subsubsection{Example: Geographical differences}
+Let's say our data are divided into geographical regions: North America, South America, Europe, Asia, Africa, Australia. Now, imagine we choose our dev and test sets as follows:
+\begin{itemize}
+\item Dev set: North America, South America, Europe
+\item Test set: Asia, Africa, Australia
+\end{itemize}
+Here, we would be in trouble, since these represents to "different targets" (two different distributions): Good performance on the dev set, may not correspond to good performance on the test set!
+
+Instead, all of the data should be shuffled, and randomly distributed between the dev and test sets. Then the two sets come from the same distribution.
+
+\subsubsection{Size of train, dev and test sets}
+Earlier, it might have been adviced to have a split in size between the three sets be 60\% training set, 20\% dev set, and 20\% test set (or figures around these lines).
+
+However, in the big data era, we often have a so much data, that there's no reason to make the dev and test percentages so large.
+
+The test set should be large enough, that it ensures confidence in the performance of the model. The dev set should be of comparable size. Exact measures depend on the problem, but if, for instance we have a million data points, 1\% is 10000 samples! Often, this will be enough for confidence in the model. So, a reasonable split for such modern data sets is often closer to 98\% training set, 1\% dev set, and 1\% test set.
+
+Sometimes, you may even forego having a test set, and simply work with a dev set (which confusingly, is then sometimes referred to as the test set). This is generally not recommendable, but may work nonetheless.
+
+\subsection{When to change metrics and/or dev/test sets}
+Sometimes, we find that the target we have set is simply not appropriate for what we wish to achieve. This section offers some insight into detecting such a problem, and how to deal with it.
+
+\subsubsection{Example: Cat image classifier}
 
 
 \section{Comparison to human-level performance}
