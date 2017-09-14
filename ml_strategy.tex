@@ -21,11 +21,24 @@
 This note describes a number of strategies, tips and tricks for successfully navigating actual machine learning projects.
 
 \subsection{The project development cycle}
+
+\begin{figure}
+\centering
+\includegraphics[width = 0.5\textwidth]{dev_cycle}
+\caption{The project development cycle}
+\label{fig:cycle}
+\end{figure}
+
 Basically, the evolution of a ML project over time comes in cycles of three phases:
 \begin{equation}
 \textrm{Idea}\rightarrow\textrm{Code}\rightarrow\textrm{Experiment}
 \end{equation}
+
 In short: Start with an idea, implement it in code. Then get your hands dirty and experiment with running the code in different ways. Eventually, this will hopefully lead to getting a new and hopefully better idea, which will start the cycle over again, until a satisfactory product has been build.
+
+It is generally adviced to get started relatively fast: Get an initial - even if simple - idea, and implement the code as soon as possible. This is preferable to wasting too much time pondering the details of the problem instead of actually getting started with the project development. 
+
+Build you first system quickly, then iterate. The material below should help you do this effectively.
 
 \subsection{Orthogonalization}
 \textit{Orthogonalization} is essentially knowing what to tune to achieve what effect.
@@ -260,7 +273,7 @@ After doing this, you are informed, that the City Council has acquired an additi
 
 These images overall does not have the same clarity and resolution as the ones from the security cameras: They have a different distribution.
 
-Since the desired classifier will actually use security camera footage, adding these to the test set is a bad idea. So is adding them to the dev set, as the dev and test set should come from the same distribution. However, there is no major problem in adding them to the training set, since the algorithm will be tuned to perform will on the dev set anyway.
+Since the final classifier will actually use security camera footage, adding these to the test set is a bad idea. So is adding them to the dev set, as the dev and test set should come from the same distribution. However, there is no major problem in adding them to the training set, since the algorithm will be tuned to perform will on the dev set anyway.
 
 \subsection{Bias/variance considerations}
 You train a first iteration of the model, and it turns out that is has the following error rates:
