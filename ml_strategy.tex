@@ -168,10 +168,12 @@ Here $m$ is the number of samples in the dev set, and $\delta_i$ is either 0 or 
 
 Now, we introduce a weighting factor $w_i$, depending on whether or not the image is pornographic in character:
 \begin{equation}
+\label{new_metric1}
 \frac{1}{m}\sum_{i=1}^m w_i\delta_i
 \end{equation}
 Here, we set $w_i$ equal to 1 for most images, and a larger number, like 10 or maybe even 100, for pornographic ones. Finally, we may wish to change the normalization constant, so we get a rating between 0 and 1:
 \begin{equation}
+\label{new_metric2}
 \frac{1}{\sum_{i=1}^m w_i}\sum_{i=1}^m w_i\delta_i
 \end{equation}
 
@@ -227,6 +229,89 @@ Here, making an informed decision as in the previous section is much harder: We 
 That does not mean that further improvements are not possible, but there's fewer clues to what might be an effective strategy.
 
 \section{Case study: Bird recognition}
+Let's play a game: You are the top machine learning researcher in a city where people are afraid of birds. You are therefore put in charge of developing an image classifier that detects birds in pictures.
+
+To this end, you're given a labelled set of 10,000,000 security camera pictures, where each picture is classified as having a bird in it ($y=1$) or not ($y=0$).
+
+\subsection{Choice of metric}
+The City Council tells that they want an algorithm which has the following properties:
+\begin{itemize}
+\item Has high accuracy.
+\item Runs quickly and takes only a short time to classify a new image.
+\item Can fit in a small amount of memory, so that it can run in a small processor that the city will attach to many different security cameras.
+\end{itemize}
+Since having three separate metrics complicates your work, making it hard to make a fast decision between potential classifiers, you and the council decide on a satisicing metric scheme as follows:
+\begin{itemize}
+\item Accuracy as the optization metric.
+\item Classification time as a satisficing metric: The classification should take at most 10 seconds.
+\item Memory usage as a satificing metric: The model should fit within 10 MB of memory.
+\end{itemize}
+
+\subsection{Division into training/dev/test sets}
+Since there's a large amount of data, there's no reason to make the dev and test sets very large, percentage-wise. You judge that testing on 250,000 images should be enough to ensure confidence in a model. Therefore, you randomly split the data as follows:
+\begin{itemize}
+\item Training set: 9,500,000 images.
+\item Dev set: 250,000 images.
+\item Test set: 250,000 images.
+\end{itemize}
+
+\subsubsection{Getting additional data}
+After doing this, you are informed, that the City Council has acquired an additional 1,000,000 labelled images from concerned citizens worried about the bird threat.
+
+These images overall does not have the same clarity and resolution as the ones from the security cameras: They have a different distribution.
+
+Since the desired classifier will actually use security camera footage, adding these to the test set is a bad idea. So is adding them to the dev set, as the dev and test set should come from the same distribution. However, there is no major problem in adding them to the training set, since the algorithm will be tuned to perform will on the dev set anyway.
+
+\subsection{Bias/variance considerations}
+You train a first iteration of the model, and it turns out that is has the following error rates:
+\begin{itemize}
+\item Training set error: 4\%.
+\item Dev set error: 4.5\%.
+\end{itemize}
+This makes the variance 0.5\%, but initially your only estimate of the avoidable bias is, that it is 4\% or less.
+
+To getter a better idea, you look to human-level performance on the classification task. It turns out, that most people have an error rate around 1\%. However you also find that trained ornitologists have an error rate of 0.3\%. However, a team of ornithologists does even better, having an error rate of 0.1\%!
+
+Hence, your best estimate of the human-level performance error rate as a proxy for Bayes error is 0.1\% - the lowest score any human, or team of humans, you tested achieved.
+
+With this in mind, you see that the avoidable bias is at least 3.9\%. Much more than the variance of 0.5\%. You conclude that you best course of action for the next development cycle is to focus on reducing the bias. Some strategies could be easing regularization of the model, or rebuilding a model with greater capacity.
+
+\subsection{Test set performance}
+The next iteration of you algorithm, which you also run on the test set, has the following error rates:
+\begin{itemize}
+\item Training set error: 2\%.
+\item Dev set error: 2.1\%.
+\item Test set error: 7\%.
+\end{itemize}
+We see that the dev training and dev sets have almost the same error rate, so it has been fit well to the dev set. However, the jump in error for the test set shows that it has indeed overfit the data to the dev set!
+
+To remedy this, we could augment the size of the dev set.
+
+\subsection{Beyond human-level performance}
+After working hard on improving the algoritm for some time, you end up with a classifier with the following performance:
+\begin{itemize}
+\item Human-level error: 0.10\% (as before)
+\item Training set error: 0.05\%.
+\item Dev set error: 0.05\%.
+\end{itemize}
+Since the algorithm is now better than human-level performance, we can no longer use the 0.10\% as a proxy for Bayes error. Indeed, we see that the Bayes error must now be less than or equal to 0.05\% While there still may be room for further improvements, such developments will be slow, since we no longer have an estimate of avoidable bias.
+
+\subsection{Moving the "target"}
+
+\subsubsection{Competition!}
+You find out, that the City Council has hired one of your competitors to work on the problem as well. And it turns out that even though your model has a higher accuracy, the council likes your competitor's model better, as it has fewer false positives, leading to fewer false bird alarms.
+
+To remedy this situation, you find that it's time to change your optimization metric, introducing a large penalization weight for false positive classifications as shown in equations \ref{new_metric1} and \ref{new_metric2}.
+
+\subsubsection{New bird species}
+Subsequent development gives you back the edge over the opposition, but now you are faced with a new problem: A new bird species is being sighted, and your classifier's performance slowly drops as a result of this new distribution of the real images. You are given a few months to remedy this situation, but you only have 1000 images with the these animals in them to work with.
+
+So, since the algorithm still does rather well at recognizing birds in general, you decide that it's not much use to add any of the 1000 images to the training set. Instead you add 500 to each of the dev and test sets, and introduce another penalization weight for misclassifications of these images, hence moving the "target" to a position of special interest in getting these pictures right.
+
+\subsection{Incorporating existing data}
+The City Council has found, that in addition to your classifier, having cats in the city also helps reduce the number of bird sightings. Having previously worked with cat images, you have a large back catalogue of labelled cat/non-cat images. 100,000,000 images, in fact! Training a model on this massive data set takes about two weeks.
+
+You decide that starting by training a model on a much smaller data set, like 1,000,000 images is worth the advantage of a getting a quick start, even if the initial model may be sub-optimal. Getting faster computers from the council would also greatly improve the speed of your progress.
 
 
 \section{Error analysis}
