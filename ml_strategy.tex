@@ -20,7 +20,7 @@
 \section{Introduction}
 This note describes a number of strategies, tips and tricks for successfully navigating actual machine learning projects.
 
-\subsection{The project cycle}
+\subsection{The project development cycle}
 Basically, the evolution of a ML project over time comes in cycles of three phases:
 \begin{equation}
 \textrm{Idea}\rightarrow\textrm{Code}\rightarrow\textrm{Experiment}
@@ -45,7 +45,8 @@ For each of these problems, we have different "knobs" to turn in order to get th
 \item Performance on the training set:
 	\begin{itemize}
 	\item Training a bigger network, or more generally a model with greater capacity.
-	\item Choosing a better strategy for gradient descent. ADAM for instance
+	\item Choosing a better strategy for gradient descent. ADAM for instance.
+	\item Train your model for more epochs.
 	\end{itemize}
 \item Performance on the dev set:
 	\begin{itemize}
@@ -152,10 +153,78 @@ Sometimes, you may even forego having a test set, and simply work with a dev set
 Sometimes, we find that the target we have set is simply not appropriate for what we wish to achieve. This section offers some insight into detecting such a problem, and how to deal with it.
 
 \subsubsection{Example: Cat image classifier}
+Let's say, you're building a cat app, and have made two binary classifiers for distringuishing between cat and non-cat pictures. You have chosen the - appearantly perfectly reasonable - optimization metric to be classification accuracy.
 
+Now, on the dev set classifier A has an accuracy of 3\%, while classifier B has 5\%. So initially classifier A is chosen. However, it turns out, that classifier A lets some pornographic images through! This is of course unacceptable for a cat app.
+
+We are now in a situation, where the "target" set (i.e. the metric and dev set) prefers classifier A, while you/the app users prefer classifier B. This is a sign that it's time to move the "target"!
+
+\subsubsection{Changing the metric}
+In the example above, we might choose to penalize the mis-classified pornographic images much heavier than other errors. Let's see how. The original metric to be minimized is:
+\begin{equation}
+\frac{1}{m}\sum_{i=1}^m\delta_i
+\end{equation}
+Here $m$ is the number of samples in the dev set, and $\delta_i$ is either 0 or 1, depending on whether or not the sample is mis-classified or not.
+
+Now, we introduce a weighting factor $w_i$, depending on whether or not the image is pornographic in character:
+\begin{equation}
+\frac{1}{m}\sum_{i=1}^m w_i\delta_i
+\end{equation}
+Here, we set $w_i$ equal to 1 for most images, and a larger number, like 10 or maybe even 100, for pornographic ones. Finally, we may wish to change the normalization constant, so we get a rating between 0 and 1:
+\begin{equation}
+\frac{1}{\sum_{i=1}^m w_i}\sum_{i=1}^m w_i\delta_i
+\end{equation}
+
+Note the orthogonalization in this approach: First, we worry about changing the metric to something more appropriate. Then we go through development cycles to improve performance with regards to the new metric.
+
+\subsubsection{Another example: More cat images}
+Consider the same cat image classifier example as above. However, in this case, the problem is, that the images we've used for the dev/test sets are images collected on the internet. These are often taken by professional photographers, and so tend to be of much higher quality/clarity than ones taken by amateaurs, who are the typical users of the cat app.
+
+So when deployed, the classifier actually does much worse than it did on the dev/test sets, since the real app images comes from a different distribution.
+
+This would be a good time to change the dev/test sets (and maybe the metrics) to better fit the actual problem.
 
 \section{Comparison to human-level performance}
 
+\subsection{Bayes error rate}
+The Bayes error rate (or Bayes optimal error) for a machine learning problem, is the theoretical lower bound of how well an algorithm is able to perform. This rate is usually not zero, as the quality of the data may not be sufficient to make a perfectly performant algorithm.
+
+\subsection{Avoidable bias}
+We are interested in estimating the Bayes error rate, since any algoritm we make will have an error rate higher than the Bayes error rate. The difference between Bayes error rate and actual rate shows how much room we have for improvement. This is known as the avoidable bias.
+
+\subsection{Human level performance as a proxy for Bayes error rate}
+Human level performance can mean many things. If we want to diagnose a patient based on x-ray images, the average human will not do too well. A trained doctor will do much better. And a team of trained doctors even better.
+
+What all these have in common is, that since they are algorithms, their error rate must me at least as large as the Bayes error rate of the problem! Therefore, if we know the human error rate (or the best one if we have several, as in the example above), we have a limit on the Bayes error rate, and therefore also on the avoiadable bias.
+
+\subsection{Beyond human level performance}
+There is however no guarantee that human level actually is the Bayes error rate, though for some tasks it will be close. But often, it is possible to develop an algoritm that will have a lower error rate than the best human performance. However, in this region, it is trickier to guide the development. The reason is, that as long as the algoritm performs worse than humans, we have the following advantages when developing:
+\begin{itemize}
+\item We can get more data labelled by human with relative ease.
+\item We can gain insights from manual error analysis: "Why did a person get this right?"
+\item We can do a better analysis of bias and variance (see below).
+\end{itemize}
+
+\subsection{What to focus on? Bias or variance?}
+Let's consider a task, for which our algorithm has an error rate of 8\% on the training set and 10\% on the dev set. The question is now, if we should focus our energy on correcting bias (lowering error on training set) or variance (lowering error on dev set).
+
+If we know what the human level performance is, we can use it as a proxy for the Bayes error rate. This will be helpful in guiding this decision.
+
+If the human error level is 1\%, then our algorithm, isn't really doing a terribly good job on the training set: We know that the avoidable bias is at least 7\%, while the correponding variance (the different between training and dev set errors) is 2\%. Here, it would make sense to work on increasing the capacity of the algorithm. I.e. work on reducing bias.
+
+On the other hand, if the human error level var 7.5\%, then chances are, that our algorithm is actually doing pretty well (unless we have reasons to suspect the Bayes error rate is drastically lower than human performance). Here, working to reduce variance, for instance by regularization or gathering more data, would make sense.
+
+\subsubsection{Summary}
+As long as human error is a reasonable proxy for the Bayes error, it makes sense to make a decision based on comparing the following:
+\begin{itemize}
+\item The avoidable bias: The difference between (the best) human-level error and training set error.
+\item Variance: The difference between training set error and dev set error.
+\end{itemize}
+
+\subsection{Beyond human-level performance}
+Here, making an informed decision as in the previous section is much harder: We can no longer use human-level error as a proxy for Bayes error, and hence, we are much more in the dark.
+
+That does not mean that further improvements are not possible, but there's fewer clues to what might be an effective strategy.
 
 \section{Case study: Bird recognition}
 
