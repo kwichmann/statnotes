@@ -328,9 +328,134 @@ You decide that starting by training a model on a much smaller data set, like 1,
 
 
 \section{Error analysis}
+Let's go back to out favorite example: The binary cat image classifier. Suppose you have an error rate of 10\%, and someone from the team suggests, that a lot the errors are dog images being classified as being cat images. The question now is whether it is worth the time and energy to focus specifically on this problem.
 
+\subsection{Manual error checking}
+To do so, it is suggested that you take a random sample of, say, 100 of the misclassified pictures. Then go through them by hand, and count how many of the errors are actually dogs classified as cats. Then that number can be used to estimate the best-case improvement that might results from fixing the problem.
+
+If, for instance, that 5 of the 100 pictures were dog mistaken for cats, then 5\% of the 10\% errors, i.e. 0.5\%, is an estimate of how much the error rate could improve from this particular focus. This is also known as a ceiling - remember that it's a best-case scenario. Whether this is worth your effort will of course depend on the problem.
+
+If, on the other hand, there was 50 out of 100 images with this problem, the ceiling would be 5\%. In this case, it is almost certainly a good place to concentrate efforts.
+
+No matter what the ceiling value turns out to be, this is a procedure that will not take you many minutes, but will potentially save you lots of the frustration that may come from wasting resources on insignificant improvements.
+
+\subsubsection{Testing several hypotheses}
+If there's several ideas on the board for what may cause errors, you can check for several at the same time while going though your image sample. The observations can be summarized in a simple table/spreadsheets; Causes of errors as columns, and individual images as rows. Make a tag if the error is due to the relevat column.
+
+Be sure to leave a column open for comments, so you can jot down anything unusual during the inspection. You might just stumble upon a new hypothesis by reviewing those! Also, leave a column for incorrectly labelled data (see next section).
+
+When done, you can the sum up each column, and calculate ceiling values from those.
+
+\subsection{Incorrectly labelled data}
+As you go through a sample of images as described above, you may run into incorrectly labelled images. It is almost inevitable that there will be some mislabelled data, especially in a large data set, but depending on the amount and character of such wrong labels, we may have a problem.
+
+\subsubsection{Training set}
+Typically, training sets are large, and so tend to be rather robust with respect to a few, randomly mislabelled data. Since we usually make sure that the algorithm will not overfit, a few weird data points tend not to skew the overall picture.
+
+However, if these errors are not random, i.e. if the mislabelling happens according to some kind of system, the training set will be biased. ML algorithms are very good at picking up any kind of systematic in the data, and hence we could have a big problem.
+
+\subsubsection{Dev set}
+This is the error you can estimate by manually going through the images. Again, you can use this to estimate a ceiling value to decide whether going through the labels of the dev set would be worth your time.
+
+If you are comparing different classifiers, this will also give you a margin, within which it will not make sense to make such a comparison. For instance if the "misclassification ceiling" is 0.6\%, it makes little sense to claim that a classifier with an error rate of 2.1\% is better than one with an error of 2.6\% - as the difference is smaller than 0.6\%!
+
+\subsection{Correcting labels}
+Let's assume that you've decided it's worth the effort to correct the labelling of your data. Which sets to correct?
+
+As noted above, unless there's known biases in your training set, there's usually no reason to go through the (usually huge) training set.
+
+But the dev and test sets should both be corrected. Otherwise, the distributions will not remain the same.
+
+\subsubsection{Errors vs. non-errors}
+Usually, there will be data point the algorithm gets wrong than right. It's natural to focus on the errors, but it might be a good idea to at least sample some of the non-errors to see if there's similar problems happening there too.
 
 \section{Mismatched training/dev/test sets}
+Sometimes, the distribution of the training set and the dev/train sets are not the same. For instance, if we'd done the label correction mentioned above, we would be in this situation. Another way this could happen is described in the example below:
+
+\subsection{Example: Cat app (again)}
+As noted earlier, if we want to train a cat image classifier for a cat app, it will be relatively easy to find a lot of cat images on the net. But such images will tend to be of high quality, and thus not from the same distribution as the ones the app will actually deal with.
+
+Let's say that we have found/downloaded/scraped 200,000 high quality cat images from the web. We also have 10,000 more realistic images from a pre-test of the cat app. Clearly these numbers are skewed.
+
+If we just shuffle all of the images and divide into train/dev/test sets, we are in trouble: We will set the wrong target, as most of the images from the dev/test sets are actually not reflective of the real image data the app will handle!
+
+Instead, since our target is the pre-test app data, let \emph{all} of the dev/test sets be from this group! Let the dev set be the downloaded image and the rest of the app data. For instance, we might use the following split:
+\begin{itemize}
+\item Training set: All 200,000 web images, 5,000 app images.
+\item Dev set: 2,500 app images.
+\item Test set: 2,500 app images.
+\end{itemize} 
+
+\subsection{Bias and variance for mismatched sets}
+So for one reason or the other, we may find ourselves in the situation where the training set and the dev/test sets come from different distributions. This may not be as big a problem as one might think. Let's take a look.
+
+Let's consider the cat app again, and for simplicity let's assume the Bayes error is zero. After building a classifier, we get the following error rates:
+\begin{itemize}
+\item Training error: 1\%.
+\item Dev error: 10\%.
+\end{itemize}
+Now conventionally, we would say that the avoidable bias is 1\%, and the variance is 9\%, indicating a clear overfitting problem. But, since we have different distributions for the two sets, it is only natural that the classifier has a hard time on the dev set. The question is how we may make decisions on how to proceed in this situation.
+
+\subsubsection{The training-dev set}
+One solution is to further subdivide the training set into two parts: The (proper) training set, and the training-dev set. These should be randomized, and hence will come from the same distribution. The training-dev set should be of a size comparable to the dev and test sets. So for instance, in the example above, a reasonable split would be:
+\begin{itemize}
+\item (Proper) training set: 202,500 randomly chosen images from (200,000 web images, 5,000 app images).
+\item Training-dev set: The remaining 2,500 images from (200,000 web images, 5,000 app images).
+\item Dev set: 2,500 app images.
+\item Test set: 2,500 app images.
+\end{itemize} 
+
+\subsubsection{Mismatch error}
+We can now look at the algorithms performance on the training-dev set along with the other three sets (and the Bayes error).
+
+For instance, we might get the following:
+\begin{itemize}
+\item Training error: 1\%.
+\item Training-dev error: 9\%.
+\item Dev error: 10\%.
+\end{itemize}
+Here, we see that the variance is actually 8\%. The difference between the trainin-dev and dev errors - known as the mismatch error - is actually only 1\%. So the problem is overfitting rather than differences in distribution.
+
+On the other hand we could have gotten the following:
+\begin{itemize}
+\item Training error: 1\%.
+\item Training-dev error: 1.5\%.
+\item Dev error: 10\%.
+\end{itemize}
+Here, the variance is 0.5\%, while the mismatch error is 8.5\%. Clearly, distribution difference is a much bigger problem.
+
+Of course, we might also still have a bias problem if the training error is high compared to the (estimated) Bayes error. All of these cases are summarized in the next section.
+
+\subsection{Summary: Errors and diagnostics}
+
+\begin{table}[b]
+\centering
+\label{table:diagnostic}
+\begin{tabular}{cc}
+Bayes error (or proxy) &                           \\
+$\downarrow$           & Avoidable bias            \\
+Training error         &                           \\
+$\downarrow$           & Variance                  \\
+Training-dev error     &                           \\
+$\downarrow$           & Data mismatch             \\
+Dev error              &                           \\
+$\downarrow$           & Dev set overfitting       \\
+Test error             &                          
+\end{tabular}
+\caption{Errors and diagnostics in ML problem}
+\end{table}
+
+To summarize, we now have five relevant error rates as seen in table \ref{table:diagnostic}. The gaps between them and what they signify is also shown.
+
+Do note, that sometimes dev error may actually be \emph{lower} than training-dev error. This can happen if the dev/test data are actually easier to classify.
+
+\subsection{What to do about data mismatch?}
+There's no standard solution to these kinds of problems, but nevertheless, this section contains some suggestions that might be helpful.
+
+Is there a way to get more data similar to the dev set? Expanding the training set this way is the most obvious way to remedy the situation.
+
+Manually compare samples from the training and dev sets. Try to get an idea of the differences. Consider how you can make the training set more similar to the dev set. If the dev set has blurred images, you might want to similarly distort images from the trianing set. OR if the dev set has noisy sounds, you might want to similarly add noise to your training set. Or you might synthesize similar data. Just beware that these alterations/new data do not follow patterns the learning algorithm may pick up on, as this can lead to overfitting.
+
 
 
 \section{Learning from multiple tasks}
