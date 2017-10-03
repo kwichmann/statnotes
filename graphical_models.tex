@@ -1,0 +1,83 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{bayesnet}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Probabilistic graphical models}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Bayesian networks}
+A group of graphical models are \textit{Bayesian networks}, also know as \textit{directed graphical models}.
+
+\subsection{An example}
+As an example, consider three random variables $A, B$, and $C$ with a joint distribution $p(a,b,c)$. Then we can rewrite this as:
+\begin{equation}
+p(a,b,c)=p(c|a,b)p(a,b)
+\end{equation}
+Using the same idea once more, this can be further rewritten:
+\begin{equation}
+p(a,b,c)=p(c|a,b)p(a,b)=p(c|a,b)p(b|a)p(a)
+\label{fully_connected3}
+\end{equation}
+We can interpret this as $c$ depending on $a$ and $b$, and $b$ depending on $a$. We will use directed \textit{edges} to denote this dependency as shown in figure \ref{graph:bn3}.
+
+\begin{figure}
+\centering
+\tikz{ %
+        \node[latent] (c) {$c$} ; %
+        \node[latent, left=of c, yshift=0.8cm] (a) {$a$} ; %
+        \node[latent, left=of c, yshift=-0.8cm] (b) {$b$} ; %
+        \edge {a,b} {c} ; \edge {a} {b} ; %
+      }
+\caption{A Bayesian network with three nodes}
+\label{graph:bn3}
+\end{figure}
+
+Do note, that we might as we might as well have split the the variables into dependency in another order! This graph is merely one way of viewing the joint distribution - in general a distribution can be represented by many different graphs.
+
+\subsection{General case: Fully connected}
+Using the same scheme, we can decompose a joint distribution of $K$ variables and split it into a form similar to equation \ref{fully_connected3} by applying the multiplication rule of probability $K-1$ times:
+\begin{equation}
+p(x_1,x_2,\cdots,x_K)=p(x_K|x_1,\cdots,x_{K-1})\cdots p(x_2|x_1)p(x_1)
+\label{fully_connectedK}
+\end{equation}
+This gives rise to a \textit{fully connected} graph, as there will be edges between any two nodes. 
+
+\subsection{Less than fully connected}
+However, in general we will be more interested in cases where some pairs of nodes will not have an edge between them. We will still require the graph to be \textit{acyclical}, i.e. there must be no loops when following the directed edges.
+
+\begin{figure}
+\centering
+\tikz{ %
+        \node[latent] (x1) {$x_1$} ; %
+        \node[latent, right= of x1] (x2) {$x_2$} ; %
+        \node[latent, right= of x2] (x3) {$x_3$} ; %
+        \node[latent, right= of x1, yshift=-1.5cm] (x4) {$x_4$} ; %
+        \node[latent, right= of x4] (x5) {$x_5$} ; %
+        \node[latent, right= of x1, yshift=-3cm] (x6) {$x_6$} ; %
+        \edge {x1,x2,x3} {x4} ; \edge {x3} {x5} ; 
+        \edge {x4,x5} {x6} ; %
+      }
+\caption{A less than fully connected Bayesian network}
+\label{graph:bn_notfull}
+\end{figure}
+
+As an example, consider the six-node graph in figure \ref{graph:bn_notfull}. The corresponding decomposition would be:
+\begin{equation}
+p(x_1, x_2, x_3, x_4, x_5, x_6)=p(x_6|x_4,x_5)p(x_5|x_3)p(x_4|x_1,x_2,x_3)p(x_3)p(x_2)p(x_1)
+\end{equation}
+
+\end{document}
