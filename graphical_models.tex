@@ -23,7 +23,7 @@
 A group of graphical models are \textit{Bayesian networks}, also know as \textit{directed graphical models}.
 
 \subsection{An example}
-As an example, consider three random variables $A, B$, and $C$ with a joint distribution $p(a,b,c)$. Then we can rewrite this as:
+As an example, consider three random variables $A, B$, and $C$ with a joint distribution $p(a,b,c)$. Then we can use the multiplication rule of probability to rewrite this as:
 \begin{equation}
 p(a,b,c)=p(c|a,b)p(a,b)
 \end{equation}
@@ -77,7 +77,43 @@ However, in general we will be more interested in cases where some pairs of node
 
 As an example, consider the six-node graph in figure \ref{graph:bn_notfull}. The corresponding decomposition would be:
 \begin{equation}
-p(x_1, x_2, x_3, x_4, x_5, x_6)=p(x_6|x_4,x_5)p(x_5|x_3)p(x_4|x_1,x_2,x_3)p(x_3)p(x_2)p(x_1)
+p(x_1, x_2, x_3, x_4, x_5, x_6)=p(x_1)p(x_2)p(x_3)p(x_4|x_1,x_2,x_3)p(x_5|x_3)p(x_6|x_4,x_5)
 \end{equation}
+This is more generally expressed in the form:
+\begin{equation}
+p(\mathbf{x})=\prod_i p(x_i|\textrm{pa}_i)
+\label{parent_node_factorization}
+\end{equation}
+Here $\mathbf{x}$ is a shorthand for all the variables, while $\textrm{pa}_i$ is short for the list of \textit{parent nodes} of $x_i$, i.e. nodes which have edges pointing to $x_i$. If there are no parent nodes, this is simply $p(x_i)$.
+
+\subsection{Example: Polynomial regression}
+Let's take a look at a more practical model: Bayesian polynomial regression. Here, we have a set of $N$ observation points:
+\begin{equation}
+\mathbf{x}=(x_1,\cdots,x_n)^t,\quad \mathbf{t}=(t_1,\cdots,t_n)^t
+\end{equation}
+We think of the $t$'s as being dependent on the $x$'es: $t=t(x)$. Note that is usually the case in regression models, only the $t$'s are considered random.
+
+\begin{figure}
+\centering
+\tikz{ %
+        \node[latent] (w) {$\mathbf{w}$} ; %
+        \node[latent, below= of w] (t3) {$t_3$} ; %
+        \node[latent, left= of t3] (t2) {$t_2$} ; %
+        \node[latent, left= of t2] (t1) {$t_1$} ; %
+		\node[const, right= of t3] (cdots) {$\cdots$} ; %
+        \node[latent, right= 2 of t3] (tN) {$t_N$} ; %
+        \edge {w} {t1}; \edge {w} {t2}; \edge {w} {t3};
+        \edge {w} {tN};   
+      }
+\caption{Bayesian regression model}
+\label{graph:bayesian_regression}
+\end{figure}
+
+
+To go with each $x_i$ is an associated weight $w_i$, together denoted $\mathbf{w}$. Since the model is Bayesian, this is a random variable. Now, each $t_i$ depends on $x_i$ and $w_i$:
+\begin{equation}
+t_i=t_i(x_i,w_i)
+\end{equation}
+But remember that $x_i$ is not random. So, at its heart, the random variables of the model depend on each other as shown in the graph of figure \ref{graph:bayesian_regression}
 
 \end{document}
