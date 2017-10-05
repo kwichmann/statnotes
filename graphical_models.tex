@@ -89,7 +89,7 @@ Here $\mathbf{x}$ is a shorthand for all the variables, while $\textrm{pa}_i$ is
 \subsection{Example: Polynomial regression}
 Let's take a look at a more practical model: Bayesian polynomial regression. Here, we have a set of $N$ observation points:
 \begin{equation}
-\mathbf{x}=(x_1,\cdots,x_n)^t,\quad \mathbf{t}=(t_1,\cdots,t_n)^t
+\mathbf{x}=(x_1,\cdots,x_N)^t,\quad \mathbf{t}=(t_1,\cdots,t_N)^t
 \end{equation}
 We think of the $t$'s as being dependent on the $x$'es: $t=t(x)$. Note that is usually the case in regression models, only the $t$'s are considered random.
 
@@ -109,10 +109,26 @@ We think of the $t$'s as being dependent on the $x$'es: $t=t(x)$. Note that is u
 \label{graph:bayesian_regression}
 \end{figure}
 
-The model consists of a series of weights, together denoted $\mathbf{w}$. Since the model is Bayesian, this is a random variable. Now, each $t_i$ depends on $x_i$ and $\mathbb{w}$:
+The model consists of a series of weights, together denoted $\mathbf{w}$. Since the model is Bayesian, this is a random variable. Now, each $t_i$ depends on $x_i$ and $\mathbf{w}$:
 \begin{equation}
 t_i=t_i(x_i,\mathbf{w})
 \end{equation}
 But remember that $x_i$ is not random. So, at its heart, the random variables of the model depend on each other as shown in the graph of figure \ref{graph:bayesian_regression}
+
+\begin{figure}
+\centering
+\tikz{
+	\node[latent] (w) {$\mathbf{w}$} ; %
+	\node[latent, right = 1.5 of w] (t) {$t_n$} ; %
+        \plate {} {(t)} {$N$}; %
+	\edge {w} {t} ;
+}
+\caption{The same model with plate notation}
+\label{graph:bayesian_regression_plate}
+\end{figure}
+	
+Often, having a shorthand for a collection of variables, such as the $N$ $t$'s is useful. This is done by using a \textit{plate} as shown in figure \ref{graph:bayesian_regression_plate}.
+
+
 
 \end{document}
