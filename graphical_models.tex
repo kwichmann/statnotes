@@ -109,10 +109,9 @@ We think of the $t$'s as being dependent on the $x$'es: $t=t(x)$. Note that is u
 \label{graph:bayesian_regression}
 \end{figure}
 
-
-To go with each $x_i$ is an associated weight $w_i$, together denoted $\mathbf{w}$. Since the model is Bayesian, this is a random variable. Now, each $t_i$ depends on $x_i$ and $w_i$:
+The model consists of a series of weights, together denoted $\mathbf{w}$. Since the model is Bayesian, this is a random variable. Now, each $t_i$ depends on $x_i$ and $\mathbb{w}$:
 \begin{equation}
-t_i=t_i(x_i,w_i)
+t_i=t_i(x_i,\mathbf{w})
 \end{equation}
 But remember that $x_i$ is not random. So, at its heart, the random variables of the model depend on each other as shown in the graph of figure \ref{graph:bayesian_regression}
 
