@@ -333,9 +333,9 @@ Let's go back to out favorite example: The binary cat image classifier. Suppose 
 \subsection{Manual error checking}
 To do so, it is suggested that you take a random sample of, say, 100 of the misclassified pictures. Then go through them by hand, and count how many of the errors are actually dogs classified as cats. Then that number can be used to estimate the best-case improvement that might results from fixing the problem.
 
-If, for instance, that 5 of the 100 pictures were dog mistaken for cats, then 5\% of the 10\% errors, i.e. 0.5\%, is an estimate of how much the error rate could improve from this particular focus. This is also known as a ceiling - remember that it's a best-case scenario. Whether this is worth your effort will of course depend on the problem.
+If, for instance, that 5 of the 100 pictures were dog mistaken for cats, then 5\% of the 10\% errors, i.e. 0.5\%, is an estimate of how much the error rate could improve from this particular focus. This is also known as a ceiling - remember that it's a best-case scenario. Whether this is worth your effort will of course depend on the problem: You must always weigh the ceiling value against how many resources you estimate dealing with the problem will take.
 
-If, on the other hand, there was 50 out of 100 images with this problem, the ceiling would be 5\%. In this case, it is almost certainly a good place to concentrate efforts.
+If, on the other hand, there was 50 out of 100 images with this problem, the ceiling would be 5\%. In this case, it is much more likely to be a good place to concentrate efforts.
 
 No matter what the ceiling value turns out to be, this is a procedure that will not take you many minutes, but will potentially save you lots of the frustration that may come from wasting resources on insignificant improvements.
 
@@ -414,7 +414,7 @@ For instance, we might get the following:
 \item Training-dev error: 9\%.
 \item Dev error: 10\%.
 \end{itemize}
-Here, we see that the variance is actually 8\%. The difference between the trainin-dev and dev errors - known as the mismatch error - is actually only 1\%. So the problem is overfitting rather than differences in distribution.
+Here, we see that the variance is actually 8\%. The difference between the training-dev and dev errors - known as the mismatch error - is actually only 1\%. So the problem is overfitting rather than differences in distribution.
 
 On the other hand we could have gotten the following:
 \begin{itemize}
@@ -449,21 +449,122 @@ To summarize, we now have five relevant error rates as seen in table \ref{table:
 
 Do note, that sometimes dev error may actually be \emph{lower} than training-dev error. This can happen if the dev/test data are actually easier to classify.
 
+\subsection{A more generalized view}
+
+\begin{table}[b]
+\centering
+\label{table:general}
+\begin{tabular}{c|c|l|}
+\cline{2-3}
+                                                                                             & General data                                                 & Specific data                                                                       \\ \hline
+\multicolumn{1}{|c|}{\begin{tabular}[c]{@{}c@{}}Human-level\\ error\end{tabular}}            &                                                              &                                                                                     \\ \hline
+\multicolumn{1}{|c|}{\begin{tabular}[c]{@{}c@{}}Error on data\\ trained on\end{tabular}}     & \begin{tabular}[c]{@{}c@{}}Training\\ error\end{tabular}     &                                                                                     \\ \hline
+\multicolumn{1}{|c|}{\begin{tabular}[c]{@{}c@{}}Error on data\\ not trained on\end{tabular}} & \begin{tabular}[c]{@{}c@{}}Training-dev\\ error\end{tabular} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Dev error\\ Test error\end{tabular}} \\ \hline
+\end{tabular}
+\caption{A generalized view on errors.}
+\end{table}
+
+Another, more general way to view the errors from the previous section, is to use table \ref{table:general}. There's two columns:
+\begin{itemize}
+\item One for the "general" data. I.e. the data that is not from the primary source of out interest, but typically easier to obtain. In the cat app example, this would be the cat pictures found on the internet. These will typically all go into the training set as suggested above.
+\item One for "specific" data. These are representative of the data we are actually interested in. In the cat app example, these are the picture from the app pre-test. These will typically mostly go into the dev/test sets.
+\end{itemize}
+The three rows are as follows:
+\begin{itemize}
+\item Human-level error (proxy for Bayes error)
+\item Error on data the model is trained on.
+\item Error on data the model is not trained on.
+\end{itemize}
+So far we have mostly dealt with differences in the left column:
+\begin{itemize}
+\item The difference between the upper and middle boxes is the available bias.
+\item the difference between the middle and lower boxes is the variance.
+\end{itemize}
+Differences between the two lowest boxes are data mismatch/
+dev set overfitting.
+
+But it might prove insightful to do a similar analysis on the more specific data set.
+
 \subsection{What to do about data mismatch?}
 There's no standard solution to these kinds of problems, but nevertheless, this section contains some suggestions that might be helpful.
 
 Is there a way to get more data similar to the dev set? Expanding the training set this way is the most obvious way to remedy the situation.
 
-Manually compare samples from the training and dev sets. Try to get an idea of the differences. Consider how you can make the training set more similar to the dev set. If the dev set has blurred images, you might want to similarly distort images from the trianing set. OR if the dev set has noisy sounds, you might want to similarly add noise to your training set. Or you might synthesize similar data. Just beware that these alterations/new data do not follow patterns the learning algorithm may pick up on, as this can lead to overfitting.
-
+Manually compare samples from the training and dev sets. Try to get an idea of the differences. Consider how you can make the training set more similar to the dev set. If the dev set has blurred images, you might want to similarly distort images from the trianing set. Or if the dev set has noisy sounds, you might want to similarly add noise to your training set. Or you might synthesize similar data. Just beware that these alterations/new data do not follow patterns the learning algorithm may pick up on, as this can lead to overfitting.
 
 
 \section{Learning from multiple tasks}
+In this section we look at how we can handle learning several different tasks from the same model and/or data set.
 
+\subsection{Transfer learning}
+Let's say we've made a neural net cat image classifier by training on a large amount of pictures. We now turn to the task of predicting diagnosis from x-ray images. We have a much smaller set of such images available. Instead of training a new classifier from scratch, we judge that the the tasks are sufficiently familiar, that the same features (like edge detection and so on) may be useful in both cases.
+
+So here, we could reuse the trained neural net from the cat classifier, except for the weights of the output layer, which we will train on the x-ray images. If we have more x-ray images, it might be feasible to train the last two or more layers. Or new layers may be added altogether.
+
+This is known as \textit{transfer learning}, but as noted it required the tasks to be common in nature. As a minimum, they should have the same type of input, like images or sound. Also, as in the example above, it usually makes the most sense when the material to train the model on is limited.
+
+The training of the original network is sometimes called pre-training in this context.
+
+\subsection{Multitask learning}
+In this case, instead of training several models for different tasks, her the strategy is to perform multiple tasks at the same time, by the same model.
+
+For instance, for a self-driving car, we might want to be able to tell if several different object is in a picture: Red lights, stop signs, pedestrians, other cars. And so on.
+
+So instead of outputting a single probability measure, the model outputs a vector of probabilities for each of the tasks we wish to perform. If the possibilities are exclusive, the activation function for the output layer should be a softmax, but if they can happen independently - as is indeed the case in the example - a sum over cross-entropies for each component is appropriate.
+
+It turns out, that such multitask learning is feasible even if not all tasks have been labelled in all training set samples. In this case, the missing labels are simply not summed over.
+
+For multitask learning to make sense, once again it must be reasonable to assume that the same lower-level features would be useful for all the tasks.
 
 \section{End-to-end deep learning}
+Traditionally, AI tasks have many stages. For instance, in sound recognition, we start with raw audio. From this features are extracted. Which is then used to classify phonemes. Which form words. And eventually meaning is extracted from these. Traditionally, each step required domain knowledge and indeed, an AI expert could work specifically on one step.
 
+However, with neural networks, ideally with training the model extracts features for each intermediate step in one big algorithm. This is known as end-to-end learning.
+
+In practice, this requires very large amounts of data to achieve, and in practice, such long task pipelines are often still split up into more processes. Some "hand-wiring" is still useful for many of these steps.
 
 \section{Case study: Image recognition for driverless car}
+Let's play another game: You are a data scientist working for a startup that works with building selfdriving cars. Your task is to build an algorithm which can predict whether the following item appear in an image:
+\begin{itemize}
+\item Stop sign
+\item Pedestrian crossing sign
+\item Construction ahead sign
+\item Red traffic light
+\item Green traffic light
+\end{itemize}
+The output for a given image should be a vector indicating whether or not the corresponding item is in the picture or not. For instance, consider the following vector output:
+\begin{equation}
+y_i=\begin{pmatrix}
+1 \\ 0 \\ 1 \\ 0 \\ 0
+\end{pmatrix}
+\end{equation}
+This means that the $i$'th image has a stop sign and a reconstruction ahed sign in it.
+
+You have 100,000 labelled images taking by the front camera of the car in development. You also think you should be able to get a large amount of images from the internet to use in training. 
+
+\subsection{Getting started}
+However, this will have to wait: To get the development started fast, you plan on starting by spending a few days building a basic model based on the images you currently have.
+
+A neural network model with ReLU activation functions for hidden layers is chosen - this is a model known to perform well on a number of tasks. Since this is a multi-task classification problem, a sigmoid activation function is chosen for the output layer (as opposed to a soft-max for single-task classification).
+
+\subsection{Including internet images}
+After working on the algorithm for some time, you decide to include images found on the internet to build your algorithm. Since you're dealing with a multi-task classification, you don't need your all data to be fully labelled, so this makes the task of finding useful images easier. You manage to find 900,000 additional such (partially) labelled images.
+
+Since you're really only interested in the performance on data similar to the original 100,000 images, you take 20,000 of these and split them into 10,000 dev and tests sets. The remaining 80,000 are combined with the 900,000 internet images for the training set. A training-dev set of 10,000 is randomly picked from the training set.
+
+\subsection{Performance on the different sets}
+After training and developing the algorithm on this split, you find the following error rates:
+\begin{itemize}
+\item Human-level error: 0.5\%.
+\item Training set error: 8.8\%.
+\item Training-dev set error: 9.1\%.
+\item Dev set error: 14.3\%.
+\item Test set error: 14.8\%.
+\end{itemize}
+This means that there's an estimated avoidable bias of 8.3\%, a variance of 0.3\%, a data mismatch of 5.2\%, and finally a dev set overfitting of 0.5\%. In other words, there a large bias problem, and also a  data mismatch between the training set and the dev/test sets as well.
+
+\subsection{Error analysis}
+After training the initial mode, you perform error analysis by manually take a look at a manageably sized sample of the images the model gets wrong - you end up choosing to looks at 500 wrongly classified images.
+
 
 \end{document}
