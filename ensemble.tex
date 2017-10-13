@@ -1,0 +1,40 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png, .jpg}
+
+\title{Ensemble methods}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\textit{Ensemble learning} in machine learning is broadly speaking the practice of making a collection - an \textit{ensemble} - of models, and combine them into a single model with more desired properties.
+
+\section{Bagging and boosting}
+There are two broad categories of such meta-algorithms:
+
+\subsection{Bagging}
+\textit{Bagging} is short for \textit{bootstrap aggregation}. This is because the ensembles are made through bootstrapping, i.e. random resampling from the training set. Properties of these meta-algorithms:
+
+\begin{itemize}
+\item Ensembles are build independently in \textit{parallel}.
+\item Tends to reduce variance.
+\end{itemize}
+
+\subsection{Boosting}
+Properties of these meta-algorithms:
+\begin{itemize}
+\item Ensembles are build \textit{sequentially}, each building on the ones before.
+\item Tends to reduce bias.
+\end{itemize}
+
+\end{document}
