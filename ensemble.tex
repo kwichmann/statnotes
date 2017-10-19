@@ -79,4 +79,45 @@ To build our weak learners, we must use some \textit{base algorithm}, which we w
 \mathcal{L}[X,D]
 \end{equation}
 
+\subsection{Distributions}
+We describe the distributions $D$ through a series of weights for each sample in the training set of size $N$. These should sum to one:
+\begin{equation}
+\sum_{i=1}^N w_i=1
+\end{equation}
+The starting point - at what we will call time step 1 - will be a distribution where the weights are evenly distributed:
+\begin{equation}
+w_i^{(1)}=\frac{1}{N}
+\label{time_step_1}
+\end{equation}
+We will denote this $D^{(1)}$ for short, and generally $D^{(t)}$ for the $t$'th time step.
+
+\subsection{The algorithm}
+We now build the $T$ classifiers as follows:
+\begin{itemize}
+\item Start at time step $t=1$, i.e. with a distribution $D^{(1)}$ as described through equation \ref{time_step_1}.
+\item Repeat:
+\begin{itemize}
+\item Build the classifier $h_t=\mathcal{L}[X,D^{(t)}]$.
+\item Calculate the error rate for $h_t$:
+\begin{equation}
+\epsilon_t=\sum_{h_t(x_i)\neq f(x_i)}\frac{1}{N} 
+\end{equation}
+\item If $h_t$ is not a weak classifier, i.e. if $\epsilon_t>0.5$, then break.
+\item Set the weight for the classifier to:
+\begin{equation}
+\alpha_t=\frac{1}{2}\ln\left(\frac{\epsilon_t}{1-\epsilon_t}\right)
+\end{equation}
+\item Set the weights for the distribution $D^{(t+1)}$ of the next time step:
+\begin{equation}
+w^{(t+1)}_i=\frac{1}{Z_t}\exp\left[-h_t(x_i)f(x_i)\right]
+\end{equation}
+Here $Z_t=\sum_{i=1}^N\exp\left[-h_t(x_i)f(x_i)\right]$ is a normalization constant.
+\item Go to the next time step, unless $t=T$.
+\end{itemize}
+\item Construct the boosted classifier as:
+\begin{equation}
+H(x)=\textrm{sgn}\left[\sum_{t=1}^T \alpha_t h_t(x)\right]
+\end{equation}
+\end{itemize}
+
 \end{document}
