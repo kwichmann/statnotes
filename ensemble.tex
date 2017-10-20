@@ -70,6 +70,7 @@ As the example above shows, we need to be more clever to ensure a good boosting 
 Consider equation \ref{simple_three_boost}, but for $T$ learner instead of three. We can generalize this by including \textit{weights} for each classifier:
 \begin{equation}
 H(x)=\textrm{sgn}\left[\sum_{t=1}^T \alpha_t h_t(x)\right]
+\label{boosted_classifier}
 \end{equation}
 This introduces more flexibility - more \textit{capacity} - to our boosted model. The question now of course is both how to create the classifiers $h_t$ and how to pick the weights $\alpha_t$ appropriately.
 
@@ -100,18 +101,18 @@ We now build the $T$ classifiers as follows:
 \item Build the classifier $h_t=\mathcal{L}[X,D^{(t)}]$.
 \item Calculate the error rate for $h_t$:
 \begin{equation}
-\epsilon_t=\sum_{h_t(x_i)\neq f(x_i)}\frac{1}{N} 
+\epsilon_t=\sum_{h_t(x_i)\neq f(x_i)}w_i
 \end{equation}
 \item If $h_t$ is not a weak classifier, i.e. if $\epsilon_t>0.5$, then break.
 \item Set the weight for the classifier to:
 \begin{equation}
-\alpha_t=\frac{1}{2}\ln\left(\frac{\epsilon_t}{1-\epsilon_t}\right)
+\alpha_t=\frac{1}{2}\ln\left(\frac{1-\epsilon_t}{\epsilon_t}\right)
 \end{equation}
 \item Set the weights for the distribution $D^{(t+1)}$ of the next time step:
 \begin{equation}
-w^{(t+1)}_i=\frac{1}{Z_t}\exp\left[-h_t(x_i)f(x_i)\right]
+w^{(t+1)}_i=\frac{w^{(t)}_i}{Z_t}\exp\left[-\alpha_t h_t(x_i)f(x_i)\right]
 \end{equation}
-Here $Z_t=\sum_{i=1}^N\exp\left[-h_t(x_i)f(x_i)\right]$ is a normalization constant.
+Here $Z_t=\sum_{i=1}^N w^{(t)}_i\exp\left[-\alpha_t h_t(x_i)f(x_i)\right]$ is a normalization constant.
 \item Go to the next time step, unless $t=T$.
 \end{itemize}
 \item Construct the boosted classifier as:
@@ -119,5 +120,44 @@ Here $Z_t=\sum_{i=1}^N\exp\left[-h_t(x_i)f(x_i)\right]$ is a normalization const
 H(x)=\textrm{sgn}\left[\sum_{t=1}^T \alpha_t h_t(x)\right]
 \end{equation}
 \end{itemize}
+
+\subsection{Mathematical justification}
+AdaBoost is a \textit{greedy} algorithm, in that it chooses the best available option in each step: Each time we add another classifier to the sum in equation \ref{boosted_classifier}, we wish to do in a way that minimizes a reasonable \textit{loss function}.
+
+Let's start by naming the partial sum combinations from equation \ref{boosted_classifier}:
+\begin{equation}
+C_m(x)=\sum_{t=1}^m \alpha_t h_t(x)
+\end{equation}
+Now assuming we have trained the $m-1$ classifiers and obtained appropriate weights, we're faced with finding $h_m$ and $\alpha_m$. The classifier we're looking to optimize is the sign of:
+\begin{equation}
+h=C_{m-1}+\alpha_m h_m
+\label{cm_definition}
+\end{equation}
+
+Consider the following \textit{exponential loss function}:
+\begin{equation}
+\ell(h|D)=\mathbb{E}_D\left[\exp(-h(x)f(x))\right]
+\end{equation}
+Here $h$ is the classifier (without the sign function), and $D$ a distribution described by a set of weights $w_i$. When a data point is correctly classified, we get a negative inside the exponential. Similarly, when a data point is incorrectly classified, we get a positive. So it makes sense to minimize this loss function.
+
+We can rewrite the exponential loss function through the weights:
+\begin{align}
+\ell(h|D)=&\sum_{i=1}^N w_i\exp[-h(x_i)f(x_i)]=\\
+&\sum_{i=1}^N w_i\exp[-(C_{m-1}(x_i)+\alpha_m h_m(x_i))f(x_i)]=\\
+&\sum_{i=1}^N\underbrace{w_i\exp[-C_{m-1}(x_i)f(x_i)]}_{w'_i}\exp[-\alpha_m h_m(x_i)f(x_i)]=\\
+&\sum_{i=1}^N w'_i\exp[-\alpha_m h_m(x_i)f(x_i)]
+\end{align}
+Here, modified weights $w'_i$ have been introduced.
+
+Now we can minimize $\ell$ with respect to $\alpha_m$ by differentiating:
+\begin{equation}
+\frac{\partial\ell}{\partial\alpha_m}=\sum_{i=1}^N w'_i\exp[-\alpha_m h_m(x_i)f(x_i)]h_m(x_i)f(x_i)
+\end{equation}
+We can now split the sum into two parts, according to whether $h_m$ gets the classification right or wrong. When it is right, $h_m(x_i)f(x_i)=1$, and when it is wrong $h_m(x_i)f(x_i)=-1$. So:
+\begin{equation}
+\frac{\partial\ell}{\partial\alpha_m}=\sum_{h_m(x_i)=f(x_i)}w'_i e^{-\alpha_m}-\sum_{h_m(x_i)\neq f(x_i)}w'_i e^{\alpha_m}
+\end{equation}
+
+
 
 \end{document}
