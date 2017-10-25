@@ -1,0 +1,76 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png, .jpg}
+
+\title{Bayesian polynomial regression}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{The setup}
+Given a training set $\mathbf{x}, \mathbf{t}$ of $N$ points where the random $t$'s are thought to depend of the non-random $x$'s, we wish to find a set of weights $\mathbf{w}$ that fits the model where the $t$'s are normally distributed with precision $\beta$ and mean:
+\begin{equation}
+y(x,\mathbf{w})=\sum_{j=0}^M w_j x^j
+\end{equation}
+More generally, $x^j$ could be substituted for another set of basis functions $f_j(x)$.
+
+\section{Maximum likelihood estimation}
+The usual frequentist approach would be a maximum likelihood estimation of the parameters $\beta$ and $\mathbf{w}$. The likelihood function for the model is:
+\begin{equation}
+L(\beta,\mathbf{w}|\mathbf{x}, \mathbf{t})=\prod_{n=1}^N\mathcal{N}(y(x_n,\mathbf{w}),\beta^{-1})=\prod_{n=1}^N\sqrt{\frac{\beta}{2\pi}}\exp\left[-\frac{1}{2}\beta(y(x_n,\mathbf{w})-t_n)^2\right]
+\label{likelihood}
+\end{equation}
+To turn the product into the sum, find the log-likelihood\footnote{Here including a minus as well. Conventions might differ.}
+\begin{equation}
+\ell(\beta,\mathbf{w}|\mathbf{x}, \mathbf{t})=-\frac{N}{2}(\ln\beta-\ln(2\pi))+\frac{\beta}{2}\sum_{n=1}^N(y(x_n,\mathbf{w})-t_n)^2
+\end{equation}
+Now differentiate with respect to weights and precision to find the minimum:
+\begin{equation}
+\frac{\partial\ell}{\partial w_j}=\frac{\beta}{2}\sum_{n=1}^N 2(y(x_n,\mathbf{w})-t_n)\frac{\partial y_n}{\partial w_j}=\beta\sum_{n=1}^N(y(x_n,\mathbf{w})-t_n)x_n^j
+\end{equation}
+Setting equal to zero we get the usual least squares equations:
+\begin{equation}
+\sum_{n=1}^N(y(x_n,\mathbf{w}_{\textrm{ML}})-t_n)x_n^j=0
+\end{equation}
+For precision:
+\begin{equation}
+\frac{\partial\ell}{\partial\beta}=-\frac{N}{2\beta}+\frac{1}{2}\sum_{n=1}^N(y(x_n,\mathbf{w})-t_n)^2
+\end{equation}
+Setting this equal to zero:
+\begin{equation}
+\frac{1}{\beta_{\textrm{ML}}}=\frac{1}{N}\sum_{n=1}^N(y(x_n,\mathbf{w})-t_n)^2
+\end{equation}
+
+\section{Bayesian treatment}
+In the Bayesian formulation, we need to specify a \textit{prior distribution}. Initially, without any specific information, we have no idea whether a weight should be positive or negative, so let's choose a prior where each is centered at zero. The normal distribution is an obvious pick. Assuming independence of weights and them all having the same precision $\alpha$, this means our prior is:
+\begin{equation}
+p(\mathbf{w}|\alpha)=\mathcal{N}(\mathbf{0},\alpha^{-1}\mathbf{I}_{M+1})=\left(\frac{\alpha}{2\pi}\right)^{(M+1)/2}\exp\left\{-\frac{\alpha}{2}\mathbf{w}^t\mathbf{w}\right\}
+\label{prior}
+\end{equation}
+We can now use Bayes' theorem to obtain the posterior distribution as proportional to the likelihood function (\ref{likelihood}) times the prior (\ref{prior}):
+\begin{equation}
+p(\mathbf{w}|\alpha,\beta,\mathbf{x},\mathbf{t})\propto L(\beta,\mathbf{w}|\mathbf{x},\mathbf{t})p(\mathbf{w}|\alpha)
+\end{equation}
+Ignoring factors, this means:
+\begin{equation}
+p(\mathbf{w}|\alpha,\beta,\mathbf{x},\mathbf{t})\propto\prod_{n=1}^N\exp\left[-\frac{1}{2}\beta(y(x_n,\mathbf{w})-t_n)^2\right]\cdot\exp\left\{-\frac{\alpha}{2}\mathbf{w}^t\mathbf{w}\right\}
+\label{posterior}
+\end{equation}
+
+\subsection{Maximum posterity estimation}
+If we're just looking for a point estimate, we can now choose the parameters which maximizes equation \ref{posterior}, a process known as \textit{maximum posterior estimation} or \textit{MAP} for short. Since the exponential is strictly monotonous, we can maximize the exponent to get:
+\begin{equation}
+\frac{\beta}{2}sum_{i=1}^N(y(x_n,\mathbf{w}_{\textrm{MAP}})-t_n)^2+\frac{\alpha}{2}\mathbf{w}_{\textrm{MAP}}^t\mathbf{w}_{\textrm{MAP}}=0
+\end{equation}
+
+\end{document}
