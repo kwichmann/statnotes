@@ -1,0 +1,121 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Data Envelopment Analysis}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\textit{Data envelopment analysis} - or DEA for short - is a technique for measuring relative efficiencies between a number of similar units. It is based on linear programming.
+
+\section{Efficiency - a problematic definition}
+The traditional measure of efficiency for a unit is simply:
+\begin{equation}
+\textrm{Efficiency}=\frac{\textrm{Output}}{\textrm{Input}}
+\end{equation}
+However, this simple definition often falls short in practice: Often there will be several inputs and outputs, related to different resources, activities and factors. These may not all be equally important, which means that our definition above potentially runs into trouble.
+
+\subsection{Example}
+As an example, consider three factories (units):
+\begin{itemize}
+\item Unit 1 produces 100 items per day, and the inputs per item are 10 dollars for materials and 2 labour-hours.
+\item Unit 2 produces 80 items per day, and the inputs are 8 dollars for materials and 4 labour-hours.
+\item Unit 3 produces 120 items per day, and the inputs are 12 dollars for materials and 1.5 labour-hours.
+\end{itemize}
+This is summed up in table \ref{table:example}. It is not immediately clear how to rank the three units in terms of efficiency.
+
+\begin{table}
+\centering
+\label{table:example}
+\begin{tabular}{l|c|c|c|}
+\cline{2-4}
+                             & \multicolumn{1}{l|}{Production ($y_1$)} & \multicolumn{1}{l|}{Materials ($x_1$)} & \multicolumn{1}{l|}{Labor ($x_2$)} \\ \hline
+\multicolumn{1}{|l|}{Unit 1} & 100                             & 10                             & 2                          \\ \hline
+\multicolumn{1}{|l|}{Unit 2} & 80                              & 8                              & 4                          \\ \hline
+\multicolumn{1}{|l|}{Unit 3} & 120                             & 12                             & 1.5                        \\ \hline
+\end{tabular}
+\caption{Data for the example.}
+\end{table}
+
+\section{Relative efficiency}
+One way out of this problem is to assign different \textit{weights} to each input and output. Thus, a modified definition would be:
+\begin{equation}
+\textrm{Efficiency}=\frac{\textrm{Weighted output}}{\textrm{Weighted input}}
+\end{equation}
+Or in slightly more mathematical terms, the efficiency of the $j$'th unit can be expressed as:
+\begin{equation}
+E_j=\frac{\sum_{i=1}^{n_o}u_i y_{ij}}{\sum_{i=1}^{n_i}v_i x_{ij}}
+\end{equation}
+Here, $n_i$ and $n_o$ are the numbers of inputs and outputs, respectively. $x_{ij}$ and $y_{ij}$ are the values of the $i$'th input/output for the $j$'th unit. And $v_i$ and $u_i$ are the chosen weights for the $i$'th input/output. All weights are assumed to be non-negative.
+
+Here, a universal set of weights $\mathbf{u}$ and $\mathbf{v}$ are used for all units. But different units might be operated in different ways - having different focuses and practices.
+
+\subsection{Example}
+For the three factories, this means that given the weights $u_1$ corresponding to production, $v_1$ corresponding to materials, and $v_2$ corresponding to labor, the relative efficiencies are:
+\begin{align}
+E_1&=\frac{100 u_1}{10 v_1+2 v_2}\\
+E_2&=\frac{80 u_1}{8 v_1+4 v_2}\\
+E_3&=\frac{120 u_1}{12 v_1+1.5 v_2}
+\end{align}
+
+\section{Determining weights according to a unit}
+Assuming differences between units are substantial, let's take the viewpoint, that each unit itself should be able to set its own weights to reflect its individual specialization.
+
+So, given a specific unit $j'$, the weights should be chosen to maximize:
+\begin{equation}
+E_{j'}=\frac{\sum_{i=1}^{n_o}u_i y_{ij'}}{\sum_{i=1}^{n_i}v_i x_{ij'}}
+\label{chosen_efficiency}
+\end{equation}
+This should be done subject to two criteria:
+\begin{itemize}
+\item All effeciencies should have a maximum of 1:
+\begin{equation}
+\forall j:\ E_j\le 1
+\label{limit_efficiency}
+\end{equation}
+\item All weights should be non-negative:
+\begin{equation}
+\forall i:\ u_i\ge 0,\quad\forall i:\ v_i\ge 0
+\end{equation}
+\end{itemize}
+
+\subsection{Linear programming}
+We wish to turn this into a linear programming problem. This is done by demanding the denominator in equation \ref{chosen_efficiency} to be constant (usually 1), and the maximizing the numerator:
+\begin{itemize}
+\item Maximize: $\sum_{i=1}^{n_o}u_i y_{ij'}$.
+\item Subject to: $\sum_{i=1}^{n_i}v_i x_{ij'}=1$.
+\end{itemize}
+Each of the conditions in equation \ref{limit_efficiency} can then be written:
+\begin{equation}
+\sum_{i=1}^{n_o}u_i y_{ij}-\sum_{i=1}^{n_i}v_i x_{ij}\le 0
+\label{limit_efficiency2}
+\end{equation}
+
+\subsection{Example}
+Let say we want to determine the efficiency of factory 1. Then the quantity to be maximized is:
+\begin{equation}
+E_1=\frac{100 u_1}{10 v_1+2 v_2}
+\end{equation}
+This is equivalent to maximizing $100 u_1$ subject to $10 v_1+2 v_2=1$. The upper limit to the efficienies as expressed in equation \ref{limit_efficiency2} become:
+\begin{align}
+100 u_1-10 v_1-2 v_2 \le &0\\
+80 u_1-8 v_1-4 v_2 \le &0\\
+120 u_1-12 v_1-1.5 v_2 \le &0
+\end{align}
+And of course:
+\begin{equation}
+u_1\ge 0,\quad v_1\ge 0,\quad v_2\ge 0
+\end{equation}
+
+\end{document}
