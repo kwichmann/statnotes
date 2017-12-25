@@ -34,6 +34,12 @@ I.e., there is only an explicit dependence on the state from the last time step.
 \label{fig:cyclical_graph}
 \end{figure}
 
+When there is a first time step, $t=1$, we see that every other state is determined by $s^{(1)}$:
+\begin{equation}
+s^{(t)}=f(s^{(t-1)})=f(f(s^{(t-2)}))=\cdots=f(f(\cdots f(s^{(1)})\cdots))\equiv g(s^{(1)})
+\label{explicit_s1_dependence}
+\end{equation}
+
 \subsection{Cyclical graph with input}
 To elaborate on this model, assume that at each time step, there is also some kind of input $x^{(t)}$. So now the state - now called $h^{(t)}$ for hidden state - depends on this as well:
 
@@ -49,6 +55,14 @@ Figure \ref{fig:cyclical_with_input} shows both the folded and unfolded versions
 \caption{Cyclical graph with input.}
 \label{fig:cyclical_with_input}
 \end{figure}
+
+When there is a first time step, $t=1$, we can express a general hidden state similarly to equation \ref{explicit_s1_dependence}:
+\begin{align}
+h^{(t)}=&f(h^{(t-1)}, x^{(t)})=f(f(h^{(t-2)}, x^{(t-1)}), x^{(t)})=\cdots\\
+&f(f(\cdots f(h^{(1)},x^{(1)})\cdots,x^{(t)})\cdots))\equiv\\
+&g(h^{(1)},x^{(1)},\cdots,x^{(t)})
+\end{align}
+So here, any the hidden state at a time $t$ depends on the hidden state at $t=1$ and all the input up to the point $t$.
 
 \subsection{Cyclical graph with both input and output}
 Finally, we would also like to model to provide some kind of output. We will assume there's output at every step, but in some applications, such as classification, we usually only care about the final output. 
@@ -66,6 +80,33 @@ o^{(t)}=o(h^{(t)})
 \end{equation}
 
 \section{Recurrent neural networks}
-As in feed forward neural networks, we will consider cases where the functions involved are linear followed by some kind of non-linearity. There's several ways to do this. We will explore some of them here.
+As in feed forward neural networks, we will consider cases where the functions involved are linear followed by some kind of non-linearity.
+
+\subsection{Loss function}
+As usual with neural networks, we need some kind of loss function to minimize. In general, this will be a function of the outputs:
+\begin{equation}
+L=L(o^{(1)},\ldots,o^{(\tau)},\mathbf{y})
+\end{equation}
+Here $\mathbf{y}$ is a label or collection of labels. Sometimes, it will be a function of all the outputs, sometimes only the last. In any case, we will need to know the derivatives of the outputs with respect to the parameters in the model.
+
+\subsection{Tanh activation}
+Now, consider a case where the activation function for the hidden layer is tanh. This is customary for RNNs. So, the model is:
+\begin{align}
+a^{(t)}&=W h^{(t-1)}+U x^{(t)}+b\\
+h^{(t)}&=\tanh(a^{(t)})\\
+o^{(t)}&=V h^{(t)}+c
+\end{align}
+In general, $a$, $h$, and $o$'s are vectors, and $U$, $V$ and $W$ are matrices of appropriate sizes.
+
+\subsection{One-dimensional input, hidden, and output}
+Consider now, as a warm-up, the case where everything is numbers instead of vectors/matrices.
+
+For this model, we will apply softmax to the output and use a cross-entropy loss function between the result and a sequence of labels:
+\begin{align}
+\hat{y}^{(t)}&=\textrm{softmax}(o^{(t)})\\
+L^{(t)}&=\sum_{i=1}^\tau
+\end{align}
+
+
 
 \end{document}
