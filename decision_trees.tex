@@ -1,0 +1,61 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Decision Trees}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Simple binary decision tree}
+Imagine we wish to predict whether a person is more likely to die young (below 70 years old) or old based on whether they smoked and/or drank alcohol. Table \ref{table:drink_smoke_age} shows such data for 100 subjects.
+
+\begin{table}
+\centering
+\label{table:drink_smoke_age}
+\begin{tabular}{cccc}
+\hline
+\multicolumn{1}{|c|}{Drinker} & \multicolumn{1}{c|}{Smoker} & \multicolumn{1}{c|}{High age} & \multicolumn{1}{c|}{Number} \\ \hline
+Y                             & Y                           & Y                             & 2                           \\
+Y                             & Y                           & N                             & 16                          \\
+Y                             & N                           & Y                             & 20                          \\
+Y                             & N                           & N                             & 17                          \\
+N                             & Y                           & Y                             & 5                           \\
+N                             & Y                           & N                             & 9                           \\
+N                             & N                           & Y                             & 28                          \\
+N                             & N                           & N                             & 3                          
+\end{tabular}
+\caption{Table of the 100 subjects}
+\end{table}
+
+The predictiontion can be expressed in a binary decision tree. The question is how to make such a tree.
+
+\subsection{Maximizing information gain}
+Recall that the \textit{entropy} of a probability distribution is defined as follows:
+\begin{equation}
+H=-\sum_i p_i\log_2 p_i
+\end{equation}
+\textit{Information} and entropy are complementary quantities: When entropy is lowered, information is gained. So to maximize information gain is to maximize entropy loss.
+
+\subsubsection{Pre-split entropy}
+Before splitting the subjects according to being drinkers or smokers, there's two groups:
+\begin{itemize}
+\item Subjects with high age: $2+20+5+28=55$.
+\item Subjects with low age: $16+17+9+3=45$.
+\end{itemize}
+So the entropy is:
+\begin{equation}
+H=-\frac{55}{100}\log_2\frac{55}{100}-\frac{45}{100}\log_2\frac{45}{100}
+\end{equation}
+
+\end{document}
