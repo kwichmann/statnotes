@@ -16,14 +16,66 @@
 \section{Transactions and patterns}
 Let $\mathcal{I}$ be a set of so-called \textit{transactions}. A \textit{pattern} $t$ is a subset of $\mathcal{I}$. So we might consider a dataset $\mathcal{T}$ with $n$ different transactions and $m$ patterns:
 \begin{equation}
-\mathcal{I}=\{I_1, I_2,\ldots,I_n\},\qquad \mathcal{T}=\{t_1, t_2,\ldots,t_n\}
+\mathcal{I}=\{I_1, I_2,\ldots,I_N\},\qquad \mathcal{T}=\{t_1, t_2,\ldots,t_n\}
 \end{equation}
 \textit{Association rule data mining} is an unsupervised learning discipline trying to reveal systematics in the database.
 
 \subsection{Support of a pattern}
-A pattern $X\subseteq\mathcal{I}$ is said to have a \textit{support} equal to the number of elements of $\mathcal{T}$ in which $X$ is a subset. Support may be specified absolutely or relatively.
+A pattern $X\subseteq\mathcal{I}$ is said to have a \textit{support} equal to the number of elements of $\mathcal{T}$ in which $X$ is a subset. Support may be specified absolutely or relatively:
+\begin{equation}
+N_X=|X|,\quad\textrm{supp}X=\frac{X_N}{N}
+\end{equation}
 
-\subsection{Association rules}
+\section{Association rules}
 An \textit{association rule} takes the form $X\Rightarrow Y$, where $X$ and $Y$ are disjoint patterns.
+
+For instance, consider:
+\begin{equation}
+\textrm{\{beer\}}\Rightarrow\textrm{\{diapers\}}
+\end{equation}
+This is an association rule, which says that people who buy beer, typically also purchases diapers. Another (perhaps less surprising) association rule would be:
+\begin{equation}
+\textrm{\{cheese, ham, bread\}}\Rightarrow\textrm{\{butter\}}
+\end{equation}
+Note the asymmetry between union and intersection here.
+
+\subsection{Support of an associaton rule}
+Like patterns, assocation rules have support associated with them. The support of $X\Rightarrow Y$ is simply equal to the support of $X\cap Y$. Again, this can be specifed absolutely or relatively:
+\begin{equation}
+N_{X\Rightarrow Y}=N_{X\cup Y}=|X\cap Y|,\quad\textrm{supp}(X\Rightarrow Y)=\frac{N_{X\cup Y}}{N}
+\end{equation}
+
+\subsection{Confidence of an associaton rule}
+The confidence for the association rule $X\Rightarrow Y$ is defined as:
+\begin{equation}
+\textrm{conf}(X\Rightarrow Y)=\frac{\textrm{supp}(X\Rightarrow Y)}{\textrm{supp}X}=\frac{\textrm{supp}(X\cup Y)}{\textrm{supp}X}=\frac{N_{X\Rightarrow Y}}{N_X}=\frac{N_{X\cup Y}}{N_Y}
+\end{equation}
+So the confidence can be seen as a conditional probability: Given $X$, what is the chance of $Y$?
+
+\subsection{Lift of an associaton rule}
+The \textit{lift} for the association rule $X\Rightarrow Y$ is defined as:
+\begin{equation}
+\textrm{lift}(X\Rightarrow Y)=\frac{\textrm{supp}(X\Rightarrow Y)}{\textrm{supp}X\cdot\textrm{supp}Y}
+\end{equation}
+Usng the definition of relative support lift can also be written:
+\begin{equation}
+\textrm{lift}(X\Rightarrow Y)=\frac{N_{X\cup Y}/N}{N_X/N\cdot N_Y/N}=\frac{N_{X\cup Y}\cdot N}{N_X\cdot N_Y}
+\end{equation}
+
+The interpretation of lift has to do with independence or lack thereof. If lift is equal to 1, this means:
+\begin{equation}
+1=\frac{\textrm{supp}(X\cup Y)}{\textrm{supp}X\cdot\textrm{supp}Y}\Leftrightarrow\textrm{supp}(X\cup Y)=\textrm{supp}X\cdot\textrm{supp}Y
+\end{equation}
+Reinterpreting as probabilities, this means:
+\begin{equation}
+p(X\cap Y)=p(X)\cdot p(Y)
+\end{equation}
+In other words, it implies independence between $X$ and $Y$. Lower values means negative correlation, and higher values positive correlation.
+
+\subsection{Conviction of an associaton rule}
+The \textit{conviction} for the association rule $X\Rightarrow Y$ is defined as:
+\begin{equation}
+\textrm{conv}(X\Rightarrow Y)=\frac{1-\textrm{supp}Y}{1-\textrm{conf}(X\Rightarrow Y)}
+\end{equation}
 
 \end{document}
