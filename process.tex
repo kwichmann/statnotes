@@ -19,13 +19,31 @@
 \begin{document}
 \maketitle
 
+\section{What is process mining?}
+\textit{Process mining} is about discovering underlying procedures and causal relations in data. There is a multitude of models and algorithms that can be used for this. A number of these will be outlined here.
+
+Process mining activities can be divided into three different "modes":
+
+\begin{itemize}
+\item \textit{Play-in} is the term we use for the act of taking data and turning it into a process model.
+\item In \textit{play-out} we take a process model and examine what kinds of behaviour it allows. This can be done through simulation.
+\item \textit{Replay} is the most important part of process mining. Here, modelled and observed behaviours are compared. This is useful for (among other things) conformance checking, prediction, and bottleneck analysis.
+\end{itemize}
+
 \section{Event logs}
-An \textit{event log} is a collection of data where each row contains at least the following:
+An \textit{event log} is a common way to represent the raw data used in process mining. The term refers to a collection of data where each row contains at least the following:
 \begin{itemize}
 \item A \textit{case id} corresponding to a particular unit whose processes we wish to discover.
-\item An \textit{event id}, to denote a specific kind of activity.
+\item An \textit{activity name}, to denote a specific kind of activity.
 \item A \textit{timestamp}, which allows us to order the events.
 \end{itemize}
+The data may contain other columns (and these may be used in various ways as well), but this is the minimum.
+
+\subsection{Traces of activities}
+For each unique case id, we can look at the subset of the event log which matches it. This may then be sorted by the timestamp (if this is not already the case). This will yield a number of strings of activities known as \textit{traces}. Examples of traces could be:
+\begin{equation}
+\langle abcd\rangle\quad\langle aaacccd\rangle\quad\langle ababababd\rangle
+\end{equation}
 
 \section{Model: Petri nets}
 
@@ -112,13 +130,53 @@ A place $p$ in a Petri net is called $k$-\textit{bounded} if all markings in the
 A Petri net in which all places are ($k$-)bounded is called  ($k$-)\textit{bounded}. A Petri net in which all places are safe is called \textit{safe}. A Petri net graph in which all possible initial markings are bounded is called \textit{structurally bounded}.
 
 \subsection{Workflow nets}
-A \textit{workflow net} (or WF net for short) is a Petri net which has a start or \textit{source} place and an ending or \textit{sink} place, so that the source has no inputs, and the sink no outputs. It is used to model processes with transitions representing events.
+A \textit{workflow net} (or WF-net for short) is a special kind of Petri net. It is used to model processes with transitions representing events.
+
+A workflow net has a start or \textit{source} place and an ending or \textit{sink} place, so that the source has no inputs, and the sink no outputs. In addition, all other places should be on a trace from the source to the sink. The initial marking is one token at the source.
+
+A workflow net is called \textit{sound} if the following four criteria are satisfied:
+\begin{enumerate}
+\item Safeness: The WF-net is safe.
+\item Proper completion: When a token is placed on the sink, all other places should be empty.
+\item Option to complete: It is always possible to eventually get a token to the sink.
+\item Absence of dead parts: All transitions are $L_1$-live.
+\end{enumerate}
+Actually, this is somewhat redundant: Criterium 1 and 3 implies criterum 2:
+
+\begin{theorem}
+For a safe workflow net, if there is option to complete, proper completion is also true.
+\end{theorem}
+\begin{proof}
+The statement can be written as $(3)\Rightarrow(2)$. This is equivalent to $\neg (2)\Rightarrow\neg (3)$. So assume that proper completion does not hold. I.e. there is a reachable marking with a token at the end place and at least one other place. But because any place in a WF-net is part of a trace from source to sink, we can eventually move that token to the sink. But this contradicts soundness. So completion is not possible.
+\end{proof}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{wf_theorem}
+\caption{Adding the transition $t^*$.}
+\label{fig:wf_theorem}
+\end{figure}
+
+It turns out that there's a connection between sound workflow nets and a specific modification to the net: Given a workflow net, the so-called \textit{short-circuited} Petri net is constructed by adding another transition $t^*$ from the sink to the source. Figure \ref{fig:wf_theorem} shows this process.
+
+\begin{theorem}
+A workflow net is sound if and only if the corresponding short-circuited Petri net is live and bounded.
+\end{theorem}
+\begin{proof}
+There's two directions to show. (Coming later)
+\end{proof}
 
 \section{The alpha algorithm}
 
 \section{Model: Dependency graph}
-A \textit{dependency graph} is a series of nodes - representing events - in which there are causal arrows between events. So as such, this is simply a directed graph. 
+A \textit{dependency graph} is a series of nodes - representing events - in which there are causal arrows between events. So as such, this is simply a directed graph.
+
+Because such a graph does not contain any information about splits and joins, it is usually not used as is. Instead it is the basis for more complicated models.
 
 \section{Heuristics mining}
+
+
+
+\section{Model: Causal nets}
 
 \end{document}
