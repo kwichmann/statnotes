@@ -1,6 +1,7 @@
 \documentclass[12pt, a4paper]{article}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{mathtools}
 \usepackage{tikz}
@@ -176,7 +177,21 @@ Because such a graph does not contain any information about splits and joins, it
 \section{Heuristics mining}
 
 
-
 \section{Model: Causal nets}
+A \textit{causal net} (or C-net for short) is a tuple $(T,I,O)$ where $T$ is a set of \textit{tasks}. $I$ and $O$ denotes inputs and outputs respectively, in the following way:
+\begin{equation}
+I: T\rightarrow\mathcal{P}(\mathcal{P}(T)),\quad
+O: T\rightarrow\mathcal{P}(\mathcal{P}(T))
+\end{equation}
+In other words, to each task is associated a collection of subsets of $T$, both for input and output. For both inputs and outputs of a give task, we require, that if the empty set is in $I(t)$ (or $O(t)$), then it is the only element.
+
+The interpretation is, that between the subsets in the collection is a logical and (AND) operation. Between elements in the subset is a logical exclusive or (XOR) operation.
+
+For a $t\in T$, the \textit{input and output tasks} for $t$ are defined as follows:
+\begin{equation}
+\Box t=\bigcup I(t),\quad t\Box=\bigcup O(t)
+\end{equation}
+
+Usually, we will consider C-nets with a source and a sink task, $t_i, t_e\in T$, respectively. We then require that $\Box t_i=\varnothing$ and $t_e\Box=\varnothing$.
 
 \end{document}
