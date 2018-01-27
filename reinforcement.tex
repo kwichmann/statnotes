@@ -1,0 +1,88 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Reinforcement Learning}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Basics of reinforcement learning}
+\textit{Reinforcement learning} deals with an \textit{agent} making \textit{decisions} over time in dealing with some \textit{environment}, to maximize some cumulative, scalar \textit{reward}.
+
+An example would be playing a video game. Here, the player is the agent. The control inputs are the decisions. The game and its internal logic is the environment. And the score is the reward.
+
+Sometimes, a reward will be greater if it is postponed - it is not always advantagegous to reap any immediate reward. In other words, reinforcement learning algorithms will not benefit from being greedy.
+
+\subsection{The reward hypothesis}
+The basis of all reinforcement learning is the \textit{reward hypothesis}, which states:
+
+\begin{quotation}
+All goals can be described by the maximization of some cumulative, expected reward.
+\end{quotation}
+
+\subsection{Observation, action, and reward}
+At at given timestep $t$, a reinforcement learning agent gets some input; an \textit{observation} $O_t$ about the environment. It then takes an \textit{action} $A_t$. And finally it gets a scalar \textit{reward} $R_t$.
+
+\subsection{History and state}
+At any given time step $t$, the agent has a \textit{history} $H_t$, which simply consist of all the observations, actions, and rewards that have happened so far:
+\begin{equation}
+H_t=O_1,A_1,R_1,O_2,A_2,R_2,\cdots,O_t,A_t,R_t,
+\end{equation}
+A \textit{state} is a way for to parse this history into a more meaningful form. Formally, the state representation is simply a function of the history:
+\begin{equation}
+S_t=f(H_t)
+\end{equation}
+
+It is very important to note, that this is generally distinct from the \textit{environment state} $H^e_t$. The environment state contains complete information about the environment, including data and mechanisms that may be hidden to the agent. Hence $H^e_t$ can depend on other things than just the historySuch information is \textit{private} to the environment.
+
+The \textit{agent state} $S^a_t$ on the other hand is the internal representation the agent uses to decide on which actions to take. Once again, it can be any function of history:
+\begin{equation}
+S^a_t=f(H_t)
+\end{equation}
+
+\subsection{Markov states}
+A state $S_{t+1}$ is called a \textit{Markov state} or an \textit{information state} if it only depends on the state of the previous time step. Expressed probabilistically:
+\begin{equation}
+\mathbb{P}[S_{t+1}|S_1,S_2,\cdots S_t]=\mathbb{P}[S_{t+1}|S_t]
+\end{equation}
+In other words, we don't need the entire history to decide on an action: Knowing the present is enough. Or put another way:
+\begin{quotation}
+The future is independent of the past, given the present.
+\end{quotation}
+Or:
+\begin{quotation}
+The state is a \textit{sufficient statistic} of the future.
+\end{quotation}
+
+The environment state is always Markov, as by definition it contains all information about what can happen next. Similarly, the state consisting of the entire history is trivially Markov as well.
+
+\subsection{Full observability}
+This is the case where, in fact, we can observe everything about the environment and its inner workings. So that:
+\begin{equation}
+O_t=S^a_t=S^e_t
+\end{equation}
+Sometimes this is reasonable. Sometimes not. But it will be a useful theoretical situation. This is known as a \textit{Markov decision process} or MDP for short.
+
+When this condition is not fulfilled, we speak about \textit{partial observability} or a \textit{partially observable evironment}. Here the agent only indirectly observes the invironment. This situation is known as a \textit{partially observable Markov decision process} or POMDP for short.
+
+\subsection{State example: Bayesian beliefs}
+This state representation can be seen as a current best bet at what the actual environment state is. In other words, it is represented by Bayesian probabilities, which may then be updated over time using Bayes' rule:
+\begin{equation}
+S^a_t=(\mathbb{P}[S^e_t=s_1],\mathbb{P}[S^e_t=s_2],\cdots,\mathbb{P}[S^e_t=s_n])
+\end{equation}
+
+\subsection{State example: Recurrent neural net}
+
+
+\end{document}
