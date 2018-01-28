@@ -83,6 +83,72 @@ S^a_t=(\mathbb{P}[S^e_t=s_1],\mathbb{P}[S^e_t=s_2],\cdots,\mathbb{P}[S^e_t=s_n])
 \end{equation}
 
 \subsection{State example: Recurrent neural net}
+Here, the state $S^a_t$ is a linear combination of the observation $O_t$ and the state of the last time step $S^a_{t-1}$, followed by a non-linear \textit{activation function} $\sigma$:
+\begin{equation}
+S^a_t=\sigma(W_O O_t+W_S S^a_{t-1})
+\end{equation}
+Here, the $W$'s are weight matrices with sizes corresponding to the dimenstionality of observations and state vectors. Typical choices for $\sigma$ are sigmoid, tanh, or rectified linear unit.
 
+\section{Components of an agent}
+A reinforcement learning agent may contain one or more of the following components:
+\begin{itemize}
+\item \textit{Policy}: The agent's behaviour function. Shows how the agent gets from its state to deciding on an action.
+\item \textit{Value function}: A measure of how desirable it is to be in a given state, or perform a given action.
+\item \textit{Model}: The agent's representation of the environment.
+\end{itemize}
+We'll examine each of these in greater detail below:
+
+\subsection{Policy}
+A policy $\pi$ is a mapping from state to action. For a \textit{deterministic} policy, this is an ordinary function:
+\begin{equation}
+\pi(s)=a
+\end{equation}
+So the state $s$ is always mapped to the action $a$. We should ideal choose $\pi$ so that the reward is maximized. 
+
+But a policy can also be \textit{stochastic}, i.e. probabilistic. In this case $\pi$ takes the form of conditional probabilities:
+\begin{equation}
+\pi(a|s)=\mathbb{P}[A=a|S=s]
+\end{equation}
+
+\subsection{Value function}
+A value function $V_\pi$ is a prediction of the future reward for state $s$ under a given policy $\pi$:
+\begin{equation}
+V_\pi(s)=\mathbb{E}_\pi[R_t+\gamma R_{t+1}+\gamma^2 R_{t+2}+\cdots|S_t=s]
+\end{equation}
+Here $\gamma$ is a \textit{discounting factor}, between 0 and 1. 0 means that we only care about the immediate reward, while values approaching 1 means that we care progressively more about long run rewards.
+
+\subsection{Model}
+In this context, a model tries to predict the evolution of the environment. These can take two different forms:
+\begin{itemize}
+\item \textit{Transition prediction} $\mathcal{P}$ models the change of state of the environment:
+\begin{equation}
+\mathcal{P}^a_{ss'}=\mathbb{E}[S_{t+1}=s'|S_t=s, A_t=a]
+\end{equation}
+\item \textit{Reward prediction} $\mathcal{R}$ models the change in (immediate) reward:
+\begin{equation}
+\mathcal{R}^a_s=\mathbb{E}[R_{t+1}|S_t=s, A_t=a]
+\end{equation}
+\end{itemize}
+
+\subsection{Categorization of agents}
+Based on the above, we can broadly categorize agents into several categories:
+\begin{itemize}
+\item\textit{Value based agents} are based on a value function - with the policy being implicit. I.e. in each step we can greedily pick the action with the highest future reward, based directly on the value function.
+\item\textit{Policy based agents} on the other hand has the policy as its key ingredient. Here, the policy mapping directly shows what action to take in each state.
+\item\textit{Actor critic agents} takes both a poicy and a value function into account. Ideally the "best of both worlds".
+\item\textit{Model free agents} may by policy and/or value function based, but has no model! I.e. it doesn't try to make predictions about the environment.
+\item\textit{Model agents} may by policy and/or value function based, but includes modelling.
+\end{itemize}
+
+\section{Reinforcement learning and planning}
+There's two fundamental types of problems in sequential decision making: \textit{Reinforcement learning} and \textit{planning}.
+
+Reinforcement learning can be viewed as dumping the agent into an alien environment it initially knows nothing about. The agent then begins to interact with the environment, eventually improving its policy for doing so.
+
+Planning is the situation where the agent starts with a perfect model of the environment. The agent then uses this model to make calculations without any external interaction, which then informs policy.
+
+So in planning, we can in principle look many steps ahead, determining states and rewards (or expectation values thereof) and use this to pick optimal actions. In other words, a tree search.
+
+\subsection{Exploration versus exploitation}
 
 \end{document}
