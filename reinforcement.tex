@@ -34,6 +34,13 @@ All goals can be described by the maximization of some cumulative, expected rewa
 \subsection{Observation, action, and reward}
 At at given timestep $t$, a reinforcement learning agent gets some input; an \textit{observation} $O_t$ about the environment. It then takes an \textit{action} $A_t$. And finally it gets a scalar \textit{reward} $R_t$.
 
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{agent_environment}
+\caption{The interplay between agent and environment.}
+\label{fig:agent_environment}
+\end{figure}
+
 \subsection{History and state}
 At any given time step $t$, the agent has a \textit{history} $H_t$, which simply consist of all the observations, actions, and rewards that have happened so far:
 \begin{equation}
@@ -130,6 +137,27 @@ In this context, a model tries to predict the evolution of the environment. Thes
 \end{equation}
 \end{itemize}
 
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{maze}
+\caption{Upper left: Maze example. Upper right: Policy for maze. Lower left: Value function for maze. Lower right: Reward prediction for maze.}
+\label{fig:maze}
+\end{figure}
+
+\subsection{Example: Maze}
+As an example, consider an agent that has to find its way though the maze in the upper left of figure \ref{fig:maze}.  The problem has the following qualities:
+\begin{itemize}
+\item Rewards: We want the agent to get through the maze as quickly as possible, so each time step has a reward of -1.
+\item Actions: The agent can move up, down, left, or right in each time step.
+\item State: The state is the agents current position square in the maze.
+\end{itemize}
+
+A good policy for solving the problem is shown in the upper right. Here the arrows dictates the action given the state (position).
+
+The lower left shows the value function corresponding to the policy: The future reward is negative the number of steps needed to get out of the maze from the current state (position). An optimal action can be chosen greedily, by picking the possibility with the lowest value of the function.
+
+The lower right shows a reward prediction model for the maze. This one technically depends on both state and action, but as we no it is -1 no matter what.
+
 \subsection{Categorization of agents}
 Based on the above, we can broadly categorize agents into several categories:
 \begin{itemize}
@@ -150,5 +178,38 @@ Planning is the situation where the agent starts with a perfect model of the env
 So in planning, we can in principle look many steps ahead, determining states and rewards (or expectation values thereof) and use this to pick optimal actions. In other words, a tree search.
 
 \subsection{Exploration versus exploitation}
+So reinforcement learning is very much a trial-and-error process. The agent should hopefully learn an effective policy from interacting with the environment. This requires \textit{exploration}. Ideally without losing too much reward along the way.
+
+\begin{quotation}
+Exploration finds more information about the environment.
+\end{quotation}
+
+Planning, on the other hand relies on \textit{exploitation} of the complete knowledge of the environment.
+
+\begin{quotation}
+Exploitation uses known information to maximize reward.
+\end{quotation}
+
+Usually, a combination of exploration and exploitation is necessary for achieving success. So there's a balance between the two, sometimes knows as \textit{exploration-exploitation tradeoff}. This consideration is unique to reinforcement learning as opposed to machine learning as a whole.
+
+\subsubsection{Examples}
+Situation: You're going out to eat.
+\begin{itemize}
+\item Exploitation: Going to your favorite restaurant.
+\item Exploration: Trying a new restaurant.
+\end{itemize}
+Situation: Online banner advertisement.
+\begin{itemize}
+\item Exploitation: Show the most succesful advert so far.
+\item Exploration: Display a different advert.
+\end{itemize}
+Situation: Drilling for oil.
+\begin{itemize}
+\item Exploitation: Drill at the best known location.
+\item Exploration: Drill at a new location.
+\end{itemize}
+
+\subsection{Prediction and control}
+
 
 \end{document}
