@@ -46,6 +46,47 @@ For each unique case id, we can look at the subset of the event log which matche
 \langle abcd\rangle\quad\langle aaacccd\rangle\quad\langle ababababd\rangle
 \end{equation}
 
+\section{Process models}
+A mathematical \textit{model} is an abstraction made to imitate som aspect of reality. Hence, a \textit{process model} seeks to mimic a given process.
+
+\section{Evaluating process models}
+
+If we're building a binary classifier from a training set of labelled data, we can display the results of a model in a \textit{confusion matrix} with four entries:
+\begin{itemize}
+\item True positives (TP): Actual positives predicted as positives.
+\item True negatives (TN): Actual negatives predicted as negatives.
+\item False positives (FP): Actual negatives predicted as positives.
+\item Fale negatives (FN): Actual positives predicted as negatives.
+\end{itemize}
+We obviously want to have many truthful predictions, and few falsy ones. There's a number of quantities which can be calculated - like precision and recall - to predict the quality of the model.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{process_evaluation}
+\caption{Venn diagram of behaviours.}
+\label{fig:process_evaluation}
+\end{figure}
+
+But for a process model, things are not so simple. There's a set of real behaviours, i.e. behaviours that are possible in reality, and a set of behaviours that is possible in the model. But the event log is only a subset of the real behaviours; we can't be sure to see everything possible. The situation is illustrated in figure \ref{fig:process_evaluation}. Which means that the event log consists of two regions: False negatives (FN') and true positives (TP').
+
+So why can't we just define quantities corresponding to precision and recall, and so on? Because this is not a supervised learning problem! We have no idea what the set of real behaviours actually consists of, merely a subset - the event log.
+
+One quantity that can be defined, though, is the \textit{replay fitness}, the percentage of the event log allowed by the model:
+\begin{equation}
+\frac{\textrm{TP'}}{\textrm{TP'}+\textrm{FN'}}
+\end{equation}
+But having this close to 1 is not enough to declare a model good: Fitness is only one part of the story, as we shall see below.
+
+\subsection{The four forces}
+Broadly speaking, there's four criteria for estimating the quality of a process model:
+\begin{itemize}
+\item Fitness: Ability to explain observed behaviours.
+\item Precision: Correspondence of model behaviours to observations.
+\item Simplicity: The model is parsimonious enough to be interpretable.
+\item Generalization: The model should not be overfit to the observed event log.
+\end{itemize}
+The first two bullet points might seem similar, so to clarify: High fitness means that all (or most) observed behaviours are possible in the model. High precision mean that all (or most) of the possible behaviours in the model are observed.
+
 \section{Model: Petri nets}
 
 \subsection{Petri net graphs}
@@ -193,5 +234,19 @@ For a $t\in T$, the \textit{input and output tasks} for $t$ are defined as follo
 \end{equation}
 
 Usually, we will consider C-nets with a source and a sink task, $t_i, t_e\in T$, respectively. We then require that $\Box t_i=\varnothing$ and $t_e\Box=\varnothing$.
+
+\section{Petri net instances}
+An \textit{instance} of a Petri net $(P, T, F, m_0)$ is a tuple $(PI, TI, FI, \rho,\varrho, m_0')$, so that $PI$ is a set of \textit{instance places}, $TI$ a set of \textit{instance transitions}, $FI$ a set of \textit{instace flow} relations between $PI$ and $TI$. Furthermore $\rho$ and $\varrho$ are  mappings into the original Petri net:
+\begin{equation}
+\rho: PI\rightarrow P,\quad\varrho: TI\rightarrow T
+\end{equation}
+And $m_0'$ is an initial marking of $PI$. For this structure to be an instance, we furthermore require:
+\begin{itemize}
+\item There can only be elements of instance flow $FI$ where the corresponding elements (through $\rho$ and $\varrho$) is in $F$. I.e. we require:
+\begin{align}
+\forall p\in PI, t\in TI:\ &(p,t)\in FI\Rightarrow(\rho(p),\varrho(t))\in F\textrm{ and}\\
+&(t,p)\in FI\Rightarrow(\varrho(t),\rho(p))\in F
+\end{align}
+\end{itemize}
 
 \end{document}
