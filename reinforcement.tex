@@ -216,4 +216,81 @@ Situation: Drilling for oil.
 
 Usually in reinforcement learning, we have to do prediction in order to control.
 
+\section{Markov decision processes}
+Recall that a Markov decision process (or MDP for short) is a case where everything about the environment is known - the agent state is the same as the environment state. This also means that it has the Markov property.
+
+It turns out that almost all reinforcement learning problems can be restated as MDP's. For instance:
+\begin{itemize}
+\item Optimal control primarily deals with continuous MDP's.
+\item Partially observable problems can be conversted into MDP's.
+\item \textit{Bandits} are MDP's with one state.
+\end{itemize}
+
+\subsection{Transition probability matrix}
+Consider for a moment an agent with a state having the Markov property, which simply takes the same (or no) action in every time step. Then given the initial state $s$ there is a probability it will end up in state $s'$ in the next time step - it can depend only on $s$ and $s'$ per the Markov property:
+\begin{equation}
+\mathcal{P}_{ss'}=\mathbb{P}[S_{t+1}=s'|S_t=s]
+\end{equation}
+These propabilities form a matrix; the \textit{transition probability matrix} $\mathcal{P}$:
+\begin{equation}
+\mathcal{P}=\begin{pmatrix}
+\mathcal{P}_{11} & \mathcal{P}_{12} & \cdots & \mathcal{P}_{1n}\\
+\mathcal{P}_{21} & \mathcal{P}_{22} & \cdots & \mathcal{P}_{2n}\\
+\vdots & \vdots & \ddots & \vdots \\
+\mathcal{P}_{n1} & \mathcal{P}_{n2} & \cdots & \mathcal{P}_{nn}
+\end{pmatrix}
+\end{equation}
+This form assumes a finite number of states $n$, but in principle this can be infinite.
+
+Because the entries are probabilites, each row of $\mathbb{P}$ must sum to 1:
+\begin{equation}
+\forall i\in\{1, 2,\ldots,n\}:\ \sum_{j=1}^n\mathcal{P}_{ij}=1
+\end{equation}
+
+Such a system - represented by the tuple $\langle S,\mathcal{P}\rangle$ - is known as a \textit{Markov process} or \textit{Markov chain}.
+
+\subsection{Markov reward processes}
+A \textit{Markov reward process} (or MRP) is a Markov process with a finite set of states and a \textit{reward function} $\mathcal{R}$ as well as a discount factor $\gamma\in[0,1]$. The reward function is defined as the expectation value of the next reward given the current state:
+\begin{equation}
+\mathcal{R}: s\mapsto\mathcal{R}_s=\mathbb{E}[R_{t+1}|S_t=s]
+\label{reward}
+\end{equation}
+So a Markov reward process is the tuple $\langle S,\mathcal{P},\mathcal{R},\gamma\rangle$
+
+\subsection{Return and value function}
+The \textit{return} of a given outcome of a Markov reward process\footnote{Or of any system with rewards and a discounting factor $\gamma$, really.} is:
+\begin{equation}
+G_t=R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}+\cdots=\sum_{n=1}^\infty \gamma^{n-1} R_{t+n}
+\label{return}
+\end{equation}
+In other words, the return is the discounted future reward. This is the quantity we wish to maximize.
+
+The value function, as we've already discussed above, is the expectation value of the return:
+\begin{equation}
+v(s)=\mathbb{E}[G_t|S_t=s]
+\label{value}
+\end{equation}
+
+\subsection{The Bellman equation for MRP's}
+We can now use equations \ref{value}, \ref{return}, and \ref{reward} to get a recursive formula for the value function:
+\begin{align}
+v(s)=&\mathbb{E}[G_t|S_t=s]=\\
+&\mathbb{E}[R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}+\cdots|S_t=s]=\\
+&\mathbb{E}[R_{t+1}+\gamma(R_{t+2}+\gamma R_{t+3}+\gamma^2 R_{t+4}+\cdots)|S=s]=\\
+&\mathbb{E}[R_{t+1}+\gamma G_{t+1}|S_t=s]=\\
+&\mathbb{E}[R_{t+1}|S_t=s]+\gamma\mathbb{E}[G_{t+1}|S_t=s]=\\
+&\mathcal{R}_s+\gamma\sum_{s'=1}^n\mathbb{P}[G_{t+1}|S_{t+1}=s']\mathbb{P}[S_{t+1}=s']=\\
+&\mathcal{R}_s+\gamma\sum_{s'=1}^n\mathcal{P}_{ss'}v(s')
+\end{align}
+Summing it up:
+\begin{equation}
+v(s)=\mathcal{R}_s+\gamma\sum_{s'=1}^n\mathcal{P}_{ss'}v(s')
+\label{bellman}
+\end{equation}
+Treating the value and reward functions as vectors $v$ and $\mathcal{R}$, this can be rewritten in matrix form:
+\begin{equation}
+v=\mathcal{R}+\gamma\mathcal{P}v
+\label{belmann_matrix}
+\end{equation} 
+
 \end{document}
