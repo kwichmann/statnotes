@@ -216,7 +216,7 @@ Situation: Drilling for oil.
 
 Usually in reinforcement learning, we have to do prediction in order to control.
 
-\section{Markov decision processes}
+\section{Markov reward processes}
 Recall that a Markov decision process (or MDP for short) is a case where everything about the environment is known - the agent state is the same as the environment state. This also means that it has the Markov property.
 
 It turns out that almost all reinforcement learning problems can be restated as MDP's. For instance:
@@ -225,6 +225,7 @@ It turns out that almost all reinforcement learning problems can be restated as 
 \item Partially observable problems can be conversted into MDP's.
 \item \textit{Bandits} are MDP's with one state.
 \end{itemize}
+In this section, we will deal with a simpler case - known as Markov reward processes - and the tackle the general problem later.
 
 \subsection{Transition probability matrix}
 Consider for a moment an agent with a state having the Markov property, which simply takes the same (or no) action in every time step. Then given the initial state $s$ there is a probability it will end up in state $s'$ in the next time step - it can depend only on $s$ and $s'$ per the Markov property:
@@ -282,7 +283,7 @@ v(s)=&\mathbb{E}[G_t|S_t=s]=\\
 &\mathcal{R}_s+\gamma\sum_{s'=1}^n\mathbb{P}[G_{t+1}|S_{t+1}=s']\mathbb{P}[S_{t+1}=s']=\\
 &\mathcal{R}_s+\gamma\sum_{s'=1}^n\mathcal{P}_{ss'}v(s')
 \end{align}
-Summing it up:
+Here, $\mathcal{R}_s$ is the reward for leaving state $s$ - which might seem somewhat backwards. Summing it up:
 \begin{equation}
 v(s)=\mathcal{R}_s+\gamma\sum_{s'=1}^n\mathcal{P}_{ss'}v(s')
 \label{bellman}
@@ -291,6 +292,97 @@ Treating the value and reward functions as vectors $v$ and $\mathcal{R}$, this c
 \begin{equation}
 v=\mathcal{R}+\gamma\mathcal{P}v
 \label{belmann_matrix}
-\end{equation} 
+\end{equation}
+This equation can be solved using the usual methods:
+\begin{equation}
+v=\mathcal{R}+\gamma\mathcal{P}v\Leftrightarrow(I_n-\gamma\mathcal{P})v=\mathcal{R}\Leftrightarrow v=(I_n-\gamma\mathcal{P})^{-1}\mathcal{R}
+\end{equation}
+This direct solution however, is only tractable for small $n$, as the run time for matrix inversion is $O(n^3)$. Instead, there is a number of other, faster possibilities, including:
+\begin{itemize}
+\item Dynamic programming.
+\item Monte-Carlo evaluation.
+\item Temporal difference learning.
+\end{itemize}
+
+\section{Markov decision processes}
+Now for the full MDP treatment. This case is very similar to the MRP case, but now there is several different actions to choose from, collectively written as $\mathcal{A}$. To each action $a\in\mathcal{A}$, corresponds a transition probability matrix $\mathcal{P}^a$. So formally, a Markov decision process is a tuple $\langle\mathcal{S},\mathcal{A},\mathcal{P},\mathcal{R},\gamma\rangle$, where:
+\begin{itemize}
+\item $\mathcal{S}$ is a finite set of states.
+\item $\mathcal{A}$ is a finite set of actions.
+\item $\mathcal{P}^a$ is a probability transition matrix corresponding to the action $a\in\mathcal{A}$.
+\item $\mathcal{R}^a_s$ is the expected reward for taking action $a\in\mathcal{A}$ when in state $s\in\mathcal{S}$.
+\item $\gamma$ is the discounting factor.
+\end{itemize}
+
+\subsection{Policy}
+Recall that a policy $\pi$ is a way to choose an action $a\in\mathcal{A}$ given the state $s\in\mathcal{A}$:
+\begin{equation}
+\pi(a|s)=\mathcal{P}[A_t=a|S_t=s]
+\end{equation}
+
+\begin{theorem}
+Given a Markov decision process $\langle\mathcal{S},\mathcal{A},\mathcal{P},\mathcal{R},\gamma\rangle$ and a policy $\pi$ for it, then:
+\begin{itemize}
+\item The state sequence $S_1,S_2,\ldots$ is a Markov process with probability transition matrix:
+\begin{equation}
+\mathcal{P}^\pi_{ss'}=\sum_{a\in\mathcal{A}}\pi(a|s)\mathcal{P}^a_{ss'}
+\end{equation}
+\item The combined state/reward sequence $S_1,R_1,S_2,R_2,\ldots$ is a Markov reward process with reward function:
+\begin{equation}
+\mathcal{R}^\pi_s=\sum_{a\in\mathcal{A}}\pi(a|s)\mathcal{R}^a_s
+\end{equation}
+\end{itemize}
+\end{theorem}
+\begin{proof}
+This follows from the law of total probability.
+\end{proof}
+
+This means that any MDP with a policy can always be reduced to a MRP, should we so wish.
+
+\subsection{State- and action-value function}
+The \textit{state-value function} $v_\pi(s)$ of a MDP is the expected return starting from state $s$ and then following policy $\pi$:
+\begin{equation}
+v_\pi(s)=\mathbb{E}_\pi[G_t|S_t=s]
+\end{equation}
+
+The \textit{action-value function} $q_\pi(s,a)$ is the expected return starting in state $s$, taking action $a$ and then following policy $\pi$, i.e.:
+\begin{equation}
+q_\pi(s, a)=\mathbb{E}_\pi[G_t|S_t=s, A_t=a]
+\end{equation}
+
+\subsection{Bellman's expectation equation}
+It turns out that state- and action-value functions obey recursive Bellman equations as well. First the state-value function, where we explicitly write out the sum over the possibilities of the first action of the $\pi$ policy:
+\begin{align}
+v_\pi(s)=&\mathbb{E}_\pi[G_t|S_t=s]=\\
+&\sum_{a\in\mathcal{A}}\mathbb{P}[S_t=s,A_t=a]\mathbb{E}_\pi[G_t|S_t=s,A_t=a]=\\
+&\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(a,s)
+\end{align} 
+So the state-value function involved the action-value function. Let's examine the latter:
+\begin{align}
+q_\pi(a,s)=&\mathbb{E}_\pi[G_t|S_t=s, A_t=a]=\\
+&\mathbb{E}_\pi[R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}+\cdots|S_t=s, A_t=a]=\\
+&\mathbb{E}_\pi[R_{t+1}|S_t=s, A_t=a]+\\
+&\quad\gamma\mathbb{E}_\pi[R_{t+2}+\gamma R_{t+3}+\cdots|S_t=s, A_t=a]=\\
+&\mathcal{R}^a_s+\gamma\mathbb{E}_\pi[G_{t+1}|S_t=s, A_t=a]
+\end{align}
+Now, write out the sum over that state at $t+1$:
+\begin{align}
+q_\pi(a,s)=&\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathbb{P}[S_{t+1}=s',S_t=s,A_t=a]\mathbb{E}_\pi[G_{t+1}|S_{t+1}=s']=\\
+&\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_\pi(s')
+\end{align}
+This means that we have a set of coupled equations:
+\begin{equation}
+v_\pi(s)=\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(a,s),\quad
+q_\pi(a,s)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_\pi(s')
+\end{equation}
+Inserting the latter into the former we get an equation for state-value function only:
+\begin{equation}
+v_\pi(s)=\sum_{a\in\mathcal{A}}\pi(a|s)\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_\pi(s')\right]
+\end{equation}
+Similarly, we can get an equation for action-value function by inserting the former into the latter:
+\begin{equation}
+q_\pi(a,s)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}\left[\sum_{a'\in\mathcal{A}}\pi(a'|s')q_\pi(a',s')\right]
+\end{equation}
+Do note the renaming of indices, though.
 
 \end{document}
