@@ -355,11 +355,11 @@ It turns out that state- and action-value functions obey recursive Bellman equat
 \begin{align}
 v_\pi(s)=&\mathbb{E}_\pi[G_t|S_t=s]=\\
 &\sum_{a\in\mathcal{A}}\mathbb{P}[S_t=s,A_t=a]\mathbb{E}_\pi[G_t|S_t=s,A_t=a]=\\
-&\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(a,s)
+&\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(s,a)
 \end{align} 
 So the state-value function involved the action-value function. Let's examine the latter:
 \begin{align}
-q_\pi(a,s)=&\mathbb{E}_\pi[G_t|S_t=s, A_t=a]=\\
+q_\pi(s,a)=&\mathbb{E}_\pi[G_t|S_t=s, A_t=a]=\\
 &\mathbb{E}_\pi[R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}+\cdots|S_t=s, A_t=a]=\\
 &\mathbb{E}_\pi[R_{t+1}|S_t=s, A_t=a]+\\
 &\quad\gamma\mathbb{E}_\pi[R_{t+2}+\gamma R_{t+3}+\cdots|S_t=s, A_t=a]=\\
@@ -367,13 +367,14 @@ q_\pi(a,s)=&\mathbb{E}_\pi[G_t|S_t=s, A_t=a]=\\
 \end{align}
 Now, write out the sum over that state at $t+1$:
 \begin{align}
-q_\pi(a,s)=&\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathbb{P}[S_{t+1}=s',S_t=s,A_t=a]\mathbb{E}_\pi[G_{t+1}|S_{t+1}=s']=\\
+q_\pi(s,a)=&\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathbb{P}[S_{t+1}=s',S_t=s,A_t=a]\mathbb{E}_\pi[G_{t+1}|S_{t+1}=s']=\\
 &\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_\pi(s')
 \end{align}
 This means that we have a set of coupled equations:
 \begin{equation}
 v_\pi(s)=\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(a,s),\quad
-q_\pi(a,s)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_\pi(s')
+q_\pi(s,a)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_\pi(s')
+\label{expectation_equations}
 \end{equation}
 Inserting the latter into the former we get an equation for state-value function only:
 \begin{equation}
@@ -381,8 +382,67 @@ v_\pi(s)=\sum_{a\in\mathcal{A}}\pi(a|s)\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\m
 \end{equation}
 Similarly, we can get an equation for action-value function by inserting the former into the latter:
 \begin{equation}
-q_\pi(a,s)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}\left[\sum_{a'\in\mathcal{A}}\pi(a'|s')q_\pi(a',s')\right]
+q_\pi(s,a)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}\left[\sum_{a'\in\mathcal{A}}\pi(a'|s')q_\pi(s',a')\right]
 \end{equation}
 Do note the renaming of indices, though.
+
+\subsection{Optimal value functions and policies}
+The \textit{optimal state-value function} $v_*(s)$ is the maximum\footnote{Or supremum, to be sure is exists.} when considering all possible policies:
+\begin{equation}
+v_*(s)=\underset{\pi}{\max}\ v_\pi(s)
+\end{equation}
+Similarly, the \textit{optimal action-value function} $q_*(s,a)$ is:
+\begin{equation}
+q_*(s,a)=\underset{\pi}{\max}\ q_\pi(s,a)
+\end{equation}
+
+We can define a partial ordering on policies as follows:
+\begin{equation}
+\pi\ge\pi'\Leftrightarrow\forall s\in\mathcal{S}: v_\pi(s)\ge v_{\pi'}(s)
+\end{equation}
+
+\begin{theorem}
+For a Markov decision process, there exists an optimal policy $\pi_*$, i.e. on that is better than or as good as an arbitrary policy:
+\begin{equation}
+\forall\pi: \pi_*\ge\pi
+\end{equation}
+All such optimal policies achieves the optimal state-value and action-value function:
+\begin{equation}
+v_{\pi_*}=v_*,\quad q_{\pi_*}=q_*
+\end{equation}
+\end{theorem}
+\begin{proof}
+We can construct such a policy by:
+\begin{equation}
+\pi_*(a|s)=\begin{cases}
+1 & \textrm{if } a=\underset{a\in\mathcal{A}}{\textrm{argmax}}\ q_*(s,a) \\
+0 & \textrm{otherwise} 
+\end{cases}
+\end{equation}
+Since we must have $v_*(s)=\underset{a}{\max}\ q_*(s|a)$ it follows that this policy achieves both optimal state-value and action-value function.
+\end{proof}
+
+This shows that not only does an optimal policy exist, but a deterministic, optimal policy exists!
+
+\subsection{Bellman's optimality equations}
+As noted in the proof above, $v_*(s)=\underset{a}{\max}\ q_*(s|a)$. We can use this along with the right hand side of equation \ref{expectation_equations} to get:
+\begin{equation}
+v_*(s)=\underset{a}{\max}\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_*(s')\right]
+\label{optimal_v}
+\end{equation}
+Or we can write the same equation, but this time for $q_*(s,a)$:
+\begin{equation}
+q_*(s,a)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}\left[\underset{a'}{\max}\ q_*(s'|a')\right]
+\label{optimal_q}
+\end{equation}
+These non-linear equations are known as \textit{Bellman's optimality equations}. In general these have no closed-form solution. Instead, typically iterative methods are used for solving them. Such strategies include:
+\begin{itemize}
+\item Value iteration.
+\item Policy iteration.
+\item Q-learning.
+\item Sarsa.
+\end{itemize}
+These will be examined in the following.
+
 
 \end{document}
