@@ -304,6 +304,9 @@ This direct solution however, is only tractable for small $n$, as the run time f
 \item Temporal difference learning.
 \end{itemize}
 
+\subsubsection{Intuition behind the Bellman equation for MRP's}
+What is the intuition behind equation \ref{bellman}? Imagine the agent is in state $s$. We wish to calculate the expectation of the future discounted reward. First we leave $s$ which gives an immediate reward of $\mathcal{R}_s$. To get the future reward we have to make a weighted average over all the possible states we can go to from $s'$, each having a future reward of $v(s')$. Finally this is discounted by multiplying with $\gamma$.
+
 \section{Markov decision processes}
 Now for the full MDP treatment. This case is very similar to the MRP case, but now there is several different actions to choose from, collectively written as $\mathcal{A}$. To each action $a\in\mathcal{A}$, corresponds a transition probability matrix $\mathcal{P}^a$. So formally, a Markov decision process is a tuple $\langle\mathcal{S},\mathcal{A},\mathcal{P},\mathcal{R},\gamma\rangle$, where:
 \begin{itemize}
@@ -350,7 +353,7 @@ The \textit{action-value function} $q_\pi(s,a)$ is the expected return starting 
 q_\pi(s, a)=\mathbb{E}_\pi[G_t|S_t=s, A_t=a]
 \end{equation}
 
-\subsection{Bellman's expectation equation}
+\subsection{Bellman's expectation equations}
 It turns out that state- and action-value functions obey recursive Bellman equations as well. First the state-value function, where we explicitly write out the sum over the possibilities of the first action of the $\pi$ policy:
 \begin{align}
 v_\pi(s)=&\mathbb{E}_\pi[G_t|S_t=s]=\\
@@ -372,19 +375,45 @@ q_\pi(s,a)=&\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathbb{P}[S_{t+1}=s',S
 \end{align}
 This means that we have a set of coupled equations:
 \begin{equation}
-v_\pi(s)=\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(a,s),\quad
+v_\pi(s)=\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(s,a),\quad
 q_\pi(s,a)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_\pi(s')
 \label{expectation_equations}
 \end{equation}
 Inserting the latter into the former we get an equation for state-value function only:
 \begin{equation}
 v_\pi(s)=\sum_{a\in\mathcal{A}}\pi(a|s)\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_\pi(s')\right]
+\label{expectation_state}
 \end{equation}
 Similarly, we can get an equation for action-value function by inserting the former into the latter:
 \begin{equation}
 q_\pi(s,a)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}\left[\sum_{a'\in\mathcal{A}}\pi(a'|s')q_\pi(s',a')\right]
+\label{expectation_action}
 \end{equation}
 Do note the renaming of indices, though.
+
+\subsubsection{Intuition behind the Bellman expectation equations}
+What is the intuition behind the two equations \ref{expectation_equations}?
+
+Consider first the state-value function $v_\pi(s)$. Here, imagine the agent starting at state $s$. From there is can take a number of actions $a\in\mathcal{A}$, so we have to do a weighted average over the expected future rewards for each of these, the weights being $\pi(a|s)$. And the expected future rewards for being in state $s$ and taking action $a$ is exactly $q_\pi(s,a)$.
+
+Consider then the action-value function $q_\pi(s,a)$. Here, the agent is in state $s$ and takes action $s$. First, it gets the immediate reward $\mathcal{R}^a_s$ and then it goes to another state $s'$, so we have to sum over these possibilities. The exptected future reward for being in state $s'$ is $v_\pi(s')$. Finally, we must remember to discount the future reward by multiplying by $\gamma$.
+
+\subsection{Deterministic agents}
+A \textit{deterministic} agent is one that always chooses a specific action $a(s)$ when in state $s$. Expressed in Kronecker delta form:
+\begin{equation}
+\pi(a|s)=\delta_{a,a(s)}
+\end{equation}
+This means that the expectation equation for the state-value function simplifies:
+\begin{equation}
+v_\pi(s)=q_\pi(s,a(s))
+\label{deterministic_v}
+\end{equation}
+The intuition should be clear: The expected future reward in state $s$ is simply the expected future reward for being in state $s$ and taking action $a(s)$, since this is the only allowed action according to the policy.
+
+We can now combine equation \ref{deterministic_v} with the action-value part of equation \ref{expectation_equations} to get:
+\begin{equation}
+v_\pi(s)=\mathcal{R}^{a(s)}_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^{a(s)}_{ss'}v_\pi(s')
+\end{equation}
 
 \subsection{Optimal value functions and policies}
 The \textit{optimal state-value function} $v_*(s)$ is the maximum\footnote{Or supremum, to be sure is exists.} when considering all possible policies:
@@ -395,6 +424,12 @@ Similarly, the \textit{optimal action-value function} $q_*(s,a)$ is:
 \begin{equation}
 q_*(s,a)=\underset{\pi}{\max}\ q_\pi(s,a)
 \end{equation}
+Because both are optimal, we must have:
+\begin{equation}
+v_*(s)=\underset{a}{\max}\ q_*(s,a)
+\label{optimal_v_maxq}
+\end{equation}
+I.e. the best future reward for being in state $s$ must be achieved by taking the optimal action $a$. This is known as \textit{Bellman's optimality equation}.
 
 We can define a partial ordering on policies as follows:
 \begin{equation}
@@ -425,7 +460,7 @@ Since we must have $v_*(s)=\underset{a}{\max}\ q_*(s|a)$ it follows that this po
 This shows that not only does an optimal policy exist, but a deterministic, optimal policy exists!
 
 \subsection{Bellman's optimality equations}
-As noted in the proof above, $v_*(s)=\underset{a}{\max}\ q_*(s|a)$. We can use this along with the right hand side of equation \ref{expectation_equations} to get:
+As noted above, Bellman's optimality equation is expressed in \ref{optimal_v_maxq}. We can use this along with the right hand side of equation \ref{expectation_equations} to get:
 \begin{equation}
 v_*(s)=\underset{a}{\max}\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_*(s')\right]
 \label{optimal_v}
@@ -444,5 +479,250 @@ These non-linear equations are known as \textit{Bellman's optimality equations}.
 \end{itemize}
 These will be examined in the following.
 
+\section{Dynamic programming}
+\textit{Dynamic programming} is a method for solving complex problems by breaking them down into subproblems, solving these and putting them back together to solve the overall problem.
+
+In order for dynamic programming to be applicable, the problem must have two basic properties: \textit{optimal substructure} and \textit{overlapping subproblems}.
+
+\subsection{Optimal substructure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{principle_of_optimality}
+\caption{The principle of optimality shown for the case of finding optimal paths between points. The principle states, that we can find the optimal path from $A$ to $C$ (above) if we know the optimal paths from $A$ to $B$ and $B$ to $C$ (below).}
+\label{fig:principle_of_optimality}
+\end{figure}
+
+This is also known as \textit{the principle of optimality}. Assume we have an optimal solution for the case $(A,C)$. Then that optimal solution should be obtainable from having the optimal solutions for the cases $(A,B)$ and $(B,C)$. Looking at figure \ref{fig:principle_of_optimality} where the principle is illustrated for the problem of finding optimal paths.
+
+Since the principle can be applied iteratively, eventually the problem can be reduced to a set of "smallest", subsequent subproblems. Because of this, mathematical induction is often used to prove a given problem has optimal substructure.
+
+\subsection{Overlapping subproblems}
+This means that each of the subproblems occur "many times" and that we therefore can cache the solutions from these so we don't have to redo the same problem over and over.
+
+\subsection{Example: Fibonacci numbers}
+As is well known, the Fibonacci numbers are defined recursively:
+\begin{equation}
+F_0=0,\quad F_1=1,\quad F_{n+1}=F_n+F_{n-1} 
+\end{equation}
+By this very definition, it is clear that if we know the all $F_i, i\le n$ we can always find $F_{n+1}$, which means that the principle of optimality holds.
+
+If we did this using only recursion, the fibonacci function would call itself a large number of times. We can prevent this by caching all $F_n$ that is calculated. Thus the overlapping subproblem criterion is also satisfied.
+
+\section{The contraction mapping theorem}
+Before we continue exploring dynamc programming in the context of reinforcement learning, let's take a mathematical side trek which will be convenient for showing the convergence of certain algorithms.
+
+\begin{definition}
+A contraction mapping $T$ on the metric space $(X,d)$ is a Lipschitz function $T\rightarrow T$ with Lipschitz constant $q\in[0,1[$, i.e.:
+\begin{equation}
+\forall x,y\in X:\ d(T(X),T(Y))\le q\cdot d(x,y)
+\end{equation}
+\end{definition}
+
+\begin{theorem}
+(The contraction mapping theorem) Let $T$ be a contraction mapping on the non-empty, complete metric space $(X,d)$. Then $T$ has a unique fixed-point $x^*$:
+\begin{equation}
+\exists !\ x^*\in X:\ T(x^*)=x^*
+\end{equation}
+This fixed-point can be found by iteration of $T$ from any starting point $x_0\in X$:
+\begin{equation}
+x_n=T(x_{n-1}),\quad (x_n)\underset{n\rightarrow\infty}{\rightarrow} x^*
+\end{equation}
+\end{theorem}
+\begin{proof}
+Using the triangle inequality for any $x,y\in X$ we have:
+\begin{align}
+d(x,y)&\le d(x,T(x)+d(T(x),T(y))+d(T(y),y)\\
+&\le d(x,T(x)+q\cdot d(x,y)+d(T(y),y)
+\end{align}
+Here we've used that $T$ is a contraction. Isolate $d(x,y)$ to get:
+\begin{equation}
+d(x,y)(1-q)\le d(x,T(x)+d(T(y),y)\Leftrightarrow d(x,y)\le\frac{d(x,T(x)+d(T(y),y)}{1-q}
+\label{fundamental_contraction_inequality}
+\end{equation}
+This is known as the \textit{fundamental contraction inequality}. We can use it to prove that $T$ has at most one fixed-point: Assume both $x$ and $y$ are fixed points. Then equation \ref{fundamental_contraction_inequality} says $d(x,y)\le 0$, leaving a distance of zero as the only option, which means that $x=y$.
+
+Now, consider the mapping $T^n: X\rightarrow X$ defined as repeated application of $T$ $n$ times. This mapping is also a contraction, with Lipschitz constant $q^n$. We now wish to show that $(x_n)=(T^n(x_0))$ is Cauchy. We now apply the fundamental contraction inequality to $x_m$ and $x_n$:
+\begin{align}
+d(x_m,y_n)&\le\frac{d(x_m,T(x_m)+d(T(x_n),x_n)}{1-q}\\
+&=\frac{d(T^m(x_0),T(T^m(x_0))+d(T(T^n(x_0)),T^n(x_0))}{1-q}\\
+&=\frac{d(T^m(x_0),T^m(T(x_0))+d(T^n(T(x_0)),T^n(x_0))}{1-q}\\
+&\le\frac{q^m\cdot d(x_0),T(x_0))+q^n\cdot d(T(x_0),x_0)}{1-q}\\
+&=\frac{q^m+q^n}{1-q}d(x,T(x_0))
+\end{align}
+Since $q<1$, this can be made arbitrarily small by making $m$ and $n$ large enough. Hence $(x_n)$ is Cauchy and therefore convergent, since $X$ is complete. Let's call the limit $x^*$.
+
+To show that $x^*$ is a fixed-point consider the recursive definition of the series:
+\begin{equation}
+x_{n+1}=T(x_n)
+\end{equation}
+Now apply the limit $n\rightarrow\infty$ on both sides of the equation:
+\begin{equation}
+\lim_{n\rightarrow\infty} x_{n+1}=\lim_{n\rightarrow\infty}T(x_n)
+\end{equation}
+Since $T$ is Lipschitz, it is also continuous, and so we may interchange limit and application of $T$:
+\begin{equation}
+\lim_{n\rightarrow\infty} x_{n+1}=T\left(\lim_{n\rightarrow\infty}x_n\right)
+\end{equation}
+But we know that both these limits are equal to $x^*$, so:
+\begin{equation}
+x^*=T(x^*)
+\end{equation}
+\end{proof}
+
+The theorem is also known as \textit{Banach's fixed-point theorem}.
+
+\section{Dynamic programming for MDP's}
+It turns out that we can use dynamical programming for finding value functions for MDP's. Here, the recursive substructure is implied by Bellman's optimality equations. And the value function can be cached as calculations are done. Hence, both criteria are satisfied.
+
+This assumes perfect knowledge of the MDP, and therefore it can only be used for planning. There's essentially two types of question we can ask here:
+\begin{itemize}
+\item Prediction: Given a MDP $\langle\mathcal{S},\mathcal{A},\mathcal{P},\mathcal{R},\gamma\rangle$ and a policy $\pi$, what is the corresponding state-value function $v_\pi(s)$?
+\item Control: Given a MDP $\langle\mathcal{S},\mathcal{A},\mathcal{P},\mathcal{R},\gamma\rangle$, what is the optimal state-value function $v_*(s)$?
+\end{itemize}
+We'll look at both below.
+
+\subsection{Iterative policy evaluation}
+Evaluation relies on prediction: Given a policy $\pi$ we want to find the state-value function $v_\pi(s)$. One approach - indeed the one we will use in this section - is to obtain the value function iteratively through Bellman's expectation equation \ref{expectation_state}. Here, we start by a guess $v_1$ - or simply zeros - at the state-value function as a vector, and then insert it into the expectation equation to get $v_2$. Iterating this process, getting $v_3, v_4, v_5$ etc., $v_n$ will eventually converge to $v_\pi$:
+\begin{equation}
+v_1\rightarrow v_2\rightarrow v_3\rightarrow\cdots\underset{n\rightarrow\infty}{\rightarrow}v_\pi
+\end{equation}
+We will prove this later.
+
+The update is done using \textit{synchronous backup}, which means that we store the values of $v_i$ for all the states and use them to calculate the values for $v_{i+1}$. Only then are the "active" values used in the next step calculation changed.
+
+\subsubsection{Example: Starting with $v_1=0$}
+Assume out inital guess $v_1$ simply consists of all zeros. Then the second iteration is:
+\begin{align}
+v_2(s)=&\sum_{a\in\mathcal{A}}\pi(a|s)\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_1(s')\right]=\\
+&\sum_{a\in\mathcal{A}}\pi(a|s)\mathcal{R}^a_s
+\end{align}
+Similarly, the third iteration becomes:
+\begin{align}
+v_3(s)=&\sum_{a\in\mathcal{A}}\pi(a|s)\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_2(s')\right]=\\
+&\sum_{a\in\mathcal{A}}\pi(a|s)\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}\sum_{a'\in\mathcal{A}}\pi(a'|s')\mathcal{R}^{a'}_{s'}\right]
+\end{align}
+And so on. Of course in practice this is done numerically.
+
+\subsubsection{Example: Gridworld}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{gridworld}
+\caption{The gridworld environment. The grey areas make up the terminal state.}
+\label{fig:gridworld}
+\end{figure}
+
+Consider the gridworld environment shown in figure \ref{fig:gridworld}. The agent's state is the square it occupies. The possible action are moving up, down, left, or right. The grey squares make up a terminal state. Trying to move across the outer border will make the agent stay where it is. In each step before it reaches the terminal area, the reward is -1.
+
+The policy $\pi$ we wish to examine is uniform random choice between the four available actions in any non-terminal state:
+\begin{equation}
+\pi(\uparrow|\cdot)=\pi(\rightarrow|\cdot)=\pi(\downarrow|\cdot)=\pi(\leftarrow|\cdot)=\frac{1}{4}
+\end{equation}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{iterative_policy_evaluation}
+\caption{Left: Evolution of $v_k$ starting at zero. Right: The greedy policy corresponding to $v_k$.}
+\label{fig:iterative_policy_evaluation}
+\end{figure}
+
+The left part of figure \ref{fig:iterative_policy_evaluation} shows how $v_k$ changes as the iterative policy evaluation process is performed. Eventually it converges; at $k=\infty$ the number at each square shows (save for the sign) the average number of steps a random walker takes before getting to the terminal state.
+
+\subsection{Control: Policy iteration}
+Looking at the right hand side of \ref{fig:iterative_policy_evaluation}, we see the \textit{greedy policy} with respect to $v_k$. I.e. the policy that we choose the action for which the corresponding state is maximal (or if there's a tie, randomize even between those with maximal state-value).
+
+These policies seem to be doing rather well. In fact, after only three iterations, it has arrived at the optimal policy, even if it takes way longer for $v_k$ to converge to $v_\pi$! This should give us an idea for how to improve our policy $\pi$:
+\begin{enumerate}
+\item Start with a policy $\pi$.
+\item Find $v_\pi$ using iterative policy evaluation.
+\item Construct the policy $\pi'=\textrm{greedy}(v_\pi)$.
+\end{enumerate}
+The new policy will always be better (or at least as good) as $\pi$:
+\begin{equation}
+\pi'\ge\pi
+\end{equation}
+We will show this in the next section. If the process is applied iteratively, it will always converge to an optial policy $\pi_*$. This is known as \textit{policy iteration}. Again, this will be shown in the next section.
+
+For the gridworld example, only one such iteration was needed to reach an optimal policy. This is rarely the case for more complicated problems.
+
+\subsection{Convergence of iterative policy improvement}
+So why does all of this work? Let's start by considering only deterministic policies. Since greedy policies are deterministic (or can be made deterministic while retaining efficiency), this can be done without loss of generality.
+
+So let $\pi$ be a deterministic policy, i.e.:
+\begin{equation}
+\pi(s)=a(s)
+\end{equation}
+Now make a new policy $\pi'$ by being greedy with respect to $v_\pi$. Recall, that according to Bellman's expectation equation:
+\begin{equation}
+v_\pi(s)=\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(s,a)=q_\pi(s,a(s))
+\label{deterministic_policy}
+\end{equation}
+Here we have used that $\pi$ is deterministic. So being greedy corresponds to maximizing $q_\pi(a,s)$. This means:
+\begin{equation}
+\pi'(s)=\underset{a\in\mathcal{A}}{\textrm{argmax}}\ q_\pi(s,a)
+\end{equation}
+Why does this improve the policy? Let's see:
+\begin{equation}
+q_\pi(s,\pi'(s))=\underset{a\in\mathcal{A}}{\max}\ q_\pi(s,a)\ge q_\pi(s,a(s))=v_\pi(s)
+\label{qv_inequality}
+\end{equation}
+In the last equal sign, we used equation \ref{deterministic_policy} again. Now we can use equation \ref{qv_inequality} and the definiton of $q_\pi$ to show the desired result:
+\begin{equation}
+v_\pi(s)\le q_\pi(s,\pi'(s))=\mathbb{E}_{\pi'}[R_t+\gamma v_\pi(S_{t+1})|S_t=s]
+\end{equation}
+Here we've used that the expectation value of a constant is simply the constant itself, meaning that $\gamma v_\pi(S_{t+1})=\mathbb{E}_{\pi'}[\gamma v_\pi(S_{t+1})]$. But now we may use \ref{qv_inequality} again:
+\begin{equation}
+v_\pi(s)\le\mathbb{E}_{\pi'}[R_t+\gamma q_\pi(S_{t+1},\pi'(s))|S_t=s]
+\end{equation}
+But now we can apply the same steps again to get:
+\begin{equation}
+v_\pi(s)\le\mathbb{E}_{\pi'}[R_t+\gamma R_{t+1}+\gamma^2 v_\pi(S_{t+2})|S_t=s]
+\end{equation}
+This can be iterated indefinitely, so in the end we get:
+\begin{align}
+v_\pi(s)\le&\mathbb{E}_{\pi'}[R_t+\gamma R_{t+1}+\gamma^2 R_{r+2}+\gamma^3 R_{r+3}+\cdots|S_t=s]=\\
+&\mathbb{E}_{\pi'}[G_{t+1}|S_{t}=s]=v_{\pi'}(s)
+\end{align}
+This shows that $\pi\le\pi'$.
+
+Now assume that we perform policy iteration until there is no further improvement. I.e. until:
+\begin{equation}
+v_\pi=v_{\pi'},\quad q_\pi=q_{\pi'}
+\end{equation}
+In this case, we can rewrite equation \ref{qv_inequality}, but this time with an equal sign:
+\begin{equation}
+q_\pi(s,\pi'(s))=\underset{a\in\mathcal{A}}{\max}\ q_\pi(s,a)=q_\pi(s,a(s))=v_\pi(s)
+\end{equation}
+But this means that $\pi$ satisfies the Bellman optimality equation:
+\begin{equation}
+v_\pi(s)=\underset{a\in\mathcal{A}}{\max}\ q_\pi(s,a)
+\end{equation}
+Hence $\pi$ is optimal. This shows convergence of iterative policy improvement.
+
+\subsection{Modified policy iteration}
+As we noticed in the gridworld example, sometimes we don't really need the full convergence of $v_*$ to get a good policy by acting greedy.
+
+\textit{Modified policy iteration} exploits this idea by only taking $k$ steps in each policy evaluation loop.
+
+\subsection{Value iteration}
+This method explicity exploits the principle of optimality: An optimal strategy for an agent in state $s$ necesserily starts with a first optimal action $a_*$. If we know this, we can also choose the optimal action $a'_*$ in any state $s'$ the agent may end up in after taking action $a_*$. This is essentially what is expressed in Bellman's optimality equation:
+\begin{equation}
+v_*(s)=\underset{a}{\max}\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}v_*(s')\right]
+\end{equation}
+Following the idea of iterative policy evaluation, we can start at some value of $v_*(s)$ and iterate this equation. This is known as \textit{value iteration}.
+
+Since we're essentially being greedy in every update step, this is equivalent to modified policy iteration with $k=1$.
+
+\subsubsection{Example: More gridworld}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{value_iteration}
+\caption{Left: Evolution of $v_k$ starting at zero. Right: The greedy policy corresponding to $v_k$.}
+\label{fig:value_iteration}
+\end{figure}
+
+As an example, consider the gridworld from earlier, except with only one terminal square. The possible actions at each non-terminal square is still the four directions. But this time, we search for a value function instead of evaluating a policy. Figure \ref{fig:value_iteration} shows the state-value function as value iteration is performed starting from a uniform value of zero. We see that each step propagates the reward through the state space until convergence after 7 steps.
 
 \end{document}
