@@ -467,7 +467,7 @@ v_*(s)=\underset{a}{\max}\left[\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mat
 \end{equation}
 Or we can write the same equation, but this time for $q_*(s,a)$:
 \begin{equation}
-q_*(s,a)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}\left[\underset{a'}{\max}\ q_*(s'|a')\right]
+q_*(s,a)=\mathcal{R}^a_s+\gamma\sum_{s'\in\mathcal{S}}\mathcal{P}^a_{ss'}\left[\underset{a'}{\max}\ q_*(s',a')\right]
 \label{optimal_q}
 \end{equation}
 These non-linear equations are known as \textit{Bellman's optimality equations}. In general these have no closed-form solution. Instead, typically iterative methods are used for solving them. Such strategies include:
@@ -544,11 +544,11 @@ This is known as the \textit{fundamental contraction inequality}. We can use it 
 
 Now, consider the mapping $T^n: X\rightarrow X$ defined as repeated application of $T$ $n$ times. This mapping is also a contraction, with Lipschitz constant $q^n$. We now wish to show that $(x_n)=(T^n(x_0))$ is Cauchy. We now apply the fundamental contraction inequality to $x_m$ and $x_n$:
 \begin{align}
-d(x_m,y_n)&\le\frac{d(x_m,T(x_m)+d(T(x_n),x_n)}{1-q}\\
+d(x_m,x_n)&\le\frac{d(x_m,T(x_m)+d(T(x_n),x_n)}{1-q}\\
 &=\frac{d(T^m(x_0),T(T^m(x_0))+d(T(T^n(x_0)),T^n(x_0))}{1-q}\\
 &=\frac{d(T^m(x_0),T^m(T(x_0))+d(T^n(T(x_0)),T^n(x_0))}{1-q}\\
 &\le\frac{q^m\cdot d(x_0),T(x_0))+q^n\cdot d(T(x_0),x_0)}{1-q}\\
-&=\frac{q^m+q^n}{1-q}d(x,T(x_0))
+&=\frac{q^m+q^n}{1-q}d(x_0,T(x_0))
 \end{align}
 Since $q<1$, this can be made arbitrarily small by making $m$ and $n$ large enough. Hence $(x_n)$ is Cauchy and therefore convergent, since $X$ is complete. Let's call the limit $x^*$.
 
@@ -570,7 +570,11 @@ x^*=T(x^*)
 \end{equation}
 \end{proof}
 
-The theorem is also known as \textit{Banach's fixed-point theorem}.
+The theorem is also known as \textit{Banach's fixed-point theorem}. By taking the limit $m\rightarrow\infty$ in the inequality in the proof, we get an estimate of the convergence speed towards $x^*$:
+\begin{equation}
+d(x^*,x_n)\le\frac{q^n}{1-q}d(x_0,T(x_0))
+\end{equation}
+So in each step of the iteration process, we get closer to the fixed-point at a factor of $q$ or lower.
 
 \section{Dynamic programming for MDP's}
 It turns out that we can use dynamical programming for finding value functions for MDP's. Here, the recursive substructure is implied by Bellman's optimality equations. And the value function can be cached as calculations are done. Hence, both criteria are satisfied.
@@ -629,8 +633,34 @@ The policy $\pi$ we wish to examine is uniform random choice between the four av
 
 The left part of figure \ref{fig:iterative_policy_evaluation} shows how $v_k$ changes as the iterative policy evaluation process is performed. Eventually it converges; at $k=\infty$ the number at each square shows (save for the sign) the average number of steps a random walker takes before getting to the terminal state.
 
+\subsection{Convergence of iterative policy evaluation}
+So how are we sure that this iteration process actually converges? The answer has to do with the contraction mapping theorem.
+
+Here, we consider each configuration of state-value function $v_n$ a point in euclidean space $X=\mathbb{R}^{|\mathcal{S}|}$ of dimension equal to the number of states. The distance we will use is the \textit{Manhattan distance}, or $d_\infty$ norm:
+\begin{equation}
+d(v,w)=\underset{s\in\mathcal{S}}{\max}|v(s)-w(s)|
+\end{equation}
+In each iteration step, the operator $T:X\rightarrow X$ is applied, here written in matrix form:
+\begin{equation}
+T: v\mapsto\mathcal{R}^\pi+\gamma\mathcal{P}v
+\end{equation}
+Given $v,w\in X$ we see:
+\begin{align}
+d(T(v),T(w))&=\underset{s\in\mathcal{S}}{\max}|\mathcal{R}^\pi+\gamma\mathcal{P}v-(\mathcal{R}^\pi+\gamma\mathcal{P}w)|\\
+&=\underset{s\in\mathcal{S}}{\max}|\gamma\mathcal{P}v-\gamma\mathcal{P}w|\\
+&=\gamma\cdot\underset{s\in\mathcal{S}}{\max}|\mathcal{P}(v-w)|\\
+&\le\gamma\cdot d(v,w)
+\end{align}
+In the last step we used that none of the entries in $\mathcal{P}$ are larger than 1. So $T$ is a contraction with Lipschitz constant $q$ (assuming it is not exactly 1).
+
+So by the contraction mapping theorem, the iterative process converges to a value of $v$ which is a fixed-point for $T$, i.e.:
+\begin{equation}
+T(v)=v\Leftrightarrow\mathcal{R}^\pi+\gamma\mathcal{P}v=v
+\end{equation}
+This is exactly the Bellman expectation equation, meaning the point of convergence is actually the state-value function for $\pi$.
+
 \subsection{Control: Policy iteration}
-Looking at the right hand side of \ref{fig:iterative_policy_evaluation}, we see the \textit{greedy policy} with respect to $v_k$. I.e. the policy that we choose the action for which the corresponding state is maximal (or if there's a tie, randomize even between those with maximal state-value).
+Looking at the right hand side of figure \ref{fig:iterative_policy_evaluation}, we see the \textit{greedy policy} with respect to $v_k$. I.e. the policy that we choose the action for which the corresponding state is maximal (or if there's a tie, randomize even between those with maximal state-value).
 
 These policies seem to be doing rather well. In fact, after only three iterations, it has arrived at the optimal policy, even if it takes way longer for $v_k$ to converge to $v_\pi$! This should give us an idea for how to improve our policy $\pi$:
 \begin{enumerate}
