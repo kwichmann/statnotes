@@ -756,4 +756,20 @@ Since we're essentially being greedy in every update step, this is equivalent to
 
 As an example, consider the gridworld from earlier, except with only one terminal square. The possible actions at each non-terminal square is still the four directions. But this time, we search for a value function instead of evaluating a policy. Figure \ref{fig:value_iteration} shows the state-value function as value iteration is performed starting from a uniform value of zero. We see that each step propagates the reward through the state space until convergence after 7 steps.
 
+\section{Asynchronous dynamic programming}
+So far, all the iterative processes have been synchronous. I.e. we've update all the states of the value functions at the same time. However, there's advantages to updating the values \textit{asynchronously}. The convergence will often become faster, and assuming all states are updated it is still guaranteed.
+
+The rest of this section is a quick overview of three such strategies.
+
+\subsection{In-place dynamic programming}
+Here, one value at a time is updated as described above. The order in which the states are chosen is usually random, making sure all states are updated, and that no patterns affect the convergence process.
+
+\subsection{Prioritised sweeping}
+Not all states have the same impact on the convergence of the algorithms. As we saw in the gridword value iteration example in figure \ref{fig:value_iteration} change in value functions "ripple" out from certain states. The idea here, is the note how much the value changed in the previous update. Then sort them based on the absolute value of the change and do the updates in this order. A state that has changed a lot tends to have more effect on subsequent updates, so with this approach, we should get more change in values overall.
+
+This can be implemented using a priority queue data sctructure.
+
+\subsection{Real-time dynamic programming}
+Here, we focus on updating the states that are most relevant for the agent. This is done by simulating an agent moving through the state space, and then only updating states it comes into contact with.
+
 \end{document}
