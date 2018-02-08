@@ -1,0 +1,40 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Convolutions Neural Networks}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Mathematical convolution}
+In mathematics, the \textit{convolution} of two functions $f$ and $g$ is defined as:
+\begin{equation}
+(f*g)(t)=\int_{-\infty}^\infty f(\tau)g(t-\tau)\ d\tau
+\end{equation}
+By a change of variables $\sigma=t-\tau$, we have $\tau=t-\sigma$, and therefore $d\tau/d\sigma=-1$. Therefore:
+\begin{equation}
+(f*g)(t)=\int_\infty^{-\infty}f(t-\sigma)g(\sigma)(-d\sigma)=\int_{-\infty}^\infty f(t-\sigma)g(\sigma)\ d\sigma=(g*f)(t)
+\end{equation}
+
+\subsection{Discrete convolution}
+If $f$ and $g$ are only defined on evenly spaced lattice points the integral in the convolution turns into a sum. Without loss of generality, we can assume these lattice points to be the integers:
+\begin{equation}
+(f*g)(x)=\sum_{\Delta x\in\mathbb{Z}}f(\Delta x)g(x-\Delta x),\quad x\in\mathbb{Z}
+\end{equation}
+We will only consider the case, where both $f$ and $g$ is non-zero for most values. Which means that the infinite sum will always be finite in practice, at least in this application.
+
+\section{Edge detection}
+
+
+\end{document}
