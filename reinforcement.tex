@@ -772,4 +772,107 @@ This can be implemented using a priority queue data sctructure.
 \subsection{Real-time dynamic programming}
 Here, we focus on updating the states that are most relevant for the agent. This is done by simulating an agent moving through the state space, and then only updating states it comes into contact with.
 
-\end{document}
+\section{Model-free prediction}
+So far we have focused on planning. In other words, the situation where er know all the details of the environment. Obviously, this is not alwys the case.
+
+In this section we will consider the predicion problem in the case of an MDP we don't know the details of. This is known as \textit{model-free prediction}.
+
+\subsection{Monte Carlo learning}
+To use what is known as the \textit{Monte Carlo (MC) learning} method, we must have a process which terminates at some point - the method only learns from what is known as \textit{full episodes}.
+
+So given a policy $\pi$, we can start an agent in state $S_1\in\mathcal{S}$ and then let the process run, following $\pi$, getting rewards and so on, until the episode terminates at step $k$. The total episode can then be summed up as:
+\begin{equation}
+S_1, A_1, R_1, S_2, A_2, R_3,\ldots,S_k
+\end{equation}
+At any step in the episode $t$, we can then calculate the discounted reward:
+\begin{equation}
+G_t=R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}+\gamma^{k-t-1}R_{k-1}
+\end{equation}
+Recall that the state-value function is the expected value of this:
+\begin{equation}
+v_\pi(s)=\mathbb{E}_\pi[G_t|S_t=s]
+\end{equation}
+According to the law of large numbers, if we take the average of a large number of actualized values, we will converge to the expected value with probability 1. In other words, if we run this a lot of times $n\gg 1$, each time starting in state $S_1=s$ and getting discounted reward $G^i_1$ (i.e. calculated from step 1) in the $i$'th run, we have:
+\begin{equation}
+v_\pi(s)\approx\frac{1}{n}\sum_{i=1}^n G^i_1
+\end{equation}
+Now, of course, we need not start at position $s$. If we end up at $s$ at any time during the episode, we can n different approaches.
+
+\subsubsection{First-visit MC evaluation}
+Here, to estimate $v_\pi(s)$ from a set of $n$ episodes (with random starting states), we count how many episodes $s$ is reached $N(s)$. For each such episode, we calculate the discounted reward from the $first visit$ to $s$ in the episode $G^j_{\textrm{first}}$. We may now estimate the state-value function as:
+\begin{equation}
+v_\pi(s)\approx\frac{1}{N(s)}\sum_{j=1}^{N(s)} G^j_{\textrm{first}}
+\end{equation}
+
+\subsubsection{Every-visit MC evaluation}
+But of course, because of the Markov property, there's not fundamental difference between the first time we visit state $s$ in an episode, from any subsequent times. In other words, we might as well include all the times $s$ is visited in any episode. That total number of visits plays the part of $N(s)$ here. The discounted reward is calculated from each of these $G^j_{t_j}$. The formula for the approximate state-value function is then:
+\begin{equation}
+v_\pi(s)\approx\frac{1}{N(s)}\sum_{j=1}^{N(s)} G^j_{t_j}
+\end{equation}
+
+\subsection{Incremental mean}
+In either of the two cases above, instead of waiting until we've found all the relevant visits and then averaging, we might as well have done a running calculation of the mean.
+
+To see how this works, consider a sequence of observations $x_1,x_2,\ldots$. For the $k$'th step, we may calculate the mean for the first $k$ values:
+\begin{equation}
+\mu_k=\frac{1}{k}\sum_{i=1}^k x_i
+\label{mean}
+\end{equation}
+Our goal is to calculate $\mu_k$ just from $\mu_{k-1}$ and $x_k$. Rewrite equation \ref{mean} as follows:
+\begin{align}
+\mu_k&=\frac{1}{k}\left(\sum_{i=1}^{k-1}x_i+x_k\right)\\
+&=\frac{1}{k}((k-1)\mu_{k-1}+x_k)\\
+&=\mu_{k-1}+\frac{1}{k}(x_k-\mu_{k-1})
+\end{align}
+One way to think of this, is that $\mu_{k-1}$ is the best estimate so far. $x_k-\mu_{k-1}$ is how much the new observation is off, and so we adjust $\mu_k$ to fit it.
+
+\subsubsection{Incremental mean for Monte Carlo method}
+Here, when we get to the $k$'th (first if first-visit) visit to state $s$, with a discounted reward $G_k$, the update can be written:
+\begin{equation}
+v_\pi(s)\approx V_k(s)=V_{k-1}(s)+\frac{1}{k}(G_k-V_{k-1}(s))
+\end{equation}
+Here, we use the notation of $V_k(s)$ for the guess after the $k'th$ observation.
+
+\subsubsection{Incremental mean for non-stationary processes}
+As we can see, we continually need to keep track of how many measurements we have done so far to use incremental means. However, if the process is \textit{non-stationary}, i.e. if it eventually changes over time, we don't really want to consider episodes that are too far in the past. In this case, we may alter the incremental mean formula to:
+\begin{equation}
+v_\pi(s)\approx V_k(s)=V_{k-1}(s)+\alpha(G_k-V_{k-1}(s))
+\label{incremental_nonstationary}
+\end{equation}
+Here we don't need to keep track of $k$. Instead, we essentially assume, that only the last $1/\alpha$ visits are important.
+
+\subsection{Temporal-difference learning}
+\textit{Temporal-differece (TD) learning} is another model-free policy evaluation method. However, in contrast to MC, TD can learn from \textit{incomplete episodes}. This has the advantage that the process need not always terminate. This is done by what is known as \textit{bootstrapping}.
+
+\subsection{TD(0)}
+If we look at equation \ref{incremental_nonstationary}, we can interpret is as follows:
+\begin{equation}
+\textrm{new value}=\textrm{old value}+\alpha(\textrm{estimated reward}-\textrm{old value})
+\end{equation}
+Previously, we've estimated the future discounted reward by actually calculating it from the terminating episode. But we could also estimate it is:
+\begin{equation}
+\textrm{immediate reward}+\gamma\cdot\textrm{future reward}
+\end{equation}
+For the future reward, our best guess is the currently estimated value. So, in other words, this gives us the following update rule for our estimate:
+\begin{equation}
+V(S_t)\mapsto V(S_t)+\alpha(R_{t+1}+\gamma V(S_{t+1})-V(S_t)) 
+\end{equation}
+This method is known as \textit{TD(0)}. We will make the following two definitions:
+\begin{itemize}
+\item $R_{t+1}+\gamma V(S_{t+1})$ is known as the \textit{TD target}.
+\item $\delta_t=R_{t+1}+\gamma V(S_{t+1})-V(S_t)$ is called the \textit{TD error}.
+\end{itemize}
+
+\subsection{Bias-variance tradeoff}
+Let's consider the properties of the MC vs. TD(0) learning estimates.
+
+For MC learning we consider many time steps - whole episodes. Since this is an ordinary average, the estimate is unbiased. However, we will have a tendency to overfit to the actually observed episodes, exactly since we're considering long stretches of time. To see why: Consider an agent which goes through an episode and eventually "dies" (terminates). If this was a human, and we're trying to estimate the cause of death, it is possible that recent events (not looking both ways before crossing the road) was the cause of death, as opposed to things that happened long time ago (a food poisoning 3 years ago). Since everything is considered, the algorithm will often find patterns where there are none. In other words, it will overfit, i.e. have a high variance. But since everything is considered, given enough data, eventually it will find the true causes - it is unbiased.
+
+On the other hand, for TD learning, we only consider the very recent actions/rewards in each step. In the analogy above, this means that we are more likely to identify immediate causes/rewards. Long term patterns are very hard to find, but on the other hand, it doesn't see patterns where there are none. So the algorithm has a high bias, but low variance.
+
+Another view is that MC is based on a lot of sample points, which means that there's a lot of aggregated noise, but on the other hand, having many points will make sure we're close to the real value. For TD, the situation is reversed: Only one point is used, meaning that there's only noise from one point, but it is also hard to estimate true value.
+
+Luckily, it turns out that there is a way to choose an algoritm that is a compromise between these two extremes, which allows us to tune the bias-variance tradeoff to suit our needs.
+
+
+\end{document} 
