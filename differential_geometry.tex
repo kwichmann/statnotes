@@ -1,0 +1,102 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{Differential Geometry}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Regular curves in Euclidean spaces}
+Let $V$ be a finite-dimensional vector space over $\mathbb{R}$. Then a $C^k$ \textit{regular curve} in $V$ is a mapping:
+\begin{equation}
+x: I\rightarrow V
+\end{equation}
+Here $I$ is an interval, and we require that $x$ is $C^k$ and that $x'(t)\neq 0$ for any $t\in I$ (this last requirement is what makes the curve regular).
+
+Given a $C^k$ regular curve $x: I\rightarrow V$. Then if $\varphi$ is a $C^k$ bijection from the interval $J$ to $I$ having $\varphi'>0$, we consider $x$ equivalent to the regular curve $y: J\rightarrow V, y=x\circ\varphi$.
+
+We now assume $V$ has an inner product $(\cdot,\cdot)$ and an induced norm $||v||=\sqrt{(v,v)}$. Then for a regular curve $x$ we define an \text{arc length function} $s(t)$ by:
+\begin{equation}
+\frac{ds}{dt}=||x'(t)||
+\end{equation}
+Or equivalently:
+\begin{equation}
+s(t)=\int||x'(t)||\ dt
+\end{equation}
+This means that two arc length functions differ only by a constant. Since $x'$ is never zero, $||x'(t)||>0$, and so $s(t)$ is strictly increasing. As a integral of a $C^{k-1}$ function it is itself $C^k$.
+
+We now definte the function $X(s(t))=x(t)$. Being a composition of two $C^k$ functions, so is $X$. So we can always parametrize a regular curve by its arc length. The derivative of $X$ is found by the chain rule:
+\begin{equation}
+\frac{dX}{ds}=\frac{dx}{dt}\frac{dt}{ds}=x'(t(s))\frac{1}{ds/dt}=\frac{x'(t(s))}{||x'(t(s))||}
+\label{x_prime_s}
+\end{equation}
+Here we've used, that since there is a bijection between $I$ and $s(t)$ we can regard $t$ as a function of $s$. Taking the norm, we get $||X'(s)||=1$. Squaring this gives $||X'(s)||^2=(X'(s),X'(s))=1$. Differentiate with respect to $s$ to get:
+\begin{equation}
+2(X''(s),X'(s))=0
+\end{equation}
+So the second derivate is orthogonal to the tangent $X'(s)$.
+
+\subsection{Example: Circular curve}
+Let $x_0\in V$ and let $r_1,r_2\in V$ be perpendicular vectors, each of length $R$. Then we can make a circular curve centered in $x_0$, radius $R$, and in the plane spanned by $r_1$ and $r_2$ by:
+\begin{equation}
+x(s)=x_0+r_1\cos(s/R)+r_2\sin(s/R)
+\end{equation}
+The tangent, i.e. the first derivative is:
+\begin{equation}
+x'(s)=\frac{1}{R}[-r_1\sin(s/R)+r_2\cos(s/R)]
+\end{equation}
+The second derivative is:
+\begin{equation}
+x''(s)=-\frac{1}{R^2}[r_1\sin(s/R)+r_2\cos(s/R)]=-\frac{1}{R^2}(x(s)-x_0)
+\end{equation}
+This is pointed at the center of the circle and has a magnitude of $||x''(s)||=1/R$.
+
+\subsection{Curvature of regular Euclidean curves}
+Inspired by the circular curve example, we make the following definition:
+\begin{definition}
+Given a regular $C^2$ curve in $V$ parametrized by arc length: $x(s)$ and a point on the curve where $x''(s)\neq 0$.
+
+Then $n=x''(s)/||x''(s)||$ is called the principal normal to the curve at $x(s)$.
+
+$1/||x''(s)||$ is known as the radius of curvature at $x(s)$. The circle with center at $x(s)+x''(s)/||x''(s)||$, radius equal to the radius of curvature, in the plane spanned by $x'(s)$ and $n$ is known as the osculating circle.
+
+$\kappa=||x''(s)||$ is called the curvature of the curve at $x(s)$, even if equal to zero. So when $\kappa\neq 0$ we have $x''(s)=n\kappa$
+\end{definition}
+
+What if out curve $x(t)$ is not parametrized by arc length $s$? Then we can still calculate curvature by using the $X$ function: $x(t)=X(s(t))$. The first dervative of $x$ can be found using the chain rule:
+\begin{equation}
+x'(t)=\frac{dX}{dt}=\frac{dX}{ds}\frac{ds}{dt}=X'(s)\frac{ds}{dt}
+\end{equation}
+And the second derivative by the multiplication rule:
+\begin{equation}
+x''(t)=X''(s)\left(\frac{ds}{dt}\right)^2+X'(s)\frac{d^2s}{dt^2}
+\end{equation}
+Remember that $ds/dt=||x'(t)||$:
+\begin{equation}
+x''(t)=X''(s)||x'(t)||^2+X'(s)\frac{d}{dt}||x'(t)||
+\end{equation}
+Consider the last derivative:
+\begin{equation}
+\frac{d}{dt}||x'(t)||=\frac{d}{dt}\sqrt{(x'(t),x'(t))}=\frac{1}{2\sqrt{(x'(t),x'(t))}}2(x'(t),x'')=\frac{(x'(t),x''(t))}{||x'(t)||}
+\end{equation}
+Rearranging terms and using equation \ref{x_prime_s} we get:
+\begin{equation}
+X''(s)||x'(t)||^2=x''(t)-\frac{(x'(t),x''(t))}{||x'(t)||^2}x'(t)
+\end{equation}
+Finally we can find the second derivative of $X$:
+\begin{equation}
+X''(s)=\frac{x''(t)}{||x'(t)||^2}-\frac{(x'(t),x''(t))}{||x'(t)||^4}x'(t)
+\end{equation}
+
+\end{document}
