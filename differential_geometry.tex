@@ -95,8 +95,25 @@ Rearranging terms and using equation \ref{x_prime_s} we get:
 X''(s)||x'(t)||^2=x''(t)-\frac{(x'(t),x''(t))}{||x'(t)||^2}x'(t)
 \end{equation}
 Finally we can find the second derivative of $X$:
+\begin{align}
+X''(s)&=\frac{x''(t)}{||x'(t)||^2}-\frac{(x'(t),x''(t))}{||x'(t)||^4}x'(t)\\
+&=\frac{1}{||x'(t)||^2}\left(x''(t)-\frac{(x'(t),x''(t))}{||x'(t)||^2}x'(t)\right)
+\end{align}
+This means that the curvature is:
 \begin{equation}
-X''(s)=\frac{x''(t)}{||x'(t)||^2}-\frac{(x'(t),x''(t))}{||x'(t)||^4}x'(t)
+\kappa=||X''(s)||=\frac{1}{||x'(t)||^2}\left\Vert x''(t)-\frac{(x'(t),x''(t))}{||x'(t)||^2}x'(t)\right\Vert
+\end{equation}
+
+\subsection{Regular curves in $\mathbb{R}^2$}
+Let $x(t)$ be a regular curve in $\mathbb{R}^2$. Then we may attach a sign to the curvature $\kappa$. Let $x(s)$ be a parametrization of the curve by arc length. Then if $||x''(s)||\neq 0$, we know that $x'(s)$ and $x''(s)$ are perpendicular. Because we're in two dimensions, $x''(s)$ is either rotated 90 degrees in positive of negative direction (conter-clockwise or clockwise). This determines the sign of the curvature.
+
+Now consider a regular curve $x(s)$ in $\mathbb{R}^2$ that is also closed and simple, i.e. one that is periodic, and has no self-intersections apart from this. If the arc length is $L$ we will still let the parametrization be defined for all $s\in\mathbb{R}$, so that:
+\begin{equation}
+x(s)=x(s')\Leftrightarrow s'-s=nL, n\in\mathbb{Z}
+\end{equation}
+Since $||x'(s)||=1$ we can parametrize:
+\begin{equation}
+x'(s)=(\cos(\theta(s)),\sin(\theta(s)), 0\le s\le L
 \end{equation}
 
 \end{document}
