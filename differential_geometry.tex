@@ -115,5 +115,40 @@ Since $||x'(s)||=1$ we can parametrize:
 \begin{equation}
 x'(s)=(\cos(\theta(s)),\sin(\theta(s)), 0\le s\le L
 \end{equation}
+Now differentiate to find $x''(s)$:
+\begin{equation}
+x''(s)=(-\sin(\theta(s)),\cos(\theta(s)))\frac{d\theta}{ds}=\widehat{x'(s)}\frac{d\theta}{ds}
+\end{equation}
+Which means that the signed curvature is $\kappa(s)=d\theta/ds$. So we can integrate:
+\begin{equation}
+\int_0^L\kappa(s)\ ds=\theta(L)-\theta(0)
+\label{2d_curvature_integral}
+\end{equation}
+This means that the integral must be a multiple of $2\pi$.
+
+\begin{theorem}
+The integral \ref{2d_curvature_integral} is equal to $\pm \pi$, with the positive sign if the curve lies entirely to the left of some tangent line and the overall motion is counter-clockwise.
+\end{theorem}
+\begin{proof}
+Without loss of generality we can assume that $x(0)$ is the point with the lowest second coordinate value. This implies that $x'(0)=(1,0)$, i.e. in the direction of the first axis because of the counter-clockwise motion.
+
+Define the relative cord direction:
+\begin{equation}
+x(t,s)=\frac{x(t)-x(s)}{||x(t)-x(s)||}, 0\le s<t\le L
+\end{equation}
+This is well-defined since the curve is closed, so the denominator never becomes zero. When $s=t$ we set $x(s,s)=x'(s)$, which makes the function continuous on the triangle $T=\{(t,s)\in\mathbb{R}^2|0\le s\le t\le T\}$.
+
+$T$ is simply connected and by construction $||x(t,s)||=1$, so there exists a continuous function $\varphi: T\rightarrow\mathbb{R}^2$ so that:
+\begin{equation}
+x(t,s)=(\cos(\varphi(t,s)),\sin(\varphi(t,s))),\quad\varphi(s,s)=\theta(s)
+\end{equation}
+We wish to evaluate:
+\begin{equation}
+\theta(L)-\theta(0)=\varphi(L,L)-\varphi(0,0)
+\end{equation}
+Because of the chosen geometry, we have $x(0, 0)=x'(0)=(1,0)$. So $\varphi(0,0)$ must be a multiple of $2\pi$. We choose 0. So we only need to consider the value of $\varphi(L,L)$.
+
+To do this, start by noticing, that since we chose $\varphi(0,0)=0$, we can never have $\varphi(L,L)>2\pi$, because of the location of $x(0)$. Now consider $\varphi(L,t)$ in the limit $t\rightarrow L$. Again, because of the geometry, we must have $\varphi(L,L)\le 2\pi$. This leaves $2\pi$ as the only option.
+\end{proof}
 
 \end{document}
