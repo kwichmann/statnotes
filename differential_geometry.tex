@@ -151,4 +151,92 @@ Because of the chosen geometry, we have $x(0, 0)=x'(0)=(1,0)$. So $\varphi(0,0)$
 To do this, start by noticing, that since we chose $\varphi(0,0)=0$, we can never have $\varphi(L,L)>2\pi$, because of the location of $x(0)$. Now consider $\varphi(L,t)$ in the limit $t\rightarrow L$. Again, because of the geometry, we must have $\varphi(L,L)\le 2\pi$. This leaves $2\pi$ as the only option.
 \end{proof}
 
+\subsection{Torsion and binormal}
+Back to the general case. Consider a $C^k$ curve with arc length as parameter $x(k)$. If $k\ge 3$ we can differentiate the principal normal. Since $||n(s)||=1$, we have $||n(s)||^2=(n(s),n(s))=1$. Differentiation gives $2(n'(s),n(s))=0$, so $n'(s)$ is normal to $n(s)$.
+
+Now define a new quantity:
+\begin{equation}
+\tau(s)=||n'(s)+\kappa(s)x'(s)||
+\end{equation}
+This is known as the \textit{torsion} of the curve. The vector inside the norm turns out to have scalar product with both $x'(s)$ and $n(s)$ equal to zero.
+
+For $x'(s)$:
+\begin{equation}
+(n'(s)+\kappa(s)x'(s),x'(s))=(n'(s),x'(s))+\kappa(x'(s),x'(s))=(n'(s),x'(s))+\kappa
+\end{equation}
+The inner product can be found by differentiation of $(n(s),x'(s))$:
+\begin{equation}
+\frac{d}{ds}(n(s),x'(s))=(n'(s),x'(s))+(n(s),x''(s))
+\end{equation}
+But since $n(s)$ and $x'(s)$ are normal, this means:
+\begin{align}
+(n'(s),x'(s))&=-(n(s),x''(s))\\
+&=-\left(\frac{x''(s)}{||x''(s)||},x''(s)\right)\\
+&=-||x''(s)||=-\kappa
+\end{align}
+This shows the desired result.
+
+$n(s)$ is a bit easier:
+\begin{equation}
+(n'(s)+\kappa(s)x'(s),n(s))=(n'(s),n(s))+\kappa(x'(s),n(s))=0+0=0
+\end{equation}
+
+So it seems like $n'(s)+\kappa(s)x'(s)$ is normal to both $x'(s)$ and $n(s)$. Unless it is equal to zero. If the dimensionality of $V$ is less than three, this must be the case as there's not room for another perpendicular vector.
+
+For $\tau(s)\neq 0$ we define the \textit{binormal} of the curve to be the normalized version of this vector:
+\begin{equation}
+b(s)=\frac{n'(s)+\kappa(s)x'(s)}{\tau(s)}
+\end{equation}
+We may now continue the process and differentiate the following equations:
+\begin{equation}
+(b(s),x'(s))=0,\quad(b(s),n(s))=0,\quad (b(s),b(s))=1
+\end{equation}
+First equation:
+\begin{equation}
+(b'(s),x'(s))+(b(s),x''(s))=0\Leftrightarrow(b'(s),x'(s))=-(b(s),x''(s))=0
+\end{equation}
+
+Second equation:
+\begin{equation}
+(b'(s),n(s))+(b(s),n'(s))=0\Leftrightarrow(b'(s),n(s))=-(b(s),n'(s))
+\end{equation}
+The right hand side can be calculated as follows:
+\begin{align}
+(b(s),n'(s))&=(b(s),n'(s))+\kappa\underbrace{(b(s),x'(s))}_{0}\\
+&=(b(s),n'(s)+\kappa x'(s))\\
+&=\left(b(s),\frac{1}{\tau}b(s)\right)=\frac{\tau^2}{\tau}=\tau(s)
+\end{align}
+So $(b'(s),n(s))=-\tau(s)$.
+
+Third equation:
+\begin{equation}
+2(b'(s),b(s))=0\Leftrightarrow(b'(s),b(s))=0
+\end{equation}
+
+\subsection{The Frenet formulas}
+
+\subsubsection{In 3 dimensions}
+If $\textrm{dim}V=3$ we know that the three mutually perpendicular unit vectors $x'(s), n(s)$, and $b(s)$ form an orthonormal basis for $V$. Their dynamics can be summed up as follows:
+\begin{alignat}{5}
+x''(s) &=&				&&+\kappa(s)n(s)&& \\
+n'(s)  &=& -\kappa(s)x'(s)&&				&& +\tau(s)b(s)\\
+b'(s)  &=&				&&-\tau(s)n(s)	&&
+\end{alignat}
+Or in matrix form:
+\begin{equation}
+\frac{d}{ds}
+\begin{pmatrix}
+x'(s) \\ n(s) \\ b(s)
+\end{pmatrix}=
+\begin{pmatrix}
+0 & \kappa(s) & 0\\
+-\kappa(s) & 0 & \tau(s)\\
+0 & \tau(s) & 0
+\end{pmatrix}
+\begin{pmatrix}
+x'(s) \\ n(s) \\ b(s)
+\end{pmatrix}
+\end{equation}
+These are the \textit{Frenet formulas} in three dimensions. But how can we generalize to an arbitrary number of dimensions?
+
 \end{document}
