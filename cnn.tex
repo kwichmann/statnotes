@@ -70,7 +70,7 @@ There is nothing special about the number in the filters we've used in the edge 
 Also filter need not be $3\times 3$. It can have any size, but square with an uneven number of pixels on each side is the most common.
 
 \subsection{Padding}
-The procedure above is very similar to the mathematical discrete convolution described in equation \ref{2d_convolution} with $f$ being the filter and $g$ being the image. But of course neither of these are of infinite size as the equation requires. Instead we can think of the remaining, infinite number of values to be zero. And we then only consider the non-trivial output window.
+The procedure above is very similar to the mathematical discrete convolution described in equation \ref{2d_convolution} with $f$ being the filter and $g$ being the image\footnote{Strictly speaking, the image (or equvalently the filter) should be reversed in both axes according to the mathematical definition. The operation we've described is known as \textit{cross-correlation}. But here, we will simply refer to it a convolution.}. But of course neither of these are of infinite size as the equation requires. Instead we can think of the remaining, infinite number of values to be zero. And we then only consider the non-trivial output window.
 
 But this actually gives ud a way to avoid the image size shrinkage inherent to filtering: As we saw above, a $n\times n$ image convoluted by an $f\times f$ filter results in an output of size $(n-f+1)\times(n-f+1)$. However, if we pad the input image with zeros in all directions, we can avoid this problem. If we pad by $p$ zeros in all four directions, we now get a new input size of $(n+2p)\times(n+2p)$. We want an output size of $(n-f+1)\times(n-f+1)$ as before:
 \begin{equation}
@@ -91,4 +91,13 @@ Now, what happens if the fraction is not an integer? In that case, we miss the "
 \begin{equation}
 \left\lfloor\frac{n+2p-f}{s}\right\rfloor+1
 \end{equation}
+
+\section{Convolution of multiple channels}
+An image is typically not black and white, but has colors. This means that is has three \textit{channels}, namely red, green, and blue, or RGB. This is notated as a seperate dimension. So such a color image of height 300, width 200 would have dimensions $200\times 200\times 3$.
+
+Similarly, if we want to apply a filter for convolution, there must be a matrix of numbers for each channel. So a 5 by 5 pixel filter on a RGB image would have dimensions $5\times 5\times 3$. Because the convoutional sum is now over three dimensions, the output will be two-dimensional. For instance if a $100\times 100\times 3$ image is convoluted by a $5\times 5\times 3$ filter, we would get a $96\times 96$ "image" as output (remember the $n-f+1$ formula).
+
+Now, image we have $n$ such filters. Then we may collect all the two dimensional outputs into a new three dimensional object. For instance, if we had 10 filters in the example above, we would end up with a $96\times 96\times 10$ object as output. I.e. the number of filters in one layer is equal to the number of channels in the next.
+
+
 \end{document}
