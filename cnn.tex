@@ -92,12 +92,72 @@ Now, what happens if the fraction is not an integer? In that case, we miss the "
 \left\lfloor\frac{n+2p-f}{s}\right\rfloor+1
 \end{equation}
 
-\section{Convolution of multiple channels}
+\section{Layers in convolutional networks}
+
+\subsection{Convolution of multiple channels}
 An image is typically not black and white, but has colors. This means that is has three \textit{channels}, namely red, green, and blue, or RGB. This is notated as a seperate dimension. So such a color image of height 300, width 200 would have dimensions $200\times 200\times 3$.
 
 Similarly, if we want to apply a filter for convolution, there must be a matrix of numbers for each channel. So a 5 by 5 pixel filter on a RGB image would have dimensions $5\times 5\times 3$. Because the convoutional sum is now over three dimensions, the output will be two-dimensional. For instance if a $100\times 100\times 3$ image is convoluted by a $5\times 5\times 3$ filter, we would get a $96\times 96$ "image" as output (remember the $n-f+1$ formula).
 
 Now, image we have $n$ such filters. Then we may collect all the two dimensional outputs into a new three dimensional object. For instance, if we had 10 filters in the example above, we would end up with a $96\times 96\times 10$ object as output. I.e. the number of filters in one layer is equal to the number of channels in the next.
 
+\subsection{A convolutional layer}
+The above outlines most of the elements of a convolutional layer, but we still need two key elements: bias and activation function.
+
+The bias is a number that's added after the convolution summation over the "filter cube" is done. So it is a parameter specific to each filter. The (non-linear) activation function is then applied to the result. The result is the "pixel value" in the output "image".
+
+So the convolutional layer $l$ in a neural network has the following parameters:
+\begin{itemize}
+\item $f^{[l]}$ - The size of the square filter for a single channel. So $f^{[l]}\times f^{[l]}$.
+\item $p^{[l]}$ - The amount of padding that is applied to images before convolution.
+\item $s^{[l]}$ - The stride used (only in the two image dimensions).
+\end{itemize}
+Input and output are tensors (generalized matrices):
+\begin{itemize}
+\item Input has dimension $n_H^{[l-1]}\times n_W^{[l-1]}\times n_c^{[l-1]}$, where $l-1$ is the previous layer. Subscripts are for height, width, and number of channels, respectively.
+\item Similarly, output has dimensions $n_H^{[l]}\times n_W^{[l]}\times n_c^{[l]}$.
+\end{itemize}
+As discussed above, the relationship between the height and width of the layers is:
+\begin{equation}
+n_H^{[l]}=\left\lfloor\frac{n_H^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}}\right\rfloor+1,\quad n_W^{[l]}=\left\lfloor\frac{n_W^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}}\right\rfloor+1
+\end{equation}
+The layer contains $n_c^{[l]}$ filters, corresponding to the number of output channels. Each filter has a set of weights of dimension $f^{[l]}\times f^{[l]}\times n_c^{[l-1]}$, since the depth must be equal to the number of channels the last layer outputs. And an additional bias term.
+
+The resulting activations outputs $a^{[l]}$ have dimension $n_H^{[l]}\times n_W^{[l]}\times n_c^{[l]}$ as mentioned above. But this is for a single input image. If we have $m$ data samples, then the collective output $A^{[l]}$ is of dimension $m\times n_H^{[l]}\times n_W^{[l]}\times n_c^{[l]}$.
+
+Similarly, we can collect all the non-bias filter weights in one object of dimension $f^{[l]}\times f^{[l]}\times n_c^{[l-1]}\times n_c^{[l]}$. The biases will be a vector of dimension $n_c^{[l]}$, though we will sometimes consider it to have dimension $1\times 1\times 1\times n_c^{[l]}$.
+
+\subsection{Example of convolutional network}
+As an example, let's say out input is $39\times 39$ pixel RGB images. I.e. the inputs to the network are $39\times 39\times 3$.
+
+The first convolutional layer has 10 filters of size $3\times 3$. Stride is 1, and there's no padding. Meaning that the output is $37\times 37\times 10$.
+
+The second convolutional layer has 20 filters of size $5\times 5$. This time stride is 2, but there's still no padding. The output then is $17\times 17\times 20$.
+
+A third and final convolutional layer with 40 filter, again with size $5\times 5$, stride is 2, and no padding. Then the output is $7\times 7\times 40$.
+
+Now, this means we have $7\cdot 7\cdot 40=1960$ features to describe the initial image. Usually this is then fed into one or more fully connected layers to perform classification, or whatever is the goal of the task at hand.
+
+\subsection{Pooling layers}
+There's still one commonly used type of layer we haven't touched upon, namely \textit{pooling layers}. These are added to speed up computations by throwing away information strategically.
+
+\subsubsection{Max pooling layers}
+Consider the input image shown to the left in figure \ref{fig:max_pooling}. We may subdivide it into $2\times 2$ regions, and then only keep the largest pixel value in each. The results are shown to the right. This procedure is known as \textit{max pooling}.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{max_pooling}
+\caption{Max pooling with $f=2, s=2$.}
+\label{fig:max_pooling}
+\end{figure}
+
+As noted above, the aim is to reduce the dimensionality while keeping the most important information about the input. The max pooling layer has two parameters: $f$ which is the size of the region considered, so here $f=2$. The stride $s$ is again the amount we move the region between each evaluation, so here $s=2$ as well. So if $s<f$, there will be overlap between the squares.
+
+$s$ and $f$ are hyperparameters, i.e. they are not learnable - max pooling layers always remain the same during training.
+
+That is the process for one channel. It is simply performed the same way for each channel. So a max pooling layer does not change the number of channels.
+
+\subsubsection{Average pooling}
+Another type of pooling layer - though it is infrequently used - is the \textit{average pooling} layer. It does exactly what you'd expect from the name: It works exactly the same as the max pooling layer, except is uses the mean value, not the maximum of pixel values.
 
 \end{document}
