@@ -40,7 +40,24 @@ In two dimensions, the functions are defined on $\mathbb{Z}\times\mathbb{Z}$ ins
 \label{2d_convolution}
 \end{equation}
 
-This is the case we will use the most here.
+\subsection{Discrete convolution for finite lattices}
+Now, consider the case where both $f$ and $g$ only take on non-zero values in a rectangular area. Specifically, let $f$ only be non-zero for $\{-F,-F+1,\ldots,-1,0,1,\ldots,F\}\times\{-F,-F+1,\ldots,-1,0,1,\ldots,F\}\times$ and $g$ only non-zero for $\{0,1,\ldots,W-1\}\times\{0,1,\ldots,H-1\}\times$. Then equation \ref{2d_convolution} becomes:
+\begin{equation}
+(f*g)(i,j)=\sum_{m=-F}^F\sum_{n=-F}^F f(m,n)g(i-m,j-n)
+\label{finite_2d_convolution}
+\end{equation}
+Here, we have explicitly written out the indices of the input.
+
+\subsection{Cross-correlation}
+Looking at equation \ref{finite_2d_convolution}, notice that $m$ and $n$ are subtracted in the $g$ arguments. It turns out, that for convenience (and to follow convention), we'd like these to be added instead. The resulating quantity is called the \textit{cross-correlation}:
+\begin{equation}
+(f\otimes g)(i,j)=\sum_{m=-F}^F\sum_{n=-F}^F f(m,n)g(i+m,j+n)
+\label{cross_correlation}
+\end{equation}
+This means, that we can view this as a convolution where the values of $f$ are mirrored in both directions (or rotated 180 degrees - same thing). So:
+\begin{equation}
+(f\otimes g)=(f^-*g),\quad f^-(i,j)=f(-i,-j)
+\end{equation}
 
 \section{Filters and convolutions}
 
@@ -70,7 +87,7 @@ There is nothing special about the number in the filters we've used in the edge 
 Also filter need not be $3\times 3$. It can have any size, but square with an uneven number of pixels on each side is the most common.
 
 \subsection{Padding}
-The procedure above is very similar to the mathematical discrete convolution described in equation \ref{2d_convolution} with $f$ being the filter and $g$ being the image\footnote{Strictly speaking, the image (or equvalently the filter) should be reversed in both axes according to the mathematical definition. The operation we've described is known as \textit{cross-correlation}. But here, we will simply refer to it a convolution.}. But of course neither of these are of infinite size as the equation requires. Instead we can think of the remaining, infinite number of values to be zero. And we then only consider the non-trivial output window.
+The procedure above is the same as the cross-correlation described in equation \ref{cross_correlation} with $f$ being the filter and $g$ being the image. But here, we will simply refer to it a convolution. But there will be some of the non-zero . Instead we can think of the remaining, infinite number of values to be zero. And we then only consider the non-trivial output window.
 
 But this actually gives ud a way to avoid the image size shrinkage inherent to filtering: As we saw above, a $n\times n$ image convoluted by an $f\times f$ filter results in an output of size $(n-f+1)\times(n-f+1)$. However, if we pad the input image with zeros in all directions, we can avoid this problem. If we pad by $p$ zeros in all four directions, we now get a new input size of $(n+2p)\times(n+2p)$. We want an output size of $(n-f+1)\times(n-f+1)$ as before:
 \begin{equation}
@@ -159,5 +176,10 @@ That is the process for one channel. It is simply performed the same way for eac
 
 \subsubsection{Average pooling}
 Another type of pooling layer - though it is infrequently used - is the \textit{average pooling} layer. It does exactly what you'd expect from the name: It works exactly the same as the max pooling layer, except is uses the mean value, not the maximum of pixel values.
+
+\subsection{CNN structure with pooling layers}
+A typical convolutional networks structure starts with a number of a number of layers - actually pairs of layers, but the terminology is common - consisting of a convolutional layer followed by a pooling layer. Then these are followed by a number of fully connected layers ending in a softmax output layer (for classification).
+
+As we move through the convolution/pooling layers, usually the height and width of the "image" decreases, while the the number of channel increases.
 
 \end{document}
