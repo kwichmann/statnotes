@@ -41,9 +41,9 @@ In two dimensions, the functions are defined on $\mathbb{Z}\times\mathbb{Z}$ ins
 \end{equation}
 
 \subsection{Discrete convolution for finite lattices}
-Now, consider the case where both $f$ and $g$ only take on non-zero values in a rectangular area. Specifically, let $f$ only be non-zero for $\{-F,-F+1,\ldots,-1,0,1,\ldots,F\}\times\{-F,-F+1,\ldots,-1,0,1,\ldots,F\}\times$ and $g$ only non-zero for $\{0,1,\ldots,W-1\}\times\{0,1,\ldots,H-1\}\times$. Then equation \ref{2d_convolution} becomes:
+Now, consider the case where both $f$ and $g$ only take on non-zero values in a rectangular area. Specifically, let $f$ only be non-zero for $\{0,1,2,\ldots,2F\}\times\{0,1,2,\ldots,2F\}$ and $g$ only non-zero for $\{0,1,\ldots,W-1\}\times\{0,1,\ldots,H-1\}$. Then equation \ref{2d_convolution} becomes:
 \begin{equation}
-(f*g)(i,j)=\sum_{m=-F}^F\sum_{n=-F}^F f(m,n)g(i-m,j-n)
+(f*g)(i,j)=\sum_{m=0}^{2F}\sum_{n=0}^{2F}f(m,n)g(i-m,j-n)
 \label{finite_2d_convolution}
 \end{equation}
 Here, we have explicitly written out the indices of the input.
@@ -51,7 +51,7 @@ Here, we have explicitly written out the indices of the input.
 \subsection{Cross-correlation}
 Looking at equation \ref{finite_2d_convolution}, notice that $m$ and $n$ are subtracted in the $g$ arguments. It turns out, that for convenience (and to follow convention), we'd like these to be added instead. The resulating quantity is called the \textit{cross-correlation}:
 \begin{equation}
-(f\otimes g)(i,j)=\sum_{m=-F}^F\sum_{n=-F}^F f(m,n)g(i+m,j+n)
+(f\otimes g)(i,j)=\sum_{m=0}^{2F}\sum_{n=0}^{2F}f(m,n)g(i+m,j+n)
 \label{cross_correlation}
 \end{equation}
 This means, that we can view this as a convolution where the values of $f$ are mirrored in both directions (or rotated 180 degrees - same thing). So:
@@ -181,5 +181,47 @@ Another type of pooling layer - though it is infrequently used - is the \textit{
 A typical convolutional networks structure starts with a number of a number of layers - actually pairs of layers, but the terminology is common - consisting of a convolutional layer followed by a pooling layer. Then these are followed by a number of fully connected layers ending in a softmax output layer (for classification).
 
 As we move through the convolution/pooling layers, usually the height and width of the "image" decreases, while the the number of channel increases.
+
+\section{Backpropagation of convolution layers}
+We now wish to find out the derivatives with respect to the weights/bias in a convolutional layer. As usual, we assume that a forward pass has been performed, and that we know what the derivatives with respect to the inputs of the next layer are.
+
+\subsection{Single channel}
+Let's consider a layer with a single channel for now. The input is a matrix $X$, the activation/output is $A$. The weights $W$ and the bias $b$. We assume a filter of size $2f+1$ and a stride of $s$. The activation function of the layer is $\sigma$. Then we can write the output as:
+\begin{equation}
+A_{ij}=\sigma\left(\underbrace{\sum_{m=0}^{2f}\sum_{m=0}^{2f}W_{mn}X_{is+m,js+n}+b}_{Z_{ij}}\right)
+\end{equation}
+
+\subsubsection{Derivatives with respect to weights and biases}
+The derivative of the loss function with respect to the weight $W_{mn}$ is:
+\begin{equation}
+\frac{\partial L}{\partial W_{mn}}=\sum_{i=0}^{n_W-1}\sum_{j=0}^{n_H-1}\frac{\partial L}{\partial A_{ij}}\frac{\partial A_{ij}}{\partial W_{mn}}
+\end{equation}
+We assume $\partial L/\partial A_{ij}$ to be known, and so focus on the second factor:
+\begin{equation}
+\frac{\partial A_{ij}}{\partial W_{mn}}=\sum_{i'=0}^{W_X-1}\sum_{j'=0}^{H_X-1}\frac{\partial}{\partial Z_{i'j'}}\sigma(Z_{ij})\frac{\partial Z_{i'j'}}{\partial W_{mn}}
+\end{equation}
+Here $W_X$ and $H_X$ are the width and height of the inputs respectively. The activation function term is clearly only non-zero when $i=i'$ and $j=j'$:
+\begin{equation}
+\frac{\partial A_{ij}}{\partial W_{mn}}=\sigma'(Z_{ij})\frac{\partial Z_{ij}}{\partial W_{mn}}
+\end{equation}
+We use the chain rule one again:
+\begin{equation}
+\frac{\partial Z_{ij}}{\partial W_{mn}}=\frac{\partial}{\partial W_{mn}}\left[\sum_{m'=0}^{2f}\sum_{n'=0}^{2f}W_{m'n'}X_{is+m',js+n'}+b\right]
+\end{equation}
+This means that the derivative is non-zero when $m=m'$ and $n=n'$:
+\begin{equation}
+\frac{\partial Z_{ij}}{\partial W_{mn}}=X_{is+m,js+n}
+\end{equation}
+Now, we can write down the original derivative:
+\begin{equation}
+\frac{\partial L}{\partial W_{mn}}=\sum_{i=0}^{n_H-1}\sum_{j=0}^{n_W-1}\frac{\partial L}{\partial A_{ij}}\sigma'(Z_{ij})X_{is+m,js+n}
+\end{equation}
+By a completely analogous argument, the bias derivative is:
+\begin{equation}
+\frac{\partial L}{\partial b}=\sum_{i=0}^{n_H-1}\sum_{j=0}^{n_W-1}\frac{\partial L}{\partial A_{ij}}\sigma'(Z_{ij})
+\end{equation}
+
+
+
 
 \end{document}
