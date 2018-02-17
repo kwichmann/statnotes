@@ -221,7 +221,35 @@ By a completely analogous argument, the bias derivative is:
 \frac{\partial L}{\partial b}=\sum_{i=0}^{n_H-1}\sum_{j=0}^{n_W-1}\frac{\partial L}{\partial A_{ij}}\sigma'(Z_{ij})
 \end{equation}
 
-
-
+\subsubsection{Backpropagation of errors}
+The derivative of the cost function with respect to the output of layer $l$ is known as the error of that layer. In other words:
+\begin{equation}
+\delta^{[l]}_{ij}=\frac{\partial L}{\partial A^{[l]}_{ij}}
+\end{equation}
+But since the output of one (non-final) layer is the same as the input of the next layer, we have:
+\begin{equation}
+\delta^{[l]}_{ij}=\frac{\partial L}{\partial X^{[l+1]}_{ij}}
+\end{equation}
+This can be evaluated in much the same way as the derivatives from the last section.
+\begin{equation}
+\frac{\partial L}{\partial X^{[l+1]}_{ij}}=\sum_{i'=0}^{n^{[l+1]}_W-1}\sum_{j'=0}^{n^{[l+1]}_H-1}\sum_{i''=0}^{n^{[l+1]}_W-1}\sum_{j''=0}^{n^{[l+1]}_H-1}\frac{\partial L}{\partial A^{[l+1]}_{i'j'}}\frac{\partial A^{[l+1]}_{i'j'}}{\partial Z^{[l+1]}_{i''j''}}\frac{\partial Z^{[l+1]}_{i''j''}}{\partial X^{[l+1]}_{ij}}
+\end{equation}
+Here, superscripts have been added to denonte layer. The first derivative is the error term for layer $l+1$. The second is an activation derivative cancelling a summation. And so:
+\begin{equation}
+\delta^{[l]}_{ij}=\sum_{i'=0}^{n^{[l+1]}_W-1}\sum_{j'=0}^{n^{[l+1]}_H-1}\delta^{[l+1]}_{i'j'}\sigma'\left(Z^{[l+1]}_{i'j'}\right)\frac{\partial Z^{[l+1]}_{i'j'}}{\partial X^{[l+1]}_{ij}}
+\end{equation}
+The final derivative is:
+\begin{equation}
+\frac{\partial}{\partial X^{[l+1]}_{ij}}\left[\sum_{m=0}^{2f}\sum_{n=0}^{2f}W^{[l+1]}_{mn}X^{[l+1]}_{i's+m,j's+n}+b\right]
+\end{equation}
+This gives a non-zero contribution when $i=i's+m$ and $j=j's+n$. In other words for $m=i-i's$ and $n=j-j's$:
+\begin{equation}
+\frac{\partial Z^{[l+1]}_{i'j'}}{\partial X^{[l+1]}_{ij}}=W_{i-i's,n=j-j's}
+\end{equation}
+Combining it all:
+\begin{equation}
+\delta^{[l]}_{ij}=\sum_{i'=0}^{n^{[l+1]}_W-1}\sum_{j'=0}^{n^{[l+1]}_H-1}\delta^{[l+1]}_{i'j'}\sigma'\left(Z^{[l+1]}_{i'j'}\right)W_{i-i's,n=j-j's}
+\end{equation}
+So while the forward pass uses cross-correlation, the backpropagation of errors actually has a "real" convolution in it.
 
 \end{document}
