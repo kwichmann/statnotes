@@ -252,4 +252,68 @@ Combining it all:
 \end{equation}
 So while the forward pass uses cross-correlation, the backpropagation of errors actually has a "real" convolution in it.
 
+\section{Backpropagation of pooling layers}
+Since pooling layers have no tunable parameters, there's no derivatives with respect to such. But there's still backpropagation of errors through these layers.
+
+\subsection{Backpropagation of errors}
+So we need to calculate:
+\begin{equation}
+\delta^{[l]}_{ij}=\frac{\partial L}{\partial A^{[l]}_{ij}}=\frac{\partial L}{\partial X^{[l+1]}_{ij}}=\sum_{i'=0}^{N_W-1}\sum_{j'=0}^{N_H-1}\frac{\partial L}{\partial A^{[l+1]}_{i'j'}}\frac{\partial A^{[l+1]}_{i'j'}}{\partial X^{[l+1]}_{ij}}
+\end{equation}
+
+\subsubsection{Max pooling}
+Here, the activation of the layer is:
+\begin{equation}
+A_{ij}=\max X_{ij}(i',j'),\quad X_{ij}(i',j')=X_{i',j'}
+\end{equation}
+Where the domain of $X_ij$ is:
+\begin{equation}
+i'\in\{is,is+1,\ldots,is+f-1\},\ j'\in\{js,js+1,\ldots,js+f-1\}
+\end{equation}
+The derivative of a max function is simply a delta function, i.e. zero unluess $i'j'$ corresponds to the maximum. So:
+\begin{equation}
+\frac{\partial A^{[l+1]}_{i'j'}}{\partial X^{[l+1]}_{ij}}=\delta_{(i,j),\textrm{argmax}X_{i'j'}}
+\end{equation}
+Specifically, when $ij$ is outside the relevant square, this will be zero. So the backpropagation equation is:
+\begin{equation}
+\delta^{[l]}_{ij}=\sum_{i'=i}^{i+f-1}\sum_{j'=j}^{j+f-1}\delta^{[l+1]}_{i'j'}\delta_{(i,j),\textrm{argmax}X_{i'j'}}
+\end{equation}
+Don't confuse the errors (the first delta) and the Kronecker delta (the second).
+
+\subsubsection{Average pooling}
+Here, the activation function is:
+\begin{equation}
+A_{ij}=\frac{1}{f^2}\sum_{i'=0}^{f-1}\sum_{j'=0}^{f-1}X_{i+i',j+j'}
+\end{equation}
+This makes the derivative simply:
+\begin{equation}
+\frac{\partial A^{[l+1]}_{i'j'}}{\partial X^{[l+1]}_{ij}}=\frac{1}{f^2}
+\end{equation}
+But this is only true when $ij$ is within the relevant square - otherwise it is zero. So the backpropagation equation in this case is:
+\begin{equation}
+\delta^{[l]}_{ij}=\frac{1}{f^2}\sum_{i'=i}^{i+f-1}\sum_{j'=j}^{j+f-1}\delta^{[l+1]}_{i'j'}
+\end{equation}
+
+
+\section{Case studies of CNN}
+In this section, we examine the architectures of some historical convolutional networks.
+
+\subsection{LeNet 5}
+This network was used to classify greyscale images of handwritten digits. The architecture is shown in figure \ref{fig:le_net}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{le_net}
+\caption{The LeNet 5 architecture.}
+\label{fig:le_net}
+\end{figure}
+
+The inputs are $32\times 32$ images, with one channel (greyscale). There's two convolution-pooling layers, each with the almost the same hyperparameters:
+\begin{itemize}
+\item An $f=5, s=1, p=0$ convolutional layer with 6 filters in the first double layer, 16 in the second.
+\item An average pooling layer with $f=2, s=2$.
+\end{itemize}
+Then the resulting $5\times 5\times 16$ features are flattened and fed through two fully connected layers of size 120 and 84 respectively. Finally, the output layer has 10 neurons.
+
+
 \end{document}
