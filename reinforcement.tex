@@ -874,5 +874,42 @@ Another view is that MC is based on a lot of sample points, which means that the
 
 Luckily, it turns out that there is a way to choose an algoritm that is a compromise between these two extremes, which allows us to tune the bias-variance tradeoff to suit our needs.
 
+\subsection{$n$-step temporal-difference learning}
+So far, the temporal difference has only been one step into the future. But there's nothing preventing us from us looking more than one step ahead in our estimates, changing the TD target as appropriate. We can look $n$ steps ahead:
+\begin{align}
+G^{(1)}(t)=&R_{t+1}+\gamma V(S_{t+2})\\
+G^{(2)}(t)=&R_{t+1}+\gamma R_{t+2}+\gamma^2 V(S_{t+2})\\
+\vdots\quad & \quad\vdots\\
+G^{(\infty)}(t)=&R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}+\dots
+\end{align}
+Notice that the limiting case is the same as Monte Carlo learning, as all subsequent steps are taken into account. 
+
+So the update rule for $n$-step temporal-difference learning becomes:
+\begin{equation}
+V(S_t)\mapsto V(S_t)-\alpha(G^{(n)}-V(S_t))
+\end{equation}
+This is very similar to the gradient descent algorithm for training neural networks. Here, $\alpha$ plays the part of the learning rate, while the parenthesis can be thought of as an error (similar to a derivative).
+
+\subsection{TD($\lambda$)}
+So $n=1$ and $n=\infty$ are two extremes corresponding to TD(0) and MC respectively. Meaning that low $n$ has high bias, low variance. And high $n$ has low bias, high variance. It turns out that there is a better way of tuning the tradeoff, though.
+
+Instead of using simply one $n$, a sum over all values of $n$ is used. This is done by using a weight $\lambda\in[0,1]$. The target is then set to:
+\begin{equation}
+G^\lambda_t=(1-\lambda)\sum_{n=1}^\infty\lambda^{n-1}G^{(n)}_t
+\end{equation}
+The weights add up to 1, because of the geometric series:
+\begin{equation}
+\sum_{n=0}^\infty\lambda^n=1-\lambda
+\end{equation}￼
+We see that when $\lambda=0$ we do indeed get TD(0). When $\lambda=1$ we get MC.
+
+\subsection{Backward view: Eligibility traces}
+So far we have been taking a \textit{forward view}, looking $n$ steps forward into the process and so on. However, in practice, we want to do updates based on what went before our current time step. To do so, we use the tool of \textit{eligibility traces} for TD($\lambda$):
+
+At time step zero, we set the \textit{eligibilty} $E$ of all states equal to zero: $E_0(s)=0$. These are then updated in each time step according to the following rules:
+\begin{itemize}
+\item All eligibilities are reduced as follows: $E_t(s)=\lambda\gamma E_{t-1}(s)$
+\item If $S_t=s$, then in addition to the discounting above, 1 is added to eligibility. So all in all: $E_t(s)=\lambda\gamma E_{t-1}(s)+1$
+\end{itemize}
 
 \end{document} 
