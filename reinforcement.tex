@@ -842,7 +842,7 @@ v_\pi(s)\approx V_k(s)=V_{k-1}(s)+\alpha(G_k-V_{k-1}(s))
 Here we don't need to keep track of $k$. Instead, we essentially assume, that only the last $1/\alpha$ visits are important.
 
 \subsection{Temporal-difference learning}
-\textit{Temporal-differece (TD) learning} is another model-free policy evaluation method. However, in contrast to MC, TD can learn from \textit{incomplete episodes}. This has the advantage that the process need not always terminate. This is done by what is known as \textit{bootstrapping}.
+\textit{Temporal-difference (TD) learning} is another model-free policy evaluation method. However, in contrast to MC, TD can learn from \textit{incomplete episodes}. This has the advantage that the process need not always terminate. This is done by what is known as \textit{bootstrapping}.
 
 \subsection{TD(0)}
 If we look at equation \ref{incremental_nonstationary}, we can interpret is as follows:
@@ -897,11 +897,13 @@ Instead of using simply one $n$, a sum over all values of $n$ is used. This is d
 \begin{equation}
 G^\lambda_t=(1-\lambda)\sum_{n=1}^\infty\lambda^{n-1}G^{(n)}_t
 \end{equation}
-The weights add up to 1, because of the geometric series:
+This known as the $\lambda$-\textit{return}. The weights add up to 1, because of the geometric series:
 \begin{equation}
-\sum_{n=0}^\infty\lambda^n=1-\lambda
+\sum_{n=0}^\infty\lambda^n=\frac{1}{1-\lambda}
 \end{equation}￼
-We see that when $\lambda=0$ we do indeed get TD(0). When $\lambda=1$ we get MC.
+Hence $1-\lambda$ acts as a normalization constant. If the episode terminates, we assign the remaining weight to the highest possible value of $n$.
+
+We see that when $\lambda=0$ we do indeed get TD(0). When $\lambda=1$, and the episode terminates, all but the last weight is zero, and we get MC.
 
 \subsection{Backward view: Eligibility traces}
 So far we have been taking a \textit{forward view}, looking $n$ steps forward into the process and so on. However, in practice, we want to do updates based on what went before our current time step. To do so, we use the tool of \textit{eligibility traces} for TD($\lambda$):
@@ -911,5 +913,96 @@ At time step zero, we set the \textit{eligibilty} $E$ of all states equal to zer
 \item All eligibilities are reduced as follows: $E_t(s)=\lambda\gamma E_{t-1}(s)$
 \item If $S_t=s$, then in addition to the discounting above, 1 is added to eligibility. So all in all: $E_t(s)=\lambda\gamma E_{t-1}(s)+1$
 \end{itemize}
+After this, $V(s)$ is updated for all $s$, so that the change is proprotional to $E_t(s)$ and the SD error $\delta_t$:
+\begin{equation}
+\delta_t=R_{t+1}+\gamma V(S_{t+1})-V(S_t)
+\label{delta_def}
+\end{equation}
+Update rule (for all $s$) is:
+\begin{equation}
+V(s)\mapsto V(s)-\alpha\delta_t E_t(s)
+\end{equation}
+
+\subsection{Equivalence between views}
+It turns out that the forward and backward views are equivalent, at least for offline learning, i.e. when the updates are only done once the episode is over.
+
+\begin{theorem}
+The sum of offline updates for state $s$ is the same for forward and backward views in TD($\lambda$):
+\begin{equation}
+\sum_{t=1}^{T-1}\alpha\left(G^{(\lambda)}_t-V(S_t)\right)\cdot 1_{S_t=s}=\sum_{t=1}^{T-1}\alpha\delta_t E_t(s)
+\end{equation}
+Here $1_{S_t=s}$ is equal to 1 when $S_t=s$, and 0 otherwise.
+\end{theorem}
+
+\begin{proof}
+Let's start by the special cases of the extreme values of $\lambda$.
+
+When $\lambda=0$, the eligibility traces are all reset each step. Which means that for a time step $t$ where $S_t=s$, $E_t(s)=1$, and otherwise all elegibility traces are zero. This is exactly equivalent to (offline) TD(0) learning.
+
+On the other hand, if $\lambda=1$, the eligibility traces decay only according to $\gamma$. This means that the eligibilty trace for a state $E_t(s)$ keeps track of how many times the state $s$ has been visited up to and including time $t$. First, let's consider the case where $s$ is visited once, at time step $k$. This means that the eligibility function is:
+\begin{equation}
+E_t(s)=\begin{cases}
+0 & \textrm{for }t<k \\
+\gamma^{t-k} & \textrm{for }t\ge k
+\end{cases}
+\end{equation}
+This means that the right hand sum is:
+\begin{equation}
+\sum_{t=1}^{T-1}\alpha\delta_t E_t(s)=\alpha\sum_{t=k}^{T-1}\gamma^{t-k}\delta_t
+\end{equation}
+Using the definition in equation \ref{delta_def} this is:
+\begin{equation}
+\alpha\sum_{t=k}^{T-1}\gamma^{t-k}\left[R_{t+1}+\gamma V(S_{t+1})-V(S_t)\right]
+\end{equation}
+Writing out each term in the sum:
+\begin{align}
+&R_{k+1}+\gamma V(S_{k+1})-V(S_k)\\
++&\gamma R_{k+2}+\gamma^2 V(S_{k+2})-\gamma V(S_{k+1})\\
++&\gamma^2 R_{k+3}+\gamma^3 V(S_{k+3})-\gamma^2 V(S_{k+2})\\
++&\cdots\\
++&\gamma^{T-1-k} R_T+\gamma^{T-k}V(S_T)-\gamma^{T-1-k} V(S_{T-1})
+\end{align}
+A lot of terms now cancel leaving
+\begin{equation}
+R_{k+1}+\gamma R_{k+2}+\gamma^2 R_{k+3}+\cdots +\gamma^{T-1-k}R_T-V(S_k)=G^{(1)}_k-V(S_k)=\delta_k
+\end{equation}
+Here we've also used that $V(S_T)=0$ since the state is terminal. So in the case where $s$ is visited once, we get (first-visit) Monte Carlo learning result. If $s$ is revisited, there's wil be a contribution for each visit. But since elegibility traces are additive with respect to several visits, the equality remains true.
+
+The general case is very similar to the $\lambda=1$ calculation. Again, assume that $s$ is visited once, at time $k$. Now, the eligibility trace is:
+\begin{equation}
+E_t(s)=\begin{cases}
+0 & \textrm{for }t<k \\
+(\lambda\gamma)^{t-k} & \textrm{for }t\ge k
+\end{cases}
+\end{equation}
+The right hand sum now becomes:
+\begin{equation}
+\alpha\sum_{t=k}^{T-1}(\lambda\gamma)^{t-k}\left[R_{t+1}+\gamma V(S_{t+1})-V(S_t)\right]
+\end{equation}
+Write out the sum, and move terms to make time steps line up:
+\begin{align}
+-V(S_k)+&R_{k+1}+\gamma V(S_{k+1})-\lambda\gamma V(S_{k+1})\\
++&\lambda\gamma\left[R_{k+2}+\gamma V(S_{k+2})-\lambda\gamma V(S_{k+2})\right]\\
++&(\lambda\gamma)^2\left[R_{k+3}+\gamma V(S_{k+3})-\lambda\gamma V(S_{k+3})\right]\\
++&\cdots\\
++&(\lambda\gamma)^{T-1-k}\left[R_T+\gamma V(S_T)-\lambda\gamma V(S_{T-1})\right]
+\end{align}
+Pull out factors of $1-\lambda$:
+\begin{align}
+-V(S_k)+&R_{k+1}+\gamma(1-\lambda)V(S_{k+1})\\
++&\lambda\gamma\left[R_{k+2}+\gamma(1-\lambda)V(S_{k+2})\right]\\
++&(\lambda\gamma)^2\left[R_{k+3}+\gamma(1-\lambda)V(S_{k+3})\right]\\
++&\cdots\\
++&(\lambda\gamma)^{T-1-k}\left[R_T+\gamma(1-\lambda)V(S_T)\right]
+\end{align}
+Now use that:
+\begin{equation}
+\sum_{n=0}^{m-1}\lambda^n=\frac{1-\lambda^m}{1-\lambda}=\frac{1}{1-\lambda}-\frac{\lambda^m}{1-\lambda}
+\end{equation}
+Group by powers of $\lambda$:
+
+\end{proof}
+
+
 
 \end{document} 
