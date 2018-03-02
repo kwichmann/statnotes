@@ -51,7 +51,7 @@ A \textit{state} is a way for to parse this history into a more meaningful form.
 S_t=f(H_t)
 \end{equation}
 
-It is very important to note, that this is generally distinct from the \textit{environment state} $H^e_t$. The environment state contains complete information about the environment, including data and mechanisms that may be hidden to the agent. Hence $H^e_t$ can depend on other things than just the historySuch information is \textit{private} to the environment.
+It is very important to note, that this is generally distinct from the \textit{environment state} $H^e_t$. The environment state contains complete information about the environment, including data and mechanisms that may be hidden to the agent. Hence $H^e_t$ can depend on other things than just the history. Such information is \textit{private} to the environment.
 
 The \textit{agent state} $S^a_t$ on the other hand is the internal representation the agent uses to decide on which actions to take. Once again, it can be any function of history:
 \begin{equation}
@@ -977,29 +977,40 @@ E_t(s)=\begin{cases}
 \end{equation}
 The right hand sum now becomes:
 \begin{equation}
-\alpha\sum_{t=k}^{T-1}(\lambda\gamma)^{t-k}\left[R_{t+1}+\gamma V(S_{t+1})-V(S_t)\right]
+\alpha\sum_{t=k}^\infty(\lambda\gamma)^{t-k}\left[R_{t+1}+\gamma V(S_{t+1})-V(S_t)\right]
 \end{equation}
-Write out the sum, and move terms to make time steps line up:
+Since the episode is no longer required to terminate, we can sum to infinity here. Write out the sum, and move terms to make time steps line up:
 \begin{align}
 -V(S_k)+&R_{k+1}+\gamma V(S_{k+1})-\lambda\gamma V(S_{k+1})\\
 +&\lambda\gamma\left[R_{k+2}+\gamma V(S_{k+2})-\lambda\gamma V(S_{k+2})\right]\\
-+&(\lambda\gamma)^2\left[R_{k+3}+\gamma V(S_{k+3})-\lambda\gamma V(S_{k+3})\right]\\
-+&\cdots\\
-+&(\lambda\gamma)^{T-1-k}\left[R_T+\gamma V(S_T)-\lambda\gamma V(S_{T-1})\right]
++&(\lambda\gamma)^2\left[R_{k+3}+\gamma V(S_{k+3})-\lambda\gamma V(S_{k+3})\right]\cdots
 \end{align}
 Pull out factors of $1-\lambda$:
 \begin{align}
 -V(S_k)+&R_{k+1}+\gamma(1-\lambda)V(S_{k+1})\\
 +&\lambda\gamma\left[R_{k+2}+\gamma(1-\lambda)V(S_{k+2})\right]\\
-+&(\lambda\gamma)^2\left[R_{k+3}+\gamma(1-\lambda)V(S_{k+3})\right]\\
-+&\cdots\\
-+&(\lambda\gamma)^{T-1-k}\left[R_T+\gamma(1-\lambda)V(S_T)\right]
++&(\lambda\gamma)^2\left[R_{k+3}+\gamma(1-\lambda)V(S_{k+3})\right]+\cdots
 \end{align}
-Now use that:
+Now remember that:
 \begin{equation}
-\sum_{n=0}^{m-1}\lambda^n=\frac{1-\lambda^m}{1-\lambda}=\frac{1}{1-\lambda}-\frac{\lambda^m}{1-\lambda}
+\sum_{n=0}^\infty\lambda^n=\frac{1}{1-\lambda}
 \end{equation}
-Group by powers of $\lambda$:
+Use this to rewrite:
+\begin{equation}
+R_t=(1-\lambda)\frac{R_t}{1-\lambda}=(1-\lambda)\sum_{n=0}^\infty R_t\lambda^n
+\end{equation}
+So we can also pull out factors of $1-\lambda$ from the rewards and $V(S_k)$, so that we get (here is sum notation):
+\begin{equation}
+(1-\lambda)\left[\sum_{m=0}^\infty(\lambda\gamma)^m\left(\sum_{n=0}^\infty R_{k+m}\lambda^n+\gamma V(S_{k+m+1})\right)-\sum_{n'=0}^\infty V(S_k)\lambda^{n'}\right]
+\end{equation}
+We now wish to group the contents of the parenthesis by powers of $\lambda$. If we want all terms of power $p$, then we must have $p=m+n$. Or $m=p-n$. Remembering that $m\ge 0$, this means:
+\begin{equation}
+(1-\lambda)\sum_{p=0}^\infty\lambda^p\left[\sum_{n\le p}^\infty \gamma^n R_{k+p-n}+\gamma^{p+1}V(S_{k+p-n+1})-V(S_k)\right]
+\end{equation}
+On closer inspection, this is:
+\begin{equation}
+\sum_{p=0}^\infty(1-\lambda)\lambda^p\left(G^\lambda_k-V_(S_k)\right)
+\end{equation}
 
 \end{proof}
 
