@@ -999,19 +999,19 @@ Use this to rewrite:
 \begin{equation}
 R_t=(1-\lambda)\frac{R_t}{1-\lambda}=(1-\lambda)\sum_{n=0}^\infty R_t\lambda^n
 \end{equation}
-So we can also pull out factors of $1-\lambda$ from the rewards and $V(S_k)$, so that we get (here is sum notation):
+So we can also pull out factors of $1-\lambda$ from the rewards, so that we get (here is sum notation):
 \begin{equation}
-(1-\lambda)\left[\sum_{m=0}^\infty(\lambda\gamma)^m\left(\sum_{n=0}^\infty R_{k+m}\lambda^n+\gamma V(S_{k+m+1})\right)-\sum_{n'=0}^\infty V(S_k)\lambda^{n'}\right]
+(1-\lambda)\left[\sum_{m=0}^\infty(\lambda\gamma)^m\left(\sum_{n=0}^\infty R_{k+m}\lambda^n+\gamma V(S_{k+m+1})\right)\right]-V(S_k)
 \end{equation}
 We now wish to group the contents of the parenthesis by powers of $\lambda$. If we want all terms of power $p$, then we must have $p=m+n$. Or $m=p-n$. Remembering that $m\ge 0$, this means:
 \begin{equation}
-(1-\lambda)\sum_{p=0}^\infty\lambda^p\left[\sum_{n\le p}^\infty \gamma^n R_{k+p-n}+\gamma^{p+1}V(S_{k+p-n+1})-V(S_k)\right]
+(1-\lambda)\sum_{p=0}^\infty\lambda^p\left[\sum_{n\le p}^\infty \gamma^n R_{k+p-n}+\gamma^{p+1}V(S_{k+p-n+1})\right]-V(S_k)
 \end{equation}
 On closer inspection, this is:
 \begin{equation}
-\sum_{p=0}^\infty(1-\lambda)\lambda^p\left(G^\lambda_k-V_(S_k)\right)
+G^\lambda_k-V(S_k)
 \end{equation}
-
+For more than one visit to $s=S_k$, this generalizes as above.
 \end{proof}
 
 
