@@ -1061,5 +1061,26 @@ For more than one visit to $s=S_k$, this generalizes as above.
 \label{fig:offline_online}
 \end{figure}
 
+\section{Model-free control}
+Last section dealt with evaluating a policy, but usually what we really want it control - finding an optimal policy. Again, we will take a model-free approach. This is useful, because even if the underlying model is a MDP, we may not know it. Or we may know it, but it's too big to handle without sampling.
+
+\subsection{On- and off-policy learning}
+We may learn about policy $\pi$ by actually following the policy $\pi$ (when doing control, we want to improve it along the way). This is known as \textit{on-policy} learning. But we may also learn about $\pi$ by following another policy $\mu$ - "looking over the shoulder" of it, so to speak.
+
+At first we will focus on on-policy learning.
+
+\subsection{Generalized policy iteration}
+We want to mimic the strategy of policy iteration, generalizing it to the model-free case. Recall that policy iteration consists of two components:
+\begin{itemize}
+\item Policy evauation: We can use - say MC learning - to estimate $v_\pi$ for the current policy $\pi$.
+\item Policy improvement: Improve the model by acting greedily with respect to $v_\pi$.
+\end{itemize}
+Each of these components are problematic in the model free case:
+\begin{itemize}
+\item Policy evaluation of $v_\pi$ requires knowledge of the underlying MDP model.
+\item When we're acting greedily, we may cut off parts of the state space which has a long-time reward payoff.
+\end{itemize}
+
+ 
 
 \end{document} 
