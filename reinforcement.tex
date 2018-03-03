@@ -905,6 +905,46 @@ Hence $1-\lambda$ acts as a normalization constant. If the episode terminates, w
 
 We see that when $\lambda=0$ we do indeed get TD(0). When $\lambda=1$, and the episode terminates, all but the last weight is zero, and we get MC.
 
+\subsection{Overview of RL algorithms}
+Let's pause for a moment and consider the strategies of the algorithms we've seen so far.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{rl_overview}
+\caption{Backup space for algorithms.}
+\label{fig:rl_overview}
+\end{figure}
+
+\subsubsection{Backup}
+Figures \ref{fig:rl_overview} and \ref{fig:backups} show different approaches to the \textit{backup} strategy used so far. The first axis in figure \ref{fig:rl_overview} shows the \textit{depth} of the backup, while the second axis shows the \textit{width} of the backup.
+
+Consider first the brute force approach of an exhaustive search. Here all of the data are used - not merely samples - which means that the backup is \textit{full}. In every step of iteration, the entire path back to the starting point is used, which means that the backup is \textit{deep}.
+
+Dynamic programming still uses full backups - all data are used. But here, in each step, the backup is \textit{shallow}, as we only look one step forward in the data.
+
+Monto Carlo learning is based on a sample, and hence uses \textit{sample} backup. But it uses the data for all of the episode, so the backup is also deep.
+
+TD(0) learning uses sample backup as well. But since we only look one step ahead, the backup is shallow.
+
+Finally, TD($\lambda$) learning uses sample backups too. But it allows us to move along the first axis, from shallow to deep backup as $\lambda$ varies.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{backups}
+\caption{Illustration of backups for MC, TD(0), and DP respectively. An exhaustive search would cover all of the tree.}
+\label{fig:backups}
+\end{figure}
+
+\subsubsection{Bootstrapping and sampling}
+In statistics, a \textit{bootstrap} is the process of resampling data. In RL, an algorithm is said to use bootstrapping, if the update involves an estimation based on previous prediction.
+
+Dynamic programming bootstraps, as seen from the Bellman equation. Temporal difference learning bootstraps as well. Monte Carlo learning does not, as it is instead based on the entire episode sample.
+
+An algorithm that does not involve an expectation value, i.e. an estimate including all possible future outcomes is said to \textit{sample}. Monte Carlo and TD samples, while dynamic programming does not.
+
+\subsubsection{Online vs. offline learning}
+An algorithm can be operate \textit{online} or \textit{offline}. In this context it depends on when the updates to the value functions are done. Online learning means that values are changed while the episode still runs - it is done after every single action. Offline learning, on the other hand is done after the entire episode is finished.
+
 \subsection{Backward view: Eligibility traces}
 So far we have been taking a \textit{forward view}, looking $n$ steps forward into the process and so on. However, in practice, we want to do updates based on what went before our current time step. To do so, we use the tool of \textit{eligibility traces} for TD($\lambda$):
 
@@ -1014,6 +1054,12 @@ G^\lambda_k-V(S_k)
 For more than one visit to $s=S_k$, this generalizes as above.
 \end{proof}
 
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{offline_online}
+\caption{Comparison of forward/backward views and offline/online updates for TD learning.}
+\label{fig:offline_online}
+\end{figure}
 
 
 \end{document} 
