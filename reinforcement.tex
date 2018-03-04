@@ -1077,10 +1077,42 @@ We want to mimic the strategy of policy iteration, generalizing it to the model-
 \end{itemize}
 Each of these components are problematic in the model free case:
 \begin{itemize}
-\item Policy evaluation of $v_\pi$ requires knowledge of the underlying MDP model.
-\item When we're acting greedily, we may cut off parts of the state space which has a long-time reward payoff.
+\item Acting greedily with respect to $v_\pi$ requires knowledge of the underlying MDP model.
+\item Also, when we're acting greedily, we may cut off parts of the state space which has a long-time reward payoff. Which means we can get stuck at a local minimum.
 \end{itemize}
+The solution to the first problem is to use $q_\pi$ instead. In this case, for a state $s$, we can simply pick the action $a$ with the hightest value of $q_\pi$.
 
+The second problem can be avoided by acting $\varepsilon$-\textit{greedily}.
  
+\subsection{$\varepsilon$-greedy exploration}
+A strategy which ensures that we will eventually explore every part of the state space is the $\varepsilon$-greedy improvement.
 
+When improving the policy $\pi$, the new policy $\pi'$ has a probability $\varepsilon$ of picking a random action (uniformly chosen). Otherwise it acts greedy as usual.
+
+This simple strategy always produces a new policy $\pi'$ at least as good as $\pi$, provided $\pi$ is itself $\varepsilon$-greedy:
+
+\begin{theorem}
+If $\pi$ is an $\varepsilon$-greedy policy, then the new policy $\pi'$ made by being $\varepsilon$-greedy with respect to $q_\pi$ is at least as good as $\pi$: $v_{\pi'}(s)\ge v_\pi(s)$.
+\end{theorem}
+\begin{proof}
+The value function $v_{\pi'}(s)$ must be at least as big as any $q_\pi(s,a)$, so:
+\begin{align}
+v_{\pi'}(s)\ge q_\pi(s,\pi'(s))&=\sum_{a\in\mathcal{A}}\pi'(s|a)q_\pi(s,a)\\
+&=\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+(1-\varepsilon)\max_{a\in\mathcal{A}}q_\pi(s|a)
+\end{align}
+Here we have assumed there $m$ possible actions. But the maximum must be greater than any weighted sum of $q_\pi$'s, assuming the weights sum to one. We will choose the weights:
+\begin{equation}
+w_a=\frac{\pi(a|s)-\varepsilon/m}{1-\varepsilon}
+\end{equation}
+These sum to one:
+\begin{equation}
+\sum_{a\in\mathcal{A}}w_a=\sum_{a\in\mathcal{A}}\frac{\pi(a|s)}{1-\varepsilon}-\sum_{a\in\mathcal{A}}\frac{\varepsilon/m}{1-\varepsilon}=\frac{1}{1-\varepsilon}-\frac{\varepsilon}{1-\varepsilon}=\frac{1-\varepsilon}{1-\varepsilon}=1
+\end{equation}
+So:
+\begin{align}
+v_{\pi'}(s)&\ge\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+(1-\varepsilon)\sum_{a\in\mathcal{A}}\frac{\pi(a|s)-\varepsilon/m}{1-\varepsilon}q_\pi(s|a)\\
+&=\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(s|a)-\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)\\
+&=\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(s|a)=v_\pi(s)
+\end{align}
+\end{proof}
 \end{document} 
