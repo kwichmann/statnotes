@@ -698,7 +698,15 @@ Why does this improve the policy? Let's see:
 q_\pi(s,\pi'(s))=\underset{a\in\mathcal{A}}{\max}\ q_\pi(s,a)\ge q_\pi(s,a(s))=v_\pi(s)
 \label{qv_inequality}
 \end{equation}
-In the last equal sign, we used equation \ref{deterministic_policy} again. Now we can use equation \ref{qv_inequality} and the definiton of $q_\pi$ to show the desired result:
+In the last equal sign, we used equation \ref{deterministic_policy} again.
+
+It turns out, that when equation \ref{qv_inequality} is satisfied we can apply the following useful theorem, the \textit{theorem of policy improvement}:
+
+\begin{theorem}
+(Theorem of policy improvement) Given two deterministic policies, such that for all states $q_\pi(s,\pi'(s))\ge v_\pi(s)$. Then $\pi'\ge\pi$.
+\end{theorem}
+\begin{proof}
+Use the inequality assumption and the definiton of $q_\pi$ to get:
 \begin{equation}
 v_\pi(s)\le q_\pi(s,\pi'(s))=\mathbb{E}_{\pi'}[R_t+\gamma v_\pi(S_{t+1})|S_t=s]
 \end{equation}
@@ -716,6 +724,7 @@ v_\pi(s)\le&\mathbb{E}_{\pi'}[R_t+\gamma R_{t+1}+\gamma^2 R_{r+2}+\gamma^3 R_{r+
 &\mathbb{E}_{\pi'}[G_{t+1}|S_{t}=s]=v_{\pi'}(s)
 \end{align}
 This shows that $\pi\le\pi'$.
+\end{proof}
 
 Now assume that we perform policy iteration until there is no further improvement. I.e. until:
 \begin{equation}
@@ -1064,6 +1073,54 @@ For more than one visit to $s=S_k$, this generalizes as above.
 \section{Model-free control}
 Last section dealt with evaluating a policy, but usually what we really want it control - finding an optimal policy. Again, we will take a model-free approach. This is useful, because even if the underlying model is a MDP, we may not know it. Or we may know it, but it's too big to handle without sampling.
 
+\subsection{General policy improvement theorem}
+So far, we have only shown that the policy improvement theorem applies to deterministic policies. In fact, it also applies when the policies are stochastic:
+
+\begin{theorem}
+Given two stochastic policies, such that for all states:
+\begin{equation}
+q_\pi(s,\pi'(s))\equiv\sum_{a\in\mathcal{A}}\pi'(a|s)q_\pi(s,a)\ge v_\pi(s)
+\end{equation}
+Then $\pi'\ge\pi$.
+\end{theorem}
+\begin{proof}
+The starting point is:
+\begin{equation}
+v_\pi(s)\le\sum_{a\in\mathcal{A}}\pi'(a|s)q_\pi(s,a)
+\end{equation}
+The action-value function $q_\pi$ can be written:
+\begin{equation}
+q_\pi(s,a)=\mathbb{E}_\pi[R_t+\gamma v_\pi(S_{t+1})|S_t=s,A_t=a]
+\end{equation}
+Use $\pi(a|s)$ to expand the expectation value:
+\begin{equation}
+q_\pi(s,a)=\sum_{a'\in\mathcal{A}}\pi(a'|s)\left(\mathcal{R}^{a'}_s+\gamma\sum_{s'}\mathcal{P}^a_{ss'}v_\pi(s')\right)
+\end{equation}
+Here $\mathcal{P}$ is associated with policy $\pi$. Reinstate the $a$ sum:
+\begin{equation}
+\sum_{a\in\mathcal{A}}\pi'(a|s)\sum_{a'\in\mathcal{A}}\pi(a'|s)\left(\mathcal{R}^{a'}_s+\gamma\sum_{s'}\mathcal{P}^a_{ss'}v_\pi(s')\right)
+\end{equation}
+This can be expressed as an expectation value over $\pi'$ and $\pi$ respectively:
+\begin{align}
+&\mathbb{E}_{\pi'}\left[\sum_{a'\in\mathcal{A}}\pi(a'|s)\left(\mathcal{R}^{a'}_s+\gamma\mathbb{E}_\pi[v_\pi(S_{t+1})]\right)\middle|S_t=s\right]\\
+=&\mathbb{E}_{\pi'}\left[\mathbb{E}_\pi\left[R_t+\gamma\mathbb{E}_\pi[v_\pi(S_{t+1})]\right]\middle|S_t=s\right]\\
+=&\mathbb{E}_{\pi'}\left[R_t+\gamma v_\pi(S_{t+1})\middle|S_t=s\right]
+\end{align}
+But now we may use the inequality assumption once again:
+\begin{equation}
+\sum_{a''\in\mathcal{A}}\pi'(a''|S_{t+1})q_\pi(S_{t+1}|a'')\le v_\pi(s')
+\end{equation}
+Similarly to the original proof, we can now repeat this process above once more to get:
+\begin{equation}
+v_\pi(s)\le\mathbb{E}_{\pi'}\left[R_t+\gamma R_{t+1}+\gamma^2 v_\pi(S_{t+2})\middle|S_t=s\right]
+\end{equation}
+This can be iterated indefinitely, so just as in the original proof we get:
+\begin{align}
+v_\pi(s)\le&\mathbb{E}_{\pi'}[R_t+\gamma R_{t+1}+\gamma^2 R_{r+2}+\gamma^3 R_{r+3}+\cdots|S_t=s]=\\
+&\mathbb{E}_{\pi'}[G_{t+1}|S_{t}=s]=v_{\pi'}(s)
+\end{align}
+\end{proof}
+
 \subsection{On- and off-policy learning}
 We may learn about policy $\pi$ by actually following the policy $\pi$ (when doing control, we want to improve it along the way). This is known as \textit{on-policy} learning. But we may also learn about $\pi$ by following another policy $\mu$ - "looking over the shoulder" of it, so to speak.
 
@@ -1087,17 +1144,25 @@ The second problem can be avoided by acting $\varepsilon$-\textit{greedily}.
 \subsection{$\varepsilon$-greedy exploration}
 A strategy which ensures that we will eventually explore every part of the state space is the $\varepsilon$-greedy improvement.
 
-When improving the policy $\pi$, the new policy $\pi'$ has a probability $\varepsilon$ of picking a random action (uniformly chosen). Otherwise it acts greedy as usual.
+Before getting to these, let's look at a related definition: A discrete, finite probability distribution is called $\varepsilon$-\textit{soft}, if the probability of any singleton event is greater than or equal to $\varepsilon/m$, where $m$ is the number of possible outcomes.
 
-This simple strategy always produces a new policy $\pi'$ at least as good as $\pi$, provided $\pi$ is itself $\varepsilon$-greedy:
+Now for the $\varepsilon$-greedy strategy: When improving the policy $\pi$, the new policy $\pi'$ has a probability $\varepsilon$ of picking a random action (uniformly chosen). Otherwise it acts greedy as usual. Such a policy is called $\varepsilon$-greedy as well.
+
+Similarly, a policy which has an $\varepsilon$-soft distribution for choosing between actions, is itself called $\varepsilon$-soft. I.e. when it satisfies:
+\begin{equation}
+\pi(a|s)\ge\frac{\varepsilon}{|\mathcal{A}|}
+\end{equation}
+Specifically, an $\varepsilon$-greedy policy is $\varepsilon$-soft.
+
+It turns out, that the $\varepsilon$-greedy strategy always produces a new policy $\pi'$ at least as good as $\pi$, provided $\pi$ is itself $\varepsilon$-soft:
 
 \begin{theorem}
-If $\pi$ is an $\varepsilon$-greedy policy, then the new policy $\pi'$ made by being $\varepsilon$-greedy with respect to $q_\pi$ is at least as good as $\pi$: $v_{\pi'}(s)\ge v_\pi(s)$.
+If $\pi$ is an $\varepsilon$-soft policy, then the new policy $\pi'$ made by being $\varepsilon$-greedy with respect to $q_\pi$ is at least as good as $\pi$: $v_{\pi'}(s)\ge v_\pi(s)$.
 \end{theorem}
 \begin{proof}
 The value function $v_{\pi'}(s)$ must be at least as big as any $q_\pi(s,a)$, so:
 \begin{align}
-v_{\pi'}(s)\ge q_\pi(s,\pi'(s))&=\sum_{a\in\mathcal{A}}\pi'(s|a)q_\pi(s,a)\\
+q_\pi(s,\pi'(s))&=\sum_{a\in\mathcal{A}}\pi'(a|s)q_\pi(s,a)\\
 &=\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+(1-\varepsilon)\max_{a\in\mathcal{A}}q_\pi(s|a)
 \end{align}
 Here we have assumed there $m$ possible actions. But the maximum must be greater than any weighted sum of $q_\pi$'s, assuming the weights sum to one. We will choose the weights:
