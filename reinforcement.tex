@@ -1177,10 +1177,65 @@ Because $\pi$ is $\varepsilon$-soft, these are all non-negative. These weights s
 \end{equation}
 So:
 \begin{align}
-v_{\pi'}(s)&\ge\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+(1-\varepsilon)\sum_{a\in\mathcal{A}}\frac{\pi(a|s)-\varepsilon/m}{1-\varepsilon}q_\pi(s|a)\\
+q_{\pi'}(s,\pi')&\ge\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+(1-\varepsilon)\sum_{a\in\mathcal{A}}\frac{\pi(a|s)-\varepsilon/m}{1-\varepsilon}q_\pi(s|a)\\
 &=\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(s|a)-\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)\\
 &=\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(s|a)=v_\pi(s)
 \end{align}
 By the general policy improvement theorem we have $\pi'\ge\pi$.
 \end{proof}
+
+\subsection{Monte Carlo control}
+We can now use the strategy above using Monte Carlo learning. As always this requires episodes which terminates. The steps are as follows:
+\begin{itemize}
+\item Use Monte Carlo learning to estimate $q_\pi$ for the current policy $\pi$, running episodes until convergence.
+\item Update policy $\varepsilon$-greedily and repeat.
+\end{itemize}
+However, as we saw in the last section, usually we need not wait until convergence in the first step before updating the policy. We may simply update after a set number of episodes. Taken to the extreme, we may update the policy after every episode.
+
+\subsection{Greedy in the Limit with Infinite Exploration}
+We want to make sure that we actually converge to the optimal policy $\pi_*$ in the iteration process described above. The following definition is useful:
+
+\begin{definition}
+An policy iteration strategy is called Greedy in the Limit with Infinite Exploration (GLIE) if the following two conditions are met:
+\begin{itemize}
+\item Every possible state/action is asymptotically explored an infinite number of times:
+\begin{equation}
+\lim_{k\rightarrow\infty}N_k(s,a)=\infty
+\end{equation} 
+\item The policy converges to a greedy policy:
+\begin{equation}
+\lim_{k\rightarrow\infty}\pi_k(a|s)=\delta_{a,a(s)}
+\end{equation}
+Here, $a(s)$ must be $\lim_{k\rightarrow\infty}\underset{a'\in\mathcal{A}}{\textrm{argmax}}\ q_{\pi_k}(s,a')$.
+\end{itemize}
+\end{definition}
+
+This can be achieved by decreasing $\varepsilon$ during the iteration. The first crititerion then comes down to:
+\begin{equation}
+\sum_{k=1}^\infty\varepsilon_k=\infty
+\end{equation}
+And the second:
+\begin{equation}
+\sum_{k=1}^\infty\varepsilon_k^2<\infty
+\end{equation}
+For instance, $\varepsilon_k=1/k$ results in a GLIE strategy.
+
+\subsection{GLIE Monte Carlo Control}
+Consider the following policy iteration strategy:
+\begin{itemize}
+\item Initialize $N(s,a)=0$ for all state-action pairs.
+\item Repeat the following steps:
+\begin{itemize}
+\item Sample an episode $\{S_1,A_1,R_2,S_2,A_2,\ldots,S_T\}$ according to $\pi$.
+\item Add 1 to $N(s,a)$ for every $S_n=s, A_n=a$ pair in the episode.
+\item Update $q(S_t,A_t)$ for every state-action pair in the episode:
+\begin{equation}
+q(S_t,A_t)\mapsto q(S_t,A_t)+\frac{1}{N(S_t,A_t)}(G_t-q(S_t,A_t))
+\end{equation}
+\item Let $\varepsilon=1/k$, where $k$ is the episode number. Update $\pi$ to acting $\varepsilon$-greedy with respect to $q(s,a)$.
+\end{itemize}
+\end{itemize}
+
+
+
 \end{document} 
