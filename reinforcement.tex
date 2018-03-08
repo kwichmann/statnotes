@@ -1121,6 +1121,8 @@ v_\pi(s)\le&\mathbb{E}_{\pi'}[R_t+\gamma R_{t+1}+\gamma^2 R_{r+2}+\gamma^3 R_{r+
 \end{align}
 \end{proof}
 
+This version of the theorem will come in handy in a short while.
+
 \subsection{On- and off-policy learning}
 We may learn about policy $\pi$ by actually following the policy $\pi$ (when doing control, we want to improve it along the way). This is known as \textit{on-policy} learning. But we may also learn about $\pi$ by following another policy $\mu$ - "looking over the shoulder" of it, so to speak.
 
@@ -1160,7 +1162,7 @@ It turns out, that the $\varepsilon$-greedy strategy always produces a new polic
 If $\pi$ is an $\varepsilon$-soft policy, then the new policy $\pi'$ made by being $\varepsilon$-greedy with respect to $q_\pi$ is at least as good as $\pi$: $v_{\pi'}(s)\ge v_\pi(s)$.
 \end{theorem}
 \begin{proof}
-The value function $v_{\pi'}(s)$ must be at least as big as any $q_\pi(s,a)$, so:
+We wish to use the general policy improvement theorem, so consider:
 \begin{align}
 q_\pi(s,\pi'(s))&=\sum_{a\in\mathcal{A}}\pi'(a|s)q_\pi(s,a)\\
 &=\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+(1-\varepsilon)\max_{a\in\mathcal{A}}q_\pi(s|a)
@@ -1169,7 +1171,7 @@ Here we have assumed there $m$ possible actions. But the maximum must be greater
 \begin{equation}
 w_a=\frac{\pi(a|s)-\varepsilon/m}{1-\varepsilon}
 \end{equation}
-These sum to one:
+Because $\pi$ is $\varepsilon$-soft, these are all non-negative. These weights sum to one:
 \begin{equation}
 \sum_{a\in\mathcal{A}}w_a=\sum_{a\in\mathcal{A}}\frac{\pi(a|s)}{1-\varepsilon}-\sum_{a\in\mathcal{A}}\frac{\varepsilon/m}{1-\varepsilon}=\frac{1}{1-\varepsilon}-\frac{\varepsilon}{1-\varepsilon}=\frac{1-\varepsilon}{1-\varepsilon}=1
 \end{equation}
@@ -1179,5 +1181,6 @@ v_{\pi'}(s)&\ge\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+(1-\varepsi
 &=\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)+\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(s|a)-\frac{\varepsilon}{m}\sum_{a\in\mathcal{A}}q_\pi(s|a)\\
 &=\sum_{a\in\mathcal{A}}\pi(a|s)q_\pi(s|a)=v_\pi(s)
 \end{align}
+By the general policy improvement theorem we have $\pi'\ge\pi$.
 \end{proof}
 \end{document} 
