@@ -1210,15 +1210,7 @@ Here, $a(s)$ must be $\lim_{k\rightarrow\infty}\underset{a'\in\mathcal{A}}{\text
 \end{itemize}
 \end{definition}
 
-This can be achieved by decreasing $\varepsilon$ during the iteration. The first crititerion then comes down to:
-\begin{equation}
-\sum_{k=1}^\infty\varepsilon_k=\infty
-\end{equation}
-And the second:
-\begin{equation}
-\sum_{k=1}^\infty\varepsilon_k^2<\infty
-\end{equation}
-For instance, $\varepsilon_k=1/k$ results in a GLIE strategy.
+This can be achieved by decreasing $\varepsilon$ during the iteration.
 
 \subsection{GLIE Monte Carlo Control}
 Consider the following policy iteration strategy:
@@ -1236,6 +1228,67 @@ q(S_t,A_t)\mapsto q(S_t,A_t)+\frac{1}{N(S_t,A_t)}(G_t-q(S_t,A_t))
 \end{itemize}
 \end{itemize}
 
+\subsection{TD(0) Control: Sarsa}
+The Monte Carlo method - as usual - has the disadvantage that it can only be updated offline, i.e. after one or more episode have terminated.
 
+So instead we turn to SD-inspired strategies. The simplest one these is \textit{sarsa}, which - somewhat unimaginatively - is short for: "State, Action, Reward, State, Action".
+
+The idea is: Given a state $S$ and an action $A$ chosen according to the current policy $\pi$. We get a reward $R$ and end up in state $S'$. We then decide on the next action $A'$, again using the current policy $\pi$. Then update $q$ according to:
+\begin{equation}
+q(S,A)\mapsto q(S,A)+\alpha(\underbrace{R+\gamma q(S',A')}-q(S,A))
+\end{equation}
+Here, the underbraced part is the bootstrapped estimate of $q(S,A)$, and the entire paranthesis is the SD error. Next, update $\pi$ to be $\varepsilon$-greedy with respect to the new values of $q$.
+
+So here, we update the policy after every single time step, looking one step ahead. This is analogous to TD(0) for policy evaluation.
+
+Now, the big question is: Does following this strategy converge to an optimal policy? It turns out that is does, assuming the GLIE conditions are met. These turn out to be equivalent to the two following criteria:
+ The first crititerion then comes down to:
+\begin{equation}
+\sum_{k=1}^\infty\varepsilon_k=\infty,\quad
+\sum_{k=1}^\infty\varepsilon_k^2<\infty
+\end{equation}
+For instance, $\varepsilon_k=1/k$ results in a convergent GLIE strategy. 
+
+\subsection{$n$-step sarsa}
+Just as was the case for evaluation, instead of just looking one step ahead, we could look $n$ steps ahead and modify the SD estimate accordingly:
+\begin{equation}
+q_t^{(n)}=R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}+\cdots+\gamma^{n-1}R_{t+n-1}+\gamma^n q(S_{t+n},A_{t+n})
+\end{equation}
+The update rule then becomes:
+\begin{equation}
+q(S_t,A_t)\mapsto q(S_t,A_t)+\alpha(q_t^{(n)}-q(S_t,A_t))
+\end{equation}
+
+\subsection{$\lambda$-sarsa (forward view)}
+Following evaluation once again, we wish to consider a sum of different $n$-step sarsas, to gather the best qualities of different lookaheads, so to speak. So here the SD estimate is:
+\begin{equation}
+q_t^\lambda=(1-\lambda)\sum_{n=1}^\infty\lambda^{n-1}q_t^{(n)}
+\end{equation}
+And the update rule for $q$ is:
+\begin{equation}
+q(S_t,A_t)\mapsto q(S_t,A_t)+\alpha(q_t^\lambda-q(S_t,A_t))
+\end{equation}
+This is the forward view: We look to future events to calculate $q_t^\lambda$.
+
+\subsection{$\lambda$-sarsa (backward view)}
+We can again use eligibility traces to formulate an equivalent view of $\lambda$-sarsa. This time looking back in time, so that it may be easily applied online.
+
+At each episode, eligibility traces are reset: $E_0(s,a)=0$. At each step thereafter, each are discounted:
+\begin{equation}
+E_t(s,a)=\gamma\lambda E_{t-1}(s,a)
+\end{equation}
+Finally, one is added to the eligibility corresponding to the current state-action pair:
+\begin{equation}
+E(S_t,A_t)\mapsto E(S_t,A_t)+1
+\end{equation}
+
+After each step, all $q(s,a)$ are updated according to SD-error and eligibility. SD-error is:
+\begin{equation}
+\delta_t=R_{t+1}+\gamma q(S_{t+1},A_{t+1})-q(S_t,A_t)
+\end{equation}
+The update rule is:
+\begin{equation}
+q(s,a)\mapsto q(s,a)+\alpha\delta_t E_t(s,a)
+\end{equation}
 
 \end{document} 
