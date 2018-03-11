@@ -1291,4 +1291,46 @@ The update rule is:
 q(s,a)\mapsto q(s,a)+\alpha\delta_t E_t(s,a)
 \end{equation}
 
+\section{Off-policy learning}
+Doing off-policy learning is like "looking over the shoulder" of some agent using the strategy $\mu$, even though we want to optimize policy $\pi$.
+
+This approach may also be used if we want to re-use previously played data - like older versions of the policy $\pi$ earlier in the policy iteration.
+
+We might even want to learn about several policies while following $\mu$.
+
+\subsection{Change of distribution for expectation value evaluation}
+Imagine we want to calculate the expectation value of a random variable $f(X)$, where $X$ is itself a random variable with distribution $P(X)$. But we want to express this in terms of another distribution $Q(X)$. We can make this change be the following rewrite:
+\begin{align}
+\mathbb{E}_{X\sim P}[f(X)]&=\sum_X P(X)f(X)\\
+&=\sum_X Q(X)\frac{P(X)}{Q(X)}f(X)\\
+&=\mathbb{E}_{X\sim Q}\left[\frac{P(X)}{Q(X)}f(X)\right]
+\end{align}
+The case where $P$ and $Q$ corresponds to differenct policies, like $\mu$ and $\pi$ is known as \textit{importance sampling}
+
+\subsection{Monte Carlo importance sampling}
+In this case, we want to use an entire episode of following $\mu$ to improve $\pi$. But since each time step is a different stochastic variable, we must change distribution for each step:
+\begin{equation}
+G_t^{\pi/\mu}=\frac{\pi(A_t|S_t)}{\mu(A_t|S_t)}\frac{\pi(A_{t-1}|S_{t-1})}{\mu(A_{t-1}|S_{t-1})}\cdots\frac{\pi(A_T|S_T)}{\mu(A_T|S_T)}G_t
+\end{equation}
+We can then update the policy for $\pi$ according to:
+\begin{equation}
+V(S_t)\mapsto V(S_t)+\alpha(G_t^{\pi/\mu}-V(S_t))
+\end{equation}
+One thing is that this will not work if $\pi$ is non-zero when $\mu$ is zero, but in general the many factors means that the variance will be huge. In practice, this is no good!
+
+\subsection{TD(0) importance sampling}
+Instead we turn our attention to temporal-difference learning. For TD(0), we look one time step forward. For off-policy learning, this means we only have to use importance sampling for this single step to evaluate the SD target:
+\begin{equation}
+V(S_t)\mapsto V(S_t)+\alpha\left(\frac{\pi(A_t|S_t)}{\mu(A_t|S_t)}(R_{t+1}+\gamma V(S_{t+1}))-V(S_t)\right)
+\end{equation}
+This means that there's much lower variance than for MC, even though it may still be problematic.
+
+\subsection{Q-learning}
+The above is off-policy learning for the state-value function $V$. We now turn to the subject of learning the action-value function $Q(s,a)$.
+
+It turns out that we can avoid importance sampling in this case. The strategy is that given the sequence $S_t, A_t, S_{t+1}$, we use $\mu$ to choose the next action $A_{t+1}$. But we also choose an action $A'$ based on $\pi$! Now update $Q$ but use $A'$ for bootstrapping:
+\begin{equation}
+Q(S_t,A_t)\mapsto Q(S_t,A_t)+\alpha(R_{t+1}+\gamma Q(S_{t+1},A')-Q(S_t,A_t))
+\end{equation}
+
 \end{document} 
