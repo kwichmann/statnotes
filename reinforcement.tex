@@ -1332,5 +1332,42 @@ It turns out that we can avoid importance sampling in this case. The strategy is
 \begin{equation}
 Q(S_t,A_t)\mapsto Q(S_t,A_t)+\alpha(R_{t+1}+\gamma Q(S_{t+1},A')-Q(S_t,A_t))
 \end{equation}
+Then, after each such step, we update both $\pi$ and $\mu$ by the following strategy:
+\begin{itemize}
+\item $\pi$ is updated to a greedy strategy with respect to $Q(s,a)$.
+\item $\mu$ is updated to a $\varepsilon$-greedy strategy with respect to $Q(s,a)$.
+\end{itemize}
+This means that the Q-learning target is:
+\begin{align}
+&R_{t+1}+\gamma Q(S_{t+1},A')\\
+=&R_{t+1}+\gamma Q\left(S_{t+1},\underset{a'}{\textrm{argmax}}\ Q(S_{t-1},a')\right)\\
+=&R_{t+1}+\gamma\max_{a'\in\mathcal{A}}Q(S_{t+1},a')
+\end{align}
+This means the update can be written:
+\begin{equation}
+Q(S_t,A_t)\mapsto Q(S_t,A_t)+\alpha\left(R_{t+1}+\gamma\max_{a'\in\mathcal{A}}Q(S_{t+1},a')-Q(S_t,A_t)\right)
+\end{equation}
+This is also known as the \textit{sarsa-max} algorithm, because of the parallels to the sarsa algorithm.
+
+It can be shown, that this strategy converges to an optimal policy.
+
+\subsection{Overview: DP vs. TD learning}
+As we've previously discussed, dynamic programming uses full backups, while temporal-difference learning uses sample backups.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{DPvsTD}
+\caption{Dynamic programming and temporal-difference learning applied to solving various Bellman equations.}
+\label{fig:DPvsTD}
+\end{figure}
+
+Figure \ref{fig:DPvsTD} shows how each of these methods approach solving different form of Bellman equations. All of these algorithms we have encountered before. \ref{fig:DPvsTD2} shows the corresponding update formulas.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{DPvsTD2}
+\caption{Update formulas corresponding to figure \ref{fig:DPvsTD}.}
+\label{fig:DPvsTD2}
+\end{figure}
 
 \end{document} 
