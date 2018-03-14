@@ -1370,4 +1370,81 @@ Figure \ref{fig:DPvsTD} shows how each of these methods approach solving differe
 \label{fig:DPvsTD2}
 \end{figure}
 
+\section{Value function approximation}
+The methods presented so far suffer from the problem, that it is hard to handle cases where the state and/or action space is very large, or even infinite. So far, we have been thinking of $v(s)$ and $q(s,a)$ essentially as look-up tables, but such a table would often be too big to fit into any reasonable computer memory.
+
+A workaround is to use some kind of \textit{function approximation} to the value functions. Such functions will have a set of parameters, simply summarised as $\mathbf{w}$:
+\begin{equation}
+\hat{v}(s,\mathbf{w})\approx v(s),\quad\hat{q}(s,a,\mathbf{w})\approx q(s,a)
+\end{equation}
+The job of such approximator functions is to generalize from seen states to unseen states.
+
+We can use the strategies we already know from MC and TD learning, but instead of updating a table of values, we update the parameters $\mathbf{w}$.
+
+\subsection{Types of approximators}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\textwidth]{approximators}
+\caption{Three different kinds of "black box" function approximators.}
+\label{fig:approximators}
+\end{figure}
+
+Figure \ref{fig:approximators} shows three types of such approximators:
+\begin{itemize}
+\item A state-value function approximator: Input a state $s$ and get out an approximate state-value function $\hat{v}(s,\mathbf{w})$.
+\item An action-value function approximator where both state $s$ and action $a$ are input, to give an approximate action-value function $\hat{q}(s,a,\mathbf{w})$. This is known as \textit{action in}.
+\item An action-value function approximator where just the state $s$ is input, and the approximate action-value function $\hat{q}(s,a,\mathbf{w})$ for all $a\in\mathcal{A}$ is output. This is known as \textit{action out}.
+\end{itemize}
+
+\subsection{Function types}
+Another good question is what form the approximator function should take. Here is a non-exhaustive list of options:
+\begin{itemize}
+\item Linear combination of features.
+\item Neural network.
+\item Decision tree.
+\item Nearest neighbor.
+\item Wavelet bases.
+\end{itemize}
+Of course, what will and will not work depends on the problem.
+
+Here, we will focus on functions which are differentiable, as this allows us to use gradient methods. In the list above, only the first two items are differentiable, and hence these are the ones this section will focus on.
+
+Also, since reinforcement learning differs from supervised learning in the sense that our data points will not be stationary and/or iid., we require suitable training methods which reflect this.
+
+\subsection{Gradient descent}
+\textit{Gradient descent} is a method for finding the minimum of a function $J(\mathbf{w})$, where $\mathbf{w}$ is an $n$-dimensional parameter vector. To do this, we find the gradient:
+\begin{equation}
+\nabla_\mathbf{w}J(\mathbf{w})=
+\begin{pmatrix}
+\frac{\partial J}{\partial w_1} \\
+\vdots \\
+\frac{\partial J}{\partial w_n}
+\end{pmatrix}
+\end{equation}
+We may then search for a minimum greedily, by nudging the current $\mathbf{w}$ against the direction of the gradient:
+\begin{equation}
+\mathbf{w}\mapsto\mathbf{w}-\frac{1}{2}\alpha\nabla_\mathbf{w}J(\mathbf{w})
+\end{equation}
+Here $\alpha$ is called the \textit{learning rate}. The factor of $1/2$ is for mathematical convenience (some presentations omit this).
+
+There is of course no guarantee that gradient descent will not leave us stuck at a local minimum.
+
+\subsection{Gradient descent for known state-value function}
+Imagine (not very realistic) situation where all state-value functions for a policy $\pi$ are already know - we can think of them as given to us by some kind of oracle. In this case, we would like our approximator function $\hat{v}(s,\mathbf{w})$ to minimize the following quantity:
+\begin{equation}
+J(\mathbf{w})=\mathbb{E}_\pi[(v(s)-\hat{v}(s,\mathbf{w}))^2]
+\end{equation}
+If we apply gradient descent to this, each step changes $\mathbf{w}$ by:
+\begin{equation}
+\Delta\mathbf{w}=-\frac{1}{2}\alpha\nabla_\mathbf{w}J(\mathbf{w})=\alpha\mathbb{E}_\pi[(v(s)-\hat{v}(s,\mathbf{w}))\nabla_\mathbf{w}\hat{v}(s,\mathbf{w})]
+\end{equation}
+Here, the convenience of the factor of $1/2$ becomes clear. This is known as \textit{full gradient descent} (corresponding to batch gradient descent for supervised learning).
+
+The above uses expectation over all possible traces through the state space. \textit{Stochastic gradient descent} instead update after each individual step:. i.e. by sampling
+\begin{equation}
+\Delta\mathbf{w}=\frac{1}{2}\alpha\nabla_\mathbf{w}J(\mathbf{w})=\alpha\underbrace{(v(s)-\hat{v}(s,\mathbf{w}))}\nabla_\mathbf{w}\hat{v}(s,\mathbf{w})
+\end{equation}
+The underbraced part can be thought of as an error term: It tells how far off from the true value we currently are.
+
 \end{document} 
