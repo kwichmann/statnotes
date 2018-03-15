@@ -1431,7 +1431,7 @@ Here $\alpha$ is called the \textit{learning rate}. The factor of $1/2$ is for m
 There is of course no guarantee that gradient descent will not leave us stuck at a local minimum.
 
 \subsection{Gradient descent for known state-value function}
-Imagine (not very realistic) situation where all state-value functions for a policy $\pi$ are already know - we can think of them as given to us by some kind of oracle. In this case, we would like our approximator function $\hat{v}(s,\mathbf{w})$ to minimize the following quantity:
+Imagine (not very realistic) situation where all state-value functions for a policy $\pi$ are already know - we can think of them as given to us by some kind of oracle. In this case, we would like our approximator function $\hat{v}(s,\mathbf{w})$ to minimize the following quantity, known as the \textit{objective function}:
 \begin{equation}
 J(\mathbf{w})=\mathbb{E}_\pi[(v(s)-\hat{v}(s,\mathbf{w}))^2]
 \end{equation}
@@ -1444,7 +1444,70 @@ Here, the convenience of the factor of $1/2$ becomes clear. This is known as \te
 The above uses expectation over all possible traces through the state space. \textit{Stochastic gradient descent} instead update after each individual step:. i.e. by sampling
 \begin{equation}
 \Delta\mathbf{w}=\frac{1}{2}\alpha\nabla_\mathbf{w}J(\mathbf{w})=\alpha\underbrace{(v(s)-\hat{v}(s,\mathbf{w}))}\nabla_\mathbf{w}\hat{v}(s,\mathbf{w})
+\label{w_gradient}
 \end{equation}
 The underbraced part can be thought of as an error term: It tells how far off from the true value we currently are.
+
+\subsection{Linear combination of features}
+A \textit{feature} $x$ is a function of the state $x=x(s)$. It may be a quantity that a domain expert has judged to be of imporance for the problem. Or it may be by necessity if the whole state $s$ is not available to us through the environment-agent interaction. At any rate, good features throw away information in a smart way, so that a state may be more compactly represented.
+
+A neural network has the advantage that it essentially finds useful features as part of the training process.
+
+Imagine we describe the state $s$ by an $n$-dimensional feature vector $\mathbf{x}$:
+\begin{equation}
+\mathbf{x}(s)=
+\begin{pmatrix}
+x_1(s)\\
+\vdots \\
+x_n(s)
+\end{pmatrix}
+\end{equation}
+Then a simple function approximator is simply a linear combination of these:
+\begin{equation}
+\hat{v}(s,\mathbf{w})=\mathbf{x}(s)^t\mathbf{w}
+\end{equation}
+In this case, the objective function is convex, which means that there is only one local minimum, so gradient descent should work well. The gradient is also very simple:
+\begin{equation}
+\nabla_\mathbf{w}\hat{v}(s,\mathbf{w})=\mathbf{x}(s)
+\end{equation}
+This means that equation \ref{w_gradient} becomes:
+\begin{equation}
+\Delta\mathbf{w}=\alpha(v(s)-\hat{v}(s,\mathbf{w}))\mathbf{x}(s)
+\end{equation}
+I.e. the weight update is equal to learning rate times prediction error times feature value.
+
+\subsection{Gradient descent without supervision}
+So far we have assumed the true value function to be known, but of course in reality that's not the case. So how do we deal with this? The answer is, that we can take the same approach as we did for MC and TD-learning: Instead of using the true (unknown) values, we substitue some estimate - a target - of the value function.
+
+\subsubsection{Monte Carlo learning}
+For Monte Carlo learning, the target is $G_t$ - the discounted reward for the entire rest of the episode - is an unbiased, if noisy sample of the true $v_\pi(s)$:
+\begin{equation}
+\Delta\mathbf{w}=\alpha(G_t-\hat{v}(S_t,\mathbf{w}))\nabla_\mathbf{w}\hat{v}(S_t,\mathbf{w})
+\end{equation}
+We may think of this as gathering a set of "training data" consisting of the pairs:
+\begin{equation}
+\langle S_1,G_1\rangle,\langle S_2,G_2\rangle,\cdots,\langle S_T,G_T\rangle
+\end{equation}
+
+\subsubsection{TD(0) learning}
+For TD(0), the target is $R_{t+1}+\gamma\hat{v}(S_{t+1},\mathbf{w})$. This is a biased estimate, but we may use it anyway:
+\begin{equation}
+\Delta\mathbf{w}=\alpha(R_{t+1}+\gamma\hat{v}(S_{t+1},\mathbf{w})-\hat{v}(S_t,\mathbf{w}))\nabla_\mathbf{w}\hat{v}(S_t,\mathbf{w})
+\end{equation}
+Again, we can see this as gathering a "training set":
+\begin{equation}
+\langle S_1,R_2+\gamma\hat{v}(S_2)\rangle,\langle S_2,R_3+\gamma\hat{v}(S_3)\rangle,\cdots,\langle S_{T-1},R_T\rangle
+\end{equation}
+
+\subsubsection{TD($\lambda$) learning}
+For TD($\lambda$), the target is $G^\lambda_t$:
+\begin{equation}
+\Delta\mathbf{w}=\alpha(G^\lambda-\hat{v}(S_t,\mathbf{w}))\nabla_\mathbf{w}\hat{v}(S_t,\mathbf{w})
+\end{equation}
+The "training set" in this case is:
+\begin{equation}
+\langle S_1,G^\lambda_1\rangle,\langle S_2,G^\lambda_2\rangle,\cdots,\langle S_{T-1},G^\lambda_{T-1}\rangle
+\end{equation}
+As before, we can also use the equivalent backward view, using eligibility traces.
 
 \end{document} 
