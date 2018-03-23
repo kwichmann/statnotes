@@ -1508,6 +1508,37 @@ The "training set" in this case is:
 \begin{equation}
 \langle S_1,G^\lambda_1\rangle,\langle S_2,G^\lambda_2\rangle,\cdots,\langle S_{T-1},G^\lambda_{T-1}\rangle
 \end{equation}
-As before, we can also use the equivalent backward view, using eligibility traces.
+As before, we can also use the equivalent backward view, using eligibility traces. But here, instead of a trace for each state-action pair, there's a trace for each parameter in $\mathbf{w}$. Which means that all the traces fit into a vector of the same dimensionality as $\mathbf{w}$. They're updated as follows:
+\begin{equation}
+E_{t+1}=\gamma\lambda E_t+\nabla_\mathbf{w}\hat{q}(S_t,A_t,\mathbf{w})
+\end{equation}
+The error term is:
+\begin{equation}
+\delta_t=R_{t+1}+\gamma\hat{q}(S_{t+1},A_{t+1},\mathbf{w})-\hat{q}(S_t,A_t,\mathbf{w})
+\end{equation}
+And the update rule:
+\begin{equation}
+\Delta\mathbf{w}=\alpha\delta_t E_t
+\end{equation}
+
+\subsection{Bootstrap or not?}
+The question now is whether we should bootstrap or not, or rather how much. In other words, which value of $\lambda$ should we use? Figure \ref{fig:bootstrap_or_not} shows the effect of the choice of $\lambda$ for a number of classic RL problems. As we can see, $\lambda=1$, i.e. MC generally performs rather poorly. TD(0) is a bit better, but in general, there's a sweet spot somewhere in between.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{bootstrap_or_not}
+\caption{Error as a function of $\lambda$ for four different RL problems.}
+\label{fig:bootstrap_or_not}
+\end{figure}
+
+So it seems that bootstrapping is a sound idea. However, there are cases where bootstrapping causes the system to "blow" up. I.e. where value functions grows exponentially. The best known example is by Baird, known as \textit{Baird's counterexample}. Figure \ref{fig:convergence} shows in which cases convergence is theoretically guaranteed. However, often the "cross" cases work fine in practice anyway.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{convergence}
+\caption{Chart showing when convergence is guaranteed.}
+\label{fig:convergence}
+\end{figure}
+
 
 \end{document} 
