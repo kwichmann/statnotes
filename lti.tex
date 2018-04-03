@@ -1,0 +1,55 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png}
+
+\title{LTI dynamical systems}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Linear, time-independent systems}
+Consider a dynamic system with an input $x(t)$ and an output $y(t)$. The time variable $t$ may be \textit{continuous}, i.e. $t\in\mathbb{R}$, or \textit{discrete} i.e. $t\in\mathbb{Z}$. In the following we will start with the continous case and deal with the discrete case in its own section.
+
+The transformation from input to output can be thought of as an operator $\mathcal{F}:x\mapsto y$, sometimes known as a \textit{filter}. We call the dynamical system \textit{linear}, if $\mathcal{F}$ is linear. We call the system \textit{time-independent} if translations in time does not change the dynamics of the system:
+\begin{equation}
+\mathcal{F}[x](t)=y(t)\Rightarrow\mathcal{F}[x](t-\tau)=y(t-\tau)
+\end{equation}
+This should hold for all values of $t$ and $\tau$.
+
+We will take special interest in systems that are both linear and time-independent. These are called \textit{LTI} for short.
+
+\subsection{Impulse response function}
+Consider an input to an LTI system, which is a delta function impulse at time $t=0$, so that $x(t)=\delta(t)$. The corresponding output $h(t)$ is called the \textit{impulse response function}. Since the system is time-independent, this implies that an input of $x(t)=\delta(t-\tau)$ will have output $h(t-\tau)$.
+
+Consider now a general input $x(t)$. We can trivially rewrite this using a delta function:
+\begin{equation}
+x(t)=\int_{-\infty}^\infty x(\tau)\delta(t-\tau)\ d\tau
+\end{equation}
+We can think of this as splitting the input into a continuous series of infinitimal impulses. We can now use the linearity of $\mathcal{F}$ to calculate the output:
+\begin{equation}
+y(t)=\int_{-\infty}^\infty x(\tau)h(t-\tau)\ d\tau=(x*h)(t)
+\end{equation}
+We see that we end up with the \textit{convolution} between the input and the impulse responce function. So if we know $h(t)$ we can - in principle at least - always calculate the output.
+
+\subsubsection{Discrete case}
+Here the initial input is a Kronecker delta: $x(t)=\delta_{t0}$, with output $h(t)$. So by time-independence an input of $x(t-\tau)$ results in output $h(t-\tau)$. A general input can be rewritten:
+\begin{equation}
+x(t)=\sum_{\tau\in\mathbb{Z}}x(\tau)\delta_{t\tau}
+\end{equation}
+So the output is the discrete convolution between $x$ and $h$:
+\begin{equation}
+y(t)=\sum_{\tau\in\mathbb{Z}}x(\tau)h(t-\tau)
+\end{equation}
+
+
+\end{document}
