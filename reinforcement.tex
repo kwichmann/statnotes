@@ -871,6 +871,7 @@ This method is known as \textit{TD(0)}. We will make the following two definitio
 \item $R_{t+1}+\gamma V(S_{t+1})$ is known as the \textit{TD target}.
 \item $\delta_t=R_{t+1}+\gamma V(S_{t+1})-V(S_t)$ is called the \textit{TD error}.
 \end{itemize}
+Since the TD target is an estimate of the return - as opposed to MC where it is the actually observed return - the TD error will have an expectation value that differs from zero. The TD target is a \textit{biased} estimator of the return.
 
 \subsection{Bias-variance tradeoff}
 Let's consider the properties of the MC vs. TD(0) learning estimates.
@@ -882,6 +883,77 @@ On the other hand, for TD learning, we only consider the very recent actions/rew
 Another view is that MC is based on a lot of sample points, which means that there's a lot of aggregated noise, but on the other hand, having many points will make sure we're close to the real value. For TD, the situation is reversed: Only one point is used, meaning that there's only noise from one point, but it is also hard to estimate true value.
 
 Luckily, it turns out that there is a way to choose an algoritm that is a compromise between these two extremes, which allows us to tune the bias-variance tradeoff to suit our needs.
+
+\subsection{Convergence properties of MC and TD}
+But before that, let's look a little deeper into the differences between MC and TD learning. 
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{random_walk}
+\caption{Comparing convergence of MC and TD for a random walk.}
+\label{fig:random_walk}
+\end{figure}
+
+It turns out, that both MC and TD will converge to $v_\pi$ as the number of episodes tends to infinity. The question is how fast this happens. Figure \ref{fig:random_walk} shows the RMS error for both methods (and some different values of $\alpha$) for a random walk model. As we can see, TD tends to converge faster than MC. For both methods, higher values of $\alpha$ are more "jittery", as high learning rates has a greater tendency to over/under-shoot in each step.
+
+\subsection{Batch MC and TD}
+Above, we assumed that we had access to an arbitrarily large amount of sample data. But what happens if we have just a finite set of $K$ episodes - a \textit{batch} - to train the data on?
+
+In this case, we can instead keep using the limited set of data, randomly picking from these until convergence. How can we characterize the resulting value functions in each case?
+
+For MC, we get $v_\pi(s)$ equal to the average of $G_t$ for all data points where $S_t=s$. Alternatively, we may characterize this as the $v_\pi$ which minimizes the sum of squared errors:
+\begin{equation}
+\sum_{k=1}^K\sum_{t=1}^{T_k}\left(G^k_t-v_\pi(s^k_t)\right)^2
+\end{equation}
+
+For TD, when convergence is reached, the TD errors must be zero:
+\begin{equation}
+\mathbb{E}\left[v_\pi\left(s_t\right)\right]=\mathbb{E}\left[R_{t+1}+\gamma v_\pi\left(s_{t+1}\right)\right]
+\end{equation}
+Here, $s_t$ and $s_{t+1}$ can be any consecutive states in any of the episodes, and the expectation value is taken over the batch. This looks similar to a Markov Decision Process. In this case we search for a model which satisfies:
+\begin{equation}
+v_\pi(s)=\sum_{a\in\mathcal{A}}\pi(a|s)\left[\mathcal{R}^a_s+\gamma\sum_{s\in\mathcal{S}}\mathcal{P}^a_{ss'}v_\pi(s')\right]
+\label{td_batch}
+\end{equation}
+We can now consider this a probablistic model with $v_\pi$ as a random variable, and $\mathcal{R}$ and $\mathcal{P}$ as parameters. Then the maximum likelihood model is the one which averages the parameters over the relevant occurences in the batch:
+\begin{equation}
+\mathcal{R}^a_s=\frac{1}{N(s,a)}\sum r^a_s,\quad
+\mathcal{P}^a_{ss'}=\frac{1}{N(s,a)}\sum\delta_{s's_n}=\frac{N(s,a,s')}{N(s,a)}
+\end{equation}
+Here $N(s,a)$ is the number of times state $s$ is followed by action $a$ in the batch, and the sums are over these as well. $s_n$ is the state after $s$ (the next state), so the second sum counts the number of times $s,a,s'$ occurs. When averaging over the batch, this assures that equation \ref{td_batch} is satisfied.
+
+\subsubsection{Example}
+Consider a system with two states, A and B. There is no choice between actions. The batch consists of the following 8 episodes:
+\begin{itemize}
+\item $A,0,B,0$.
+\item $B,1$ (6 times).
+\item $B,0$.
+\end{itemize}
+The question now is: What is $v(A)$ and $v(B)$? ($\gamma=1$).
+
+For Monte Carlo, this is an average over the return for each state. So:
+\begin{equation}
+v(A)=\frac{0}{1}=0,\quad v(B)=\frac{0+1+1+1+1+1+1+0}{8}=\frac{3}{4}
+\end{equation}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{batch_mdp}
+\caption{The example MDP build on batch.}
+\label{fig:batch_mdp}
+\end{figure}
+
+
+For TD(0), we build the corresponding MDP. First $\mathcal{R}$:
+\begin{equation}
+\mathcal{R}_A=\frac{0}{1}=0,\quad
+\mathcal{R}_B=\frac{0+1+1+1+1+1+1+0}{8}=\frac{3}{4}
+\end{equation}
+Then $\mathcal{P}$:
+\begin{equation}
+\mathcal{P}_{AB}=\frac{1}{1}=1,\quad\mathcal{P}_{BA}=0
+\end{equation}
+Also, from $B$ there's a probability of 1 of ending the episode. The corresponding MDP is visualized in figure \ref{fig:batch_mdp}. From this we infer that just like before $v(B)=3/4$, but $v(A)=3/4$ as well!
 
 \subsection{$n$-step temporal-difference learning}
 So far, the temporal difference has only been one step into the future. But there's nothing preventing us from us looking more than one step ahead in our estimates, changing the TD target as appropriate. We can look $n$ steps ahead:
