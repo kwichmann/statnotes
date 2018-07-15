@@ -9,7 +9,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{width=10cm,compat=1.9}
 \graphicspath{ {img/} }
-\DeclareGraphicsExtensions{.png}
+\DeclareGraphicsExtensions{.png, .jpg}
 
 \title{Reinforcement Learning}
 \author{Kristian Wichmann}
@@ -943,7 +943,6 @@ v(A)=\frac{0}{1}=0,\quad v(B)=\frac{0+1+1+1+1+1+1+0}{8}=\frac{3}{4}
 \label{fig:batch_mdp}
 \end{figure}
 
-
 For TD(0), we build the corresponding MDP. First $\mathcal{R}$:
 \begin{equation}
 \mathcal{R}_A=\frac{0}{1}=0,\quad
@@ -1611,6 +1610,33 @@ So it seems that bootstrapping is a sound idea. However, there are cases where b
 \caption{Chart showing when convergence is guaranteed.}
 \label{fig:convergence}
 \end{figure}
+
+\section{Policy-based reinforcement learning}
+So far we have focused on using value functions to generate a policy. However, in some cases it can be useful or practical to model the policy itself directly. Again, we will consider a function approximator with a set of trainable parameters $\theta$:
+\begin{equation}
+\pi_\theta(s,a)=\mathbb{P}[a|s,\theta]
+\end{equation}
+As we can see, the policy is generally stochastic in nature. Also, the approach is model-free.
+
+Pros of policy-based learning:
+\begin{itemize}
+\item Converges easily.
+\item Good in high dimensions and continous action spaces.
+\item Can learn stochastic policies.
+\end{itemize}
+Cons:
+\begin{itemize}
+\item Often converges to local minima.
+\item Policy evaluation is inefficient and high variance.
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{value_policy_actor}
+\caption{The relation between value-based, action-based, and actor critic reinforcement learning.}
+\label{fig:value_policy_actor}
+\end{figure}
+
 
 
 \end{document} 
