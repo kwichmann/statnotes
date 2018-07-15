@@ -82,4 +82,49 @@ However, we now see that in the limit $t\rightarrow\infty$ the error is actually
 \lim_{t\rightarrow\infty}e(t)=y_r\frac{a}{a+k}
 \end{equation}
 
+\section{Laplace transforms}
+Given a function $f=f(t)$ defined for all positive $t$. Then the Laplace transform of it is defined as:
+\begin{equation}
+\mathcal{L}[f](s)=\int_0^\infty f(t)e^{-ts}\ dt
+\end{equation}
+The notation $F(s)$ is often used as a shorthand, and similarly for other functions.
+
+\subsection{Properties of the Laplace transform}
+The Laplace transform is linear, since integration is:
+\begin{align}
+\mathcal{L}[af+bg](s)&=\int_0^\infty\left[af(t)+b(g(t)\right]e^{-ts}\ dt\\
+&=a\int_0^\infty f(t)e^{-ts}\ dt+b\int_0^\infty g(t)e^{-ts}\ dt\\
+&=a\mathcal{L}[f](s)+b\mathcal{L}[g](s)
+\end{align}
+Laplace transforming a derivative gives us:
+\begin{align}
+\mathcal{L}\left[\frac{df}{dt}\right](s)&=\int_0^\infty \frac{df(t)}{dt}e^{-ts}\ dt\\
+&=\left[f(t)e^{-ts}\right]_0^\infty-\int_0^\infty f(t)\frac{d}{dt}e^{-ts}\ dt\\
+&=-f(0)+s\int_0^\infty f(t)e^{-ts}\ dt\\
+&=s\mathcal{L}[f](s)-f(0)
+\end{align}
+Here partial integration has been used. Note that we have assumed that $f(t)$ grows slower than an exponential for $t\rightarrow\infty$.
+
+Similarly, we can transform an integral:
+\begin{align}
+\mathcal{L}\left[\int_0^t f(x)\ dx\right](s)&=\int_0^\infty\int_0^t f(x)\ dx\ e^{-ts}\ dt\\
+&=\left[\int_0^t f(x)\ dx\cdot\left(-\frac{1}{s}\right)e^{-ts}\right]_0^\infty-\int_0^\infty f(t)\left(-\frac{1}{s}\right)e^{-ts}\ dt\\
+&=\frac{1}{s}\mathcal{L}[f](s)
+\end{align}
+Again, we have made assumptions on the growth speed of the integrand, i.e. this time of the integral of $f$.
+
+\subsection{A few select Laplace transforms}
+We consider two specific Laplace transforms in this section. First of a constant:
+\begin{align}
+\mathcal{L}[k](s)&=\int_0^\infty k\cdot e^{-st}\ dt\\
+&=k\int_0^\infty e^{-st}\ dt\\
+&=-\frac{k}{s}[e^{-st}]_0^\infty=\frac{k}{s}
+\end{align}
+And then of the function $te^{at}$:
+\begin{align}
+\mathcal{L}[te^{at}](s)&=\int_0^\infty te^{at}\cdot e^{-st}\ dt\\
+&=\int_0^\infty te^{(a-s)t}\ dt\\
+&=\left[t\frac{1}{a-s}e^{(a-s)t}\right]_0^\infty-\int_0^\infty 1\cdot\frac{1}{a-s}e^{(a-s)t}\ dt=\frac{1}{(s-a)^2}
+\end{align}
+
 \end{document}
