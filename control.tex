@@ -1,0 +1,85 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\numberwithin{equation}{section}
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\graphicspath{ {img/} }
+\DeclareGraphicsExtensions{.png, .jpg}
+
+\title{Control Theory}
+\author{Kristian Wichmann}
+
+\begin{document}
+\maketitle
+
+\section{Control and error}
+\emph{Control theory} deals with strategies for keeping a quantity at a constant level in a dynamic system. In mathematical terms we try to keep a quantity $y(t)$ at a constant level $y_r$ over time $t$.
+
+To achieve this goal, a \emph{controller} will affect the system at all time. This will generally be based on the \emph{error}, i.e. the current deviation from the desired level:
+\begin{equation}
+e(t)=y_r-y(t)
+\end{equation}
+
+\section{P-control}
+\emph{P-control} is the case where the controller correction $u$ is proportional (hence the P) to the error:
+\begin{equation}
+u(t)=ke(t)=k(y_r-y(t))
+\end{equation}
+
+\subsection{Example: Anaesthesia}
+Surgery is performed on a patient. During the procedure, it is desirable to keep the blood concentration of anaesthetic $y(t)$ at a constant level $y_r$. Without control, the concentration follows the following differential equation:
+\begin{equation}
+\frac{dy}{dt}=-ay
+\end{equation}
+I.e. it will decay exponentially from a starting concentration $y_0=y(0)$:
+\begin{equation}
+y(t)=y_0\cdot e^{-at}
+\end{equation}
+We now add the control term:
+\begin{equation}
+\frac{dy}{dt}=-ay+u=-ay+k(y_r-y(t))=ky_r-(a+k)y
+\end{equation}
+This is a differential equation of the form:
+\begin{equation}
+\frac{dy}{dy}=-b+ay
+\end{equation}
+Which has the general solution:
+\begin{equation}
+y(t)=-\frac{b}{a}+c\cdot e^{-at}
+\end{equation}
+Here, this means:
+\begin{equation}
+y(t)=\frac{ky_r}{a+k}+c\cdot e^{(a+k)t}
+\end{equation}
+With the boundary condition that $y(0)=0$ we can determine $c$:
+\begin{equation}
+c=-\frac{ky_r}{a+k}
+\end{equation}
+We can now write the solution as:
+\begin{equation}
+y(t)=\frac{ky_r}{a+k}-\frac{ky_r}{a+k}e^{(a+k)t}
+\end{equation}
+So the error is:
+\begin{equation}
+e(t)=y_r-y(t)=y_r-\frac{ky_r}{a+k}+\frac{ky_r}{a+k}e^{(a+k)t}
+\end{equation}
+Expand first term to get common denominator:
+\begin{align}
+e(t)&=\frac{y_r(a+k)}{a+k}-\frac{ky_r}{a+k}+\frac{ky_r}{a+k}e^{(a+k)t}\\
+&=\frac{y_r}{a+k}\left[a+k(e^{(a+k)t}-1)\right]
+\end{align}
+The controller dose is then found by multiplying by $k$:
+\begin{equation}
+u(t)=\frac{y_r}{a+k}\left[ak+k^2(e^{(a+k)t}-1)\right]
+\end{equation}
+However, we now see that in the limit $t\rightarrow\infty$ the error is actually not zero, as we would hope for, but instead:
+\begin{equation}
+\lim_{t\rightarrow\infty}e(t)=y_r\frac{a}{a+k}
+\end{equation}
+
+\end{document}
