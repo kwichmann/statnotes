@@ -46,15 +46,15 @@ We now add the control term:
 \end{equation}
 This is a differential equation of the form:
 \begin{equation}
-\frac{dy}{dy}=-b+ay
+\frac{dy}{dy}=b+ay
 \end{equation}
 Which has the general solution:
 \begin{equation}
-y(t)=-\frac{b}{a}+c\cdot e^{-at}
+y(t)=-\frac{b}{a}+c\cdot e^{at}
 \end{equation}
 Here, this means:
 \begin{equation}
-y(t)=\frac{ky_r}{a+k}+c\cdot e^{(a+k)t}
+y(t)=\frac{ky_r}{a+k}+c\cdot e^{-(a+k)t}
 \end{equation}
 With the boundary condition that $y(0)=0$ we can determine $c$:
 \begin{equation}
@@ -62,20 +62,20 @@ c=-\frac{ky_r}{a+k}
 \end{equation}
 We can now write the solution as:
 \begin{equation}
-y(t)=\frac{ky_r}{a+k}-\frac{ky_r}{a+k}e^{(a+k)t}
+y(t)=\frac{ky_r}{a+k}-\frac{ky_r}{a+k}e^{-(a+k)t}
 \end{equation}
 So the error is:
 \begin{equation}
-e(t)=y_r-y(t)=y_r-\frac{ky_r}{a+k}+\frac{ky_r}{a+k}e^{(a+k)t}
+e(t)=y_r-y(t)=y_r-\frac{ky_r}{a+k}+\frac{ky_r}{a+k}e^{-(a+k)t}
 \end{equation}
 Expand first term to get common denominator:
 \begin{align}
-e(t)&=\frac{y_r(a+k)}{a+k}-\frac{ky_r}{a+k}+\frac{ky_r}{a+k}e^{(a+k)t}\\
-&=\frac{y_r}{a+k}\left[a+k(e^{(a+k)t}-1)\right]
+e(t)&=\frac{y_r(a+k)}{a+k}-\frac{ky_r}{a+k}+\frac{ky_r}{a+k}e^{-(a+k)t}\\
+&=\frac{y_ra}{a+k}+\frac{y_rk}{a+k}e^{-(a+k)t}\label{anaes_error}
 \end{align}
 The controller dose is then found by multiplying by $k$:
 \begin{equation}
-u(t)=\frac{y_r}{a+k}\left[ak+k^2(e^{(a+k)t}-1)\right]
+u(t)=\frac{y_rak}{a+k}+\frac{y_rk^2}{a+k}e^{-(a+k)t}
 \end{equation}
 However, we now see that in the limit $t\rightarrow\infty$ the error is actually not zero, as we would hope for, but instead:
 \begin{equation}
@@ -114,17 +114,85 @@ Similarly, we can transform an integral:
 Again, we have made assumptions on the growth speed of the integrand, i.e. this time of the integral of $f$.
 
 \subsection{A few select Laplace transforms}
-We consider two specific Laplace transforms in this section. First of a constant:
+We consider three specific Laplace transforms in this section. First of a constant:
 \begin{align}
 \mathcal{L}[k](s)&=\int_0^\infty k\cdot e^{-st}\ dt\\
 &=k\int_0^\infty e^{-st}\ dt\\
 &=-\frac{k}{s}[e^{-st}]_0^\infty=\frac{k}{s}
 \end{align}
-And then of the function $te^{at}$:
+Then of an exponential:
+\begin{align}
+\mathcal{L}[k](e^{at})&=\int_0^\infty e^{at}\cdot e^{-st}\ dt\\
+&=\int_0^\infty e^{(a-s)t}\ dt\\
+&=\left[\frac{1}{a-s}e^{(a-s)t}\right]_0^\infty=\frac{1}{s-a}
+\end{align}
+And finally of the function $te^{at}$:
 \begin{align}
 \mathcal{L}[te^{at}](s)&=\int_0^\infty te^{at}\cdot e^{-st}\ dt\\
 &=\int_0^\infty te^{(a-s)t}\ dt\\
 &=\left[t\frac{1}{a-s}e^{(a-s)t}\right]_0^\infty-\int_0^\infty 1\cdot\frac{1}{a-s}e^{(a-s)t}\ dt=\frac{1}{(s-a)^2}
 \end{align}
+
+\subsection{Anaesthesia revisited}
+Consider now the example from the previous section. Here, there's three equations governing the behaviour of the system:
+\begin{align}
+e(t)&=y_r-y(t)\\
+u(t)&=k\cdot e(t)\\
+\frac{d}{dt}y(t)&=a\cdot y(t)+u(t)
+\end{align}
+Now Laplace transform all three equations, using the properties derived above:
+\begin{align}
+E(s)&=\frac{y_r}{s}-Y(s)\label{anaesE}\\
+U(s)&=k E(s)\label{aneasU}\\
+s Y(s)-y(0)&=-a Y(s)+U(s)\label{aneasY}
+\end{align}
+Again, we use the boundary condition $y(0)=0$ to simplify. We wish to isolate $E(t)$. First isolate $Y(t)$ in \ref{aneasY}:
+\begin{equation}
+(s+a)Y(s)=U(s)\Leftrightarrow Y(s)=\frac{U(s)}{s+a}
+\end{equation}
+Combined with \ref{aneasU} this gives:
+\begin{equation}
+Y(s)=\frac{k E(s)}{s+a}
+\end{equation}
+And finally inserting into \ref{anaesE}:
+\begin{align}
+E(s)&=\frac{y_r}{s}-\frac{k E(s)}{s+a}\Leftrightarrow\\
+(s+a)E(s)&=\frac{y_r(s+a)}{s}-k E(s)\Leftrightarrow\\
+(s+a+k)E(s)&=\frac{y_r(s+a)}{s}\Leftrightarrow\\
+E(s)&=\frac{y_r(s+a)}{s(s+a+k)}
+\end{align}
+We now use a partial fraction expansion on the right side:
+\begin{equation}
+\frac{y_r(s+a)}{s(s+a+k)}=y_r\left(\frac{A_1}{s}+\frac{A_2}{s+a+k}\right)
+\end{equation}
+For this to hold, we must have:
+\begin{equation}
+\frac{s+a}{s(s+a+k)}=\frac{(s+a+k)A_1}{s(s+a+k)}+\frac{s A_2}{s(s+a+k)}
+\end{equation}
+So:
+\begin{equation}
+s+a=(s+a+k)A_1+sA_2=s(A_1+A_2)+(a+k)A_1
+\end{equation}
+This is one equation with two unknowns, so we can set a boundary condition ourselves. Setting $A_1+A_2=1$ simplifies this $s$ part. It also means that $A_1=1-A_2$:
+\begin{align}
+s+a&=s+(a+k)(1-A_2)\Leftrightarrow\\
+a&=(a+k)(1-A_2)\Leftrightarrow\\
+A_2&=1-\frac{a}{a+k}=\frac{k}{a+k}
+\end{align}
+Similarly:
+\begin{equation}
+A_1=1-A_2=1-\frac{k}{a+k}=\frac{a}{a+k}
+\end{equation}
+Putting it all together the error can be written:
+\begin{equation}
+E(s)=y_r\frac{a}{a+k}\underbrace{\frac{1}{s}}_{\mathcal{L}[1]}+y_r\frac{k}{a+k}\underbrace{\frac{1}{s+a+k}}_{\mathcal{L}[e^{-(a+k)t}]}
+\end{equation}
+As the braces show, we recognize two of the Laplace transforms from the previous section. Therefore, we find the original error $e(t)$ to be:
+\begin{equation}
+e(t)=y_r\frac{a}{a+k}+y_r\frac{k}{a+k}e^{-(a+k)t}
+\end{equation}
+This is the same as the result from \ref{anaes_error}.
+
+This may seem like a way more complicated way to get the same result as solving a standard differential equation. But is shows how Laplace transforms can be useful to solve problems like this.
 
 \end{document}
