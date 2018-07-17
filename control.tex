@@ -20,7 +20,7 @@
 \section{Control and error}
 \emph{Control theory} deals with strategies for keeping a quantity at a constant level in a dynamic system. In mathematical terms we try to keep a quantity $y(t)$ at a constant level $y_r$ over time $t$.
 
-To achieve this goal, a \emph{controller} will affect the system at all time. This will generally be based on the \emph{error}, i.e. the current deviation from the desired level:
+To achieve this goal, a \emph{controller} will affect the system at all time. This will generally be based on the \emph{error}, i.e. the deviation from the desired level:
 \begin{equation}
 e(t)=y_r-y(t)
 \end{equation}
@@ -194,5 +194,127 @@ e(t)=y_r\frac{a}{a+k}+y_r\frac{k}{a+k}e^{-(a+k)t}
 This is the same as the result from \ref{anaes_error}.
 
 This may seem like a way more complicated way to get the same result as solving a standard differential equation. But is shows how Laplace transforms can be useful to solve problems like this.
+
+\section{PI-control}
+\emph{PI-control} is an extension of P-control, which also includes a term proportional to the integral of the error function. Hence the I is short for integration. In mathematical terms:
+\begin{equation}
+u(t)=k_1e(t)+k_2\int_0^t e(t')\ dt'
+\end{equation}
+Otherwise, the problem stays the same, so the three Laplace transformed equations become:
+\begin{align}
+E(s)&=\frac{y_r}{s}-Y(s)\label{PI-E}\\
+U(s)&=k_1 E(s)+k_2\frac{E(s)}{s}\label{PI-U}\\
+s Y(s)&=-a Y(s)+U(s)\label{PI-Y}
+\end{align}
+Here the transformation rule for an integral has come in handy, and we have once again assumed $y(0)=0$. Once again, \ref{PI-Y} can be written:
+\begin{equation}
+U(s)=(s+a)Y(s)
+\end{equation}
+Insert this in \ref{PI-U}:
+\begin{equation}
+(s+a)Y(s)=\left[k_1+\frac{k_2}{s}\right]E(s)\label{PI-step}
+\end{equation}
+From \ref{PI-E} we get:
+\begin{equation}
+Y(s)=\frac{y_r}{s}-E(s)
+\end{equation}
+Insert in \ref{PI-step}:
+\begin{align}
+(s+a)\left[\frac{y_r}{s}-E(s)\right]&=\left[k_1+\frac{k_2}{s}\right]E(s)\Leftrightarrow\\
+(s+a)\frac{y_r}{s}-(s+a)E(s)&=\left[k_1+\frac{k_2}{s}\right]E(s)\Leftrightarrow\\
+(s+a)\frac{y_r}{s}&=\left[k_1+\frac{k_2}{s}+s+a\right]E(s)
+\end{align}
+Now isolate $E(s)$ to get:
+\begin{equation}
+E(s)=\frac{s+a}{k_1+\frac{k_2}{s}+s+a}\frac{y_r}{s}=\frac{s+a}{s^2+(k_1+a)s+k_2}y_r\label{PI_error}
+\end{equation}
+
+\subsection{Rewriting the error}
+To rewrite the error consider an expression of the more general form:
+\begin{equation}
+\frac{s+a}{s^2+bs+c}
+\end{equation}
+
+\begin{theorem}
+\label{rewrite_error_theorem}
+If the polynomial $p(s)=s^2+bs+c$ has two distinct roots $\omega_1$ and $\omega_2$, then:
+\begin{equation}
+\frac{s+a}{s^2+bs+c}=\frac{a+\omega_1}{\omega_2-\omega_1}\frac{1}{s-\omega_1}+\frac{a+\omega_2}{\omega_1-\omega_2}\frac{1}{s-\omega_2}
+\end{equation}
+If the polynomial has a double root $\omega$, then:
+\begin{equation}
+\frac{s+a}{s^2+bs+c}=\frac{1}{s-\omega}+\frac{a+\omega}{(s-\omega)^2}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+For distict roots: The polynomial can be factored as:
+\begin{equation}
+p(s)=(s-\omega_1)(s-\omega_2)
+\end{equation}
+We now do a partial fraction expansion:
+\begin{equation}
+\frac{s+a}{(s-\omega_1)(s-\omega_2)}=\frac{A_1}{s-\omega_1}+\frac{A_2}{s-\omega_2}=\frac{A_1(s-\omega_2)+A_2(s-\omega_1)}{(s-\omega_1)(s-\omega_2)}
+\end{equation}
+So:
+\begin{equation}
+s+a=A_1(s-\omega_2)+A_2(s-\omega_1)=(A_1+A_2)s-A_1\omega_2-\omega_1 A_2
+\end{equation}
+Choose $A_1+A_2=1$. This means $A_2=1-A_1$:
+\begin{align}
+s+a&=s-A_1\omega_2-\omega_1(1-A_1)\Leftrightarrow\\
+a&=-A_1\omega_2-\omega_1+A_1\omega_1\Leftrightarrow\\
+a&=(\omega_1-\omega_2)A_1-\omega_1\Leftrightarrow\\
+A_1&=\frac{a+\omega_1}{\omega_1-\omega_2}
+\end{align}
+Now $A_2$ can be found:
+\begin{align}
+A_2&=1-\frac{a+\omega_1}{\omega_1-\omega_2}\\
+&=1+\frac{a+\omega_1}{\omega_2-\omega_1}\\
+&=\frac{\omega_2-\omega_1+a+\omega_1}{\omega_2-\omega_1}\\
+&=\frac{a+\omega_2}{\omega_2-\omega_1}
+\end{align}
+This proves the distinct case.
+
+When there's a double root, the factorization is:
+\begin{equation}
+p(s)=(s-\omega)^2
+\end{equation}
+Reduce the proposed rewrite of the fraction:
+\begin{equation}
+\frac{1}{s-\omega}+\frac{a+\omega}{(s-\omega)^2}=\frac{s-\omega+a+\omega}{(s-\omega)^2}=\frac{s+a}{(s-\omega)^2}
+\end{equation}
+The denominator is now equal to $p(s)$, and we're done.
+\end{proof}
+
+\subsection{Solving the PI-control equations}
+Wanting to apply theorem \ref{rewrite_error_theorem} to \ref{PI_error} we look for roots of the denominator. The discriminant is:
+\begin{equation}
+d=(k_1+a)^2-4k_2
+\end{equation}
+So when $(k_1+a)^2>4k_2$ there's two distinct roots, found by the usual formula:
+\begin{equation}
+\omega_1=\frac{-(k_1+a)+\sqrt{d}}{2},\quad\omega_2=\frac{-(k_1+a)-\sqrt{d}}{2}
+\end{equation}
+We now get the error function:
+\begin{equation}
+E(s)=\frac{a+\omega_1}{\omega_2-\omega_1}\underbrace{\frac{1}{s-\omega_1}}_{\mathcal{L}[e^{\omega_1t}]}+\frac{a+\omega_2}{\omega_1-\omega_2}\underbrace{\frac{1}{s-\omega_2}}_{\mathcal{L}[e^{\omega_2t}]}
+\end{equation}
+As shown by the braces, in this case the solution in the time domain is:
+\begin{equation}
+e(t)=\frac{a+\omega_1}{\omega_2-\omega_1}e^{\omega_1t}+\frac{a+\omega_2}{\omega_1-\omega_2}e^{\omega_2t}
+\end{equation}
+If $(k_1+a)^2=4k_2$ there's a double root:
+\begin{equation}
+\omega=-\frac{k_1+a}{2}
+\end{equation}
+In this case the error function is:
+\begin{equation}
+E(s)=\underbrace{\frac{1}{s-\omega}}_{\mathcal{L}[e^{\omega t}]}+(a+\omega)\underbrace{\frac{1}{(s-\omega)^2}}_{\mathcal{L}[te^{\omega t}]}
+\end{equation}
+So in the time domain:
+\begin{equation}
+e(t)=e^{\omega t}+(a+\omega)te^{\omega t}
+\end{equation}
 
 \end{document}
